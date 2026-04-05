@@ -1,0 +1,323 @@
+<section class="module" id="module-6" style="background: var(--color-bg-warm);">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">The Big Picture</h1>
+      <p class="module-subtitle">Zoom out. See how every piece connects — and why this architecture lets you build faster than ever.</p>
+    </div>
+
+    <!-- Screen 1: Architecture Overview -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Full Map</h2>
+      <p>Think of the entire system as a city. Each neighborhood has a purpose, roads connect them, and traffic lights (hooks) keep everything flowing safely. Let's see the whole city at once.</p>
+
+      <div class="arch-diagram animate-in">
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Entry Point — Plugin Initialization</h4>
+          <div class="arch-component" data-desc="The main entry point. When OpenCode starts, this function loads config, creates managers, wires tools, sets up hooks, and returns the plugin interface. Everything starts here.">
+            <div class="arch-icon">🚀</div>
+            <span>index.ts</span>
+          </div>
+          <div class="arch-component" data-desc="Reads your configuration file (oh-my-openagent.jsonc). Supports JSONC (comments allowed), partial parsing (bad sections get skipped, good ones still load), and automatic migration from legacy config formats.">
+            <div class="arch-icon">⚙️</div>
+            <span>plugin-config.ts</span>
+          </div>
+          <div class="arch-component" data-desc="Orchestrates creating the BackgroundManager (parallel agents), SkillMcpManager (skill-embedded servers), and TmuxSessionManager (interactive terminals). These three managers power the runtime.">
+            <div class="arch-icon">🏗️</div>
+            <span>create-managers.ts</span>
+          </div>
+        </div>
+
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Agents — The AI Team</h4>
+          <div class="arch-component" data-desc="The orchestrator. Sisyphus has model-specific prompt variants (Claude, GPT-5.4, Gemini) that are dynamically built based on available agents, tools, skills, and categories. He plans, delegates, and verifies.">
+            <div class="arch-icon">👑</div>
+            <span>Sisyphus</span>
+          </div>
+          <div class="arch-component" data-desc="The autonomous deep worker. Runs on GPT-5.4 by default. Gets a goal, not a recipe — explores the codebase independently, researches patterns, and executes end-to-end.">
+            <div class="arch-icon">🔨</div>
+            <span>Hephaestus</span>
+          </div>
+          <div class="arch-component" data-desc="Read-only strategic advisor. Cannot write or edit files — only reads and thinks. Called for architecture decisions, debugging after 2+ failures, and self-review of significant work.">
+            <div class="arch-icon">🔮</div>
+            <span>Oracle</span>
+          </div>
+          <div class="arch-component" data-desc="The strategic planner. Interview mode: questions you, identifies scope, and builds a detailed plan BEFORE any code is written. Used by the /start-work command.">
+            <div class="arch-icon">📋</div>
+            <span>Prometheus</span>
+          </div>
+        </div>
+
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Tools — What Agents Can Do</h4>
+          <div class="arch-component" data-desc="Content-hash validated file editing. Every line tagged with a hash fingerprint. If the file changed since last read, edits are rejected before corruption. The single biggest reliability improvement.">
+            <div class="arch-icon">✏️</div>
+            <span>Hashline Edit</span>
+          </div>
+          <div class="arch-component" data-desc="Full LSP integration: goto definition, find references, rename, diagnostics, symbols. Gives agents the same code intelligence that VS Code has.">
+            <div class="arch-icon">🔍</div>
+            <span>LSP Suite</span>
+          </div>
+          <div class="arch-component" data-desc="Structure-aware code search across 25 languages. Find patterns like 'all async functions that call fetch' — something text search can't do.">
+            <div class="arch-icon">🌳</div>
+            <span>AST-Grep</span>
+          </div>
+          <div class="arch-component" data-desc="Persistent interactive terminal sessions via tmux. Run REPLs, debuggers, TUI apps. The agent maintains the session across multiple interactions.">
+            <div class="arch-icon">🖥️</div>
+            <span>Tmux</span>
+          </div>
+        </div>
+
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Hooks — The Invisible Guardrails</h4>
+          <div class="arch-component" data-desc="25+ core hooks: comment checker, model fallback, context window monitoring, edit error recovery, tool output truncation, hashline enhancement, thinking block validation.">
+            <div class="arch-icon">🛡️</div>
+            <span>Core Hooks</span>
+          </div>
+          <div class="arch-component" data-desc="15+ continuation hooks: todo enforcer, Ralph Loop, session recovery, background notifications, preemptive compaction, stop-continuation guard.">
+            <div class="arch-icon">🔄</div>
+            <span>Continuation</span>
+          </div>
+          <div class="arch-component" data-desc="10+ skill hooks: auto slash commands, category-skill reminders, agent usage hints, Claude Code compatibility hooks for loading external skills/MCPs/commands.">
+            <div class="arch-icon">⚡</div>
+            <span>Skill Hooks</span>
+          </div>
+        </div>
+
+        <div class="arch-description">Click any component to learn what it does</div>
+      </div>
+    </div>
+
+    <!-- Screen 2: The Project Structure -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">How the Code Is Organized</h2>
+      <p>The <span class="term" data-definition="A monorepo is a single code repository that contains multiple related projects or packages. Instead of having separate repos for each piece, everything lives together — making it easier to share code and keep things in sync.">monorepo</span> has a clear hierarchy. Every directory has a single responsibility.</p>
+
+      <div class="file-tree animate-in">
+        <div class="ft-folder open">
+          <span class="ft-name">src/</span>
+          <span class="ft-desc">All source code lives here</span>
+          <div class="ft-children">
+            <div class="ft-folder">
+              <span class="ft-name">agents/</span>
+              <span class="ft-desc">Agent definitions — Sisyphus, Hephaestus, Oracle, Prometheus, Explore, Librarian, Momus, Metis</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">tools/</span>
+              <span class="ft-desc">Everything agents can DO — hashline-edit, LSP, AST-grep, interactive-bash, skill tools, session manager</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">hooks/</span>
+              <span class="ft-desc">80+ event interceptors organized by concern — each hook is its own directory with focused logic</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">features/</span>
+              <span class="ft-desc">Major subsystems — background agents, skills loader, Claude Code compatibility, MCP integration, task management</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">shared/</span>
+              <span class="ft-desc">170+ utility files — model resolution, config parsing, session management, error classification</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">plugin/</span>
+              <span class="ft-desc">The glue layer — tool registry, hook factories, agent builders, skill context</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">config/</span>
+              <span class="ft-desc">Configuration schema (Zod validated), type definitions, defaults</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">cli/</span>
+              <span class="ft-desc">Command-line tools — the "doctor" diagnostic command, config manager</span>
+            </div>
+            <div class="ft-file">
+              <span class="ft-name">index.ts</span>
+              <span class="ft-desc">The entry point — where everything comes together</span>
+            </div>
+          </div>
+        </div>
+        <div class="ft-folder">
+          <span class="ft-name">packages/</span>
+          <span class="ft-desc">Platform-specific binary builds (darwin-arm64, linux-x64, windows-x64, etc.)</span>
+        </div>
+        <div class="ft-folder">
+          <span class="ft-name">docs/</span>
+          <span class="ft-desc">User-facing documentation — installation guide, orchestration guide, features reference</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: The Plugin Lifecycle -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">From Boot to Shutdown: The Full Lifecycle</h2>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>OpenCode Calls the Plugin</strong>
+            <p>OpenCode finds "oh-my-openagent" in its plugin list and calls the exported <span class="term" data-definition="An async function is a function that can pause while waiting for something (like reading a file or calling an API) and resume when the result is ready — instead of blocking everything until it finishes.">async</span> function with a context object containing the project directory and client.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Config Loading</strong>
+            <p>The plugin reads your <span class="term" data-definition="JSONC is JSON with Comments — regular JSON format but you can add notes and trailing commas. Much friendlier for config files since you can annotate your settings.">JSONC</span> config file, validates it with <span class="term" data-definition="Zod is a TypeScript library for data validation. You describe what shape data should have, and Zod checks if actual data matches — rejecting invalid data with helpful error messages.">Zod</span> schemas, and gracefully handles invalid sections (skipping them while loading the rest).</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Manager Creation</strong>
+            <p>Background agent manager, skill MCP manager, and tmux session manager are initialized. These are the runtime engines that power parallel execution.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Tool & Skill Registration</strong>
+            <p>All built-in tools (LSP, hashline, grep, glob) plus skill-provided tools are assembled. Skills can bring their own MCP servers that spin up on-demand.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Hook Wiring</strong>
+            <p>80+ hooks are created across three layers (core, continuation, skill). Each one registers for specific events and runs its logic when triggered.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <strong>Plugin Interface Returned</strong>
+            <p>The assembled agents, tools, hooks, and commands are packaged into a plugin interface and handed back to OpenCode. The system is live.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Design Principles -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Design Philosophy</h2>
+      <p>Now that you've seen every layer, here are the principles that hold everything together:</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🎯</div>
+          <h4 class="pattern-title">Right Model, Right Job</h4>
+          <p class="pattern-desc">Instead of using one AI for everything, each agent gets the model that's strongest at its specific task. Claude for orchestration, GPT for deep work, models matched to strengths.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: #E4F2F7">⚡</div>
+          <h4 class="pattern-title">Parallel by Default</h4>
+          <p class="pattern-desc">Explore agents, background tasks, file reads — everything that CAN run in parallel DOES run in parallel. Sequential execution is the exception, not the rule.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #F0EBF7">🛡️</div>
+          <h4 class="pattern-title">Defense in Depth</h4>
+          <p class="pattern-desc">80+ hooks at every checkpoint. Model fallbacks. Session recovery. Hash-validated edits. Multiple independent safety layers catch different failure modes.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">🔌</div>
+          <h4 class="pattern-title">Everything Is Configurable</h4>
+          <p class="pattern-desc">Disable any hook, override any agent's model, add custom skills, change delegation categories. Opinionated defaults, but nothing is locked down.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Composition Over Inheritance</strong>
+          <p>Notice how OmO doesn't build one giant monolithic system. Instead, it composes small, focused pieces: agents are separate from tools, tools are separate from hooks, hooks are separate from skills. Each piece can be added, removed, or replaced independently. This "composition" approach is one of the most important architectural patterns in modern software — it's why LEGO blocks are more versatile than a pre-molded toy.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: What You've Learned & Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Final Check: Can You Navigate This Codebase?</h2>
+
+      <div class="quiz-container" id="quiz-module6">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Right! The hooks/ directory contains all event interceptors. The todo continuation enforcer would be a continuation hook that detects idle agents with unfinished todos."
+             data-explanation-wrong="Hooks live in src/hooks/, organized by concern. The todo continuation enforcer is a continuation hook — it intercepts the 'agent idle' event and checks for unfinished todos.">
+          <h3 class="quiz-question">You want to modify how the "todo enforcer" works. Where in the codebase would you look?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>src/agents/ — since it affects agent behavior</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>src/hooks/todo-continuation-enforcer/ — hooks intercept events, and this one enforces todo completion</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>src/tools/ — since todos are a tool feature</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Exactly! The plugin-config.ts file handles config loading with partial parsing. Invalid sections get skipped while valid ones still load — so a typo in one setting doesn't break everything."
+             data-explanation-wrong="The config system uses 'partial parsing' — it validates each section independently. If one section has errors, it's skipped, but all the valid sections still load normally. This lives in plugin-config.ts.">
+          <h3 class="quiz-question">A user has a typo in their agent override config. What happens when the plugin loads?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The invalid section is skipped, but the rest of the config loads normally</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The entire plugin crashes and refuses to start</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>All settings are reset to defaults</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Correct! Composition means each piece (agents, tools, hooks) is independent and can be swapped or extended without affecting the others. This is exactly why you can disable individual hooks, override agent models, or add custom skills — each piece is self-contained."
+             data-explanation-wrong="The composition principle means pieces are independent and swappable. You can disable a hook without affecting agents, override a model without changing tools, or add a skill without touching hooks. Everything connects through clean interfaces, not tight coupling.">
+          <h3 class="quiz-question">Why can you disable a single hook without breaking the rest of the system?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Because hooks don't actually do anything important</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Because disabling a hook just hides its output but it still runs</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Because the architecture uses composition — each piece is independent and connects through clean interfaces</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+      </div>
+
+      <div class="callout callout-info animate-in" style="margin-top: var(--space-8);">
+        <div class="callout-icon">🎓</div>
+        <div class="callout-content">
+          <strong class="callout-title">You Made It!</strong>
+          <p>You now understand how Oh My OpenCode works under the hood — from the plugin entry point, through the agent orchestration system, to the tools and hooks that make it all reliable. Next time you type "ultrawork", you'll know exactly what's happening behind the scenes.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

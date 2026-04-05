@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside Oh My OpenCode</title>
+
+  <!-- Google Fonts: Bricolage Grotesque · DM Sans · JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-accent:       #2A7B9B;
+      --color-accent-hover: #1F6280;
+      --color-accent-light: #E4F2F7;
+      --color-accent-muted: #5A9DB8;
+    }
+  </style>
+
+  <script src="main.js" defer></script>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="nav-inner">
+      <span class="nav-title">Inside Oh My OpenCode</span>
+      <div class="nav-dots" id="nav-dots" role="tablist">
+        <button class="nav-dot" data-target="module-1" data-tooltip="What Is This Thing?" role="tab" aria-label="Module 1: What Is This Thing?"></button>
+        <button class="nav-dot" data-target="module-2" data-tooltip="Meet the Agents" role="tab" aria-label="Module 2: Meet the Agents"></button>
+        <button class="nav-dot" data-target="module-3" data-tooltip="How Agents Think" role="tab" aria-label="Module 3: How Agents Think"></button>
+        <button class="nav-dot" data-target="module-4" data-tooltip="The Tools Arsenal" role="tab" aria-label="Module 4: The Tools Arsenal"></button>
+        <button class="nav-dot" data-target="module-5" data-tooltip="The Safety Net" role="tab" aria-label="Module 5: The Safety Net"></button>
+        <button class="nav-dot" data-target="module-6" data-tooltip="The Big Picture" role="tab" aria-label="Module 6: The Big Picture"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- modules/*.html content is assembled here by build.sh -->
+<section class="module" id="module-1">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">What Is This Thing?</h1>
+      <p class="module-subtitle">You type one word. An entire AI dev team wakes up. Here's what's really happening.</p>
+    </div>
+
+    <!-- Screen 1: The Problem -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Problem: AI Coding Tools Are Fragmented</h2>
+      <p>Imagine you're building software with AI assistants. You've got Claude Code for orchestration, GPT for reasoning, Gemini for creativity. Each one is good at different things. But switching between them? Configuring workflows? Debugging when things break?</p>
+      <p>That's what <span class="term" data-definition="Oh My OpenCode (OmO) is a plugin for OpenCode — an open-source AI coding tool. Think of it as a 'batteries-included' upgrade pack that adds multi-model orchestration, parallel agents, and professional-grade tools.">Oh My OpenCode</span> solves. It's a single plugin that turns a basic AI coding tool into a full AI development team.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid #C93B3B">
+          <div class="pattern-icon" style="background: #FDE8E8">😫</div>
+          <h4 class="pattern-title">Without OmO</h4>
+          <p class="pattern-desc">Manually switching between AI models. Copy-pasting context. Configuring each tool separately. Debugging agents yourself.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">✨</div>
+          <h4 class="pattern-title">With OmO</h4>
+          <p class="pattern-desc">Type "ultrawork". The right model picks the right task. Agents run in parallel. Everything just works.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: The One-Word Magic -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">One Word: <code style="color: var(--color-accent); font-family: var(--font-mono);">ultrawork</code></h2>
+      <p>When you type <code>ultrawork</code> (or just <code>ulw</code>), here's the chain reaction that fires off under the hood:</p>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Plugin Loads</strong>
+            <p>OpenCode calls the Oh My OpenCode <span class="term" data-definition="A plugin is an add-on that extends what a program can do — like installing an app on your phone to add new features. OpenCode supports plugins that add agents, tools, and hooks.">plugin</span>. It reads your config, sets up tools, and wires everything together.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Sisyphus Wakes Up</strong>
+            <p>The main orchestrator agent — Sisyphus — activates. He's your project manager who delegates to specialists.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Agents Get Assigned</strong>
+            <p>Sisyphus analyzes your request, creates a todo list, and fires off background agents in parallel — each on the AI model best suited for the job.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Work Gets Done</strong>
+            <p>Agents read files, write code, run diagnostics, and verify their own output. Hooks silently guard against mistakes. The loop continues until every todo is complete.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: What It Actually Is -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Under the Hood: A Plugin for OpenCode</h2>
+      <p>Oh My OpenCode is a <span class="term" data-definition="TypeScript is a programming language built on top of JavaScript. It adds 'types' — labels that tell the computer what kind of data a variable holds (text, number, list, etc.) — which helps catch mistakes before the code runs.">TypeScript</span> plugin for <span class="term" data-definition="OpenCode is an open-source AI coding assistant that runs in your terminal. Think of it like Claude Code or Cursor, but open-source — anyone can extend it with plugins.">OpenCode</span>. When OpenCode starts, it loads the plugin, which injects agents, tools, and hooks into the system.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> OhMyOpenCodePlugin: <span class="code-function">Plugin</span> = <span class="code-keyword">async</span> (ctx) => {</span>
+<span class="code-line">  <span class="code-keyword">const</span> pluginConfig = <span class="code-function">loadPluginConfig</span>(ctx.directory, ctx)</span>
+<span class="code-line">  <span class="code-keyword">const</span> managers = <span class="code-function">createManagers</span>({ ctx, pluginConfig, ... })</span>
+<span class="code-line">  <span class="code-keyword">const</span> toolsResult = <span class="code-keyword">await</span> <span class="code-function">createTools</span>({ ctx, pluginConfig, managers })</span>
+<span class="code-line">  <span class="code-keyword">const</span> hooks = <span class="code-function">createHooks</span>({ ctx, pluginConfig, ... })</span>
+<span class="code-line">  <span class="code-keyword">return</span> { <span class="code-property">name</span>: <span class="code-string">"oh-my-openagent"</span>, ...pluginInterface }</span>
+<span class="code-line">}</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">When OpenCode starts up, run this setup function...</p>
+            <p class="tl">First, read the user's configuration file to know their preferences</p>
+            <p class="tl">Create the "managers" — background task runner, skill loader, etc.</p>
+            <p class="tl">Set up all the tools agents can use (LSP, edit, grep, etc.)</p>
+            <p class="tl">Wire up 80+ hooks that silently guard against mistakes</p>
+            <p class="tl">Hand everything back to OpenCode as a named plugin</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: The Plugin Pattern</strong>
+          <p>Instead of building a whole new app, OmO extends an existing one. This is like adding a turbocharger to an engine — the car is the same, but it performs completely differently. In software, this pattern is called a "plugin architecture" and it's how tools like VS Code extensions and browser add-ons work too.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: The Tech Stack -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Tech Stack at a Glance</h2>
+
+      <div class="icon-rows stagger-children">
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-accent-light)">🔷</div>
+          <div>
+            <strong>TypeScript + Bun</strong>
+            <p><span class="term" data-definition="Bun is a fast JavaScript/TypeScript runtime — the engine that actually runs the code. It's an alternative to Node.js, known for being significantly faster at starting up and running scripts.">Bun</span> runs the code. TypeScript catches bugs before they happen. Together they make a fast, reliable foundation.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #E8F5EE">🤖</div>
+          <div>
+            <strong>Multi-Model AI</strong>
+            <p>Claude Opus for orchestration. GPT-5.4 for deep work. Kimi K2.5 and GLM-5 as alternatives. Each agent gets the model that's best at its job.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #FDF5E0">🔌</div>
+          <div>
+            <strong>OpenCode Plugin SDK</strong>
+            <p>The <span class="term" data-definition="An SDK (Software Development Kit) is a collection of pre-built tools and code that helps developers build on top of an existing platform — like a LEGO starter kit that gives you the basic pieces to build with.">SDK</span> from OpenCode that lets plugins register agents, tools, hooks, and commands.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #FDEEE9">🛠️</div>
+          <div>
+            <strong>LSP + AST-Grep</strong>
+            <p><span class="term" data-definition="LSP (Language Server Protocol) is a standard that gives tools IDE-level understanding of code — it can find definitions, rename variables across files, and detect errors, just like VS Code does.">LSP</span> gives IDE-level code intelligence. <span class="term" data-definition="AST-Grep is a tool that searches code by understanding its structure (the 'abstract syntax tree'), not just text patterns. It can find 'all function calls that take 3 arguments' — something regular search can't do.">AST-Grep</span> enables structure-aware code search and rewriting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module1">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! OmO is a plugin that adds capabilities to OpenCode — it doesn't replace it. This plugin pattern lets you keep all your existing setup while gaining new powers."
+             data-explanation-wrong="Not quite. OmO extends OpenCode rather than replacing it. It's a plugin that adds agents, tools, and hooks on top of the existing platform.">
+          <h3 class="quiz-question">A friend asks: "Should I uninstall Claude Code to use Oh My OpenCode?" What do you tell them?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — OmO is a complete replacement for all AI coding tools</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — OmO is a plugin for OpenCode, not a standalone tool. It extends what OpenCode can do</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — OmO only works if you remove all other AI tools first</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Right! When you type ultrawork, the plugin loads your config, wakes up Sisyphus (the orchestrator), who then analyzes your request and delegates to specialist agents. It's a chain reaction, not a single step."
+             data-explanation-wrong="The real magic is the chain reaction: config loads, Sisyphus wakes up, analyzes intent, creates todos, delegates to specialists in parallel. Each step triggers the next.">
+          <h3 class="quiz-question">When you type "ultrawork", what actually happens first?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>AI immediately starts writing code in your project</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It opens a web browser to search for solutions</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The plugin loads config, wakes up the orchestrator agent, who analyzes your request before taking any action</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-2">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Meet the Agents</h1>
+      <p class="module-subtitle">A film crew where every member is an AI. The director delegates, the lead actor improvises, and the script doctor never touches the camera.</p>
+    </div>
+
+    <!-- Screen 1: The Film Crew Metaphor + Agent Cards -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Production Crew</h2>
+      <p>Oh My OpenCode doesn't use one AI for everything. It runs a team of <span class="term" data-definition="A discipline agent is a specialized AI worker configured with a specific model, prompt, and set of tools tailored for one type of work. Each agent has a 'discipline' — like an actor cast for a specific role.">discipline agents</span>, each cast for a specific role. Think of it like a film production crew.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: #FDEEE9; color: var(--color-actor-1); font-weight: 700; font-family: var(--font-display);">S</div>
+          <h4 class="pattern-title">Sisyphus &mdash; The Director</h4>
+          <p class="pattern-desc">Claude Opus / Kimi / GLM. <span class="term" data-definition="An orchestrator is the 'brain' agent that receives the user's request, breaks it into tasks, and delegates each task to the right specialist agent. It doesn't do the work itself — it manages who does.">Orchestrator</span> who reads the script, assigns scenes, and never picks up a camera.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-info-light); color: var(--color-actor-2); font-weight: 700; font-family: var(--font-display);">H</div>
+          <h4 class="pattern-title">Hephaestus &mdash; Lead Actor</h4>
+          <p class="pattern-desc">GPT-5.4. Deep <span class="term" data-definition="An autonomous worker agent operates independently once given a task. It reads files, writes code, runs checks, and loops until the work is complete — without asking the orchestrator for help at each step.">autonomous worker</span> who figures things out on set, improvising through complex scenes.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #EEEAFF; color: var(--color-actor-3); font-weight: 700; font-family: var(--font-display);">O</div>
+          <h4 class="pattern-title">Oracle &mdash; Script Doctor</h4>
+          <p class="pattern-desc">Read-only strategic advisor. Called in when something fails &mdash; reviews the situation and recommends rewrites, but never touches the code.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0; color: var(--color-actor-4); font-weight: 700; font-family: var(--font-display);">P</div>
+          <h4 class="pattern-title">Prometheus &mdash; Pre-Production</h4>
+          <p class="pattern-desc">Strategic planner using <span class="term" data-definition="Interview mode is a planning technique where the AI asks the user clarifying questions before generating a plan. Instead of guessing, it interviews you to understand scope, constraints, and goals — like a pre-production meeting.">interview mode</span>. Maps out the entire project before anyone starts working.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-success-light); color: var(--color-actor-5); font-weight: 700; font-family: var(--font-display);">E</div>
+          <h4 class="pattern-title">Explore &mdash; Location Scout</h4>
+          <p class="pattern-desc">Fast codebase grep. Scans the entire project in seconds to find relevant files, patterns, and structure before the real work begins.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-text-muted)">
+          <div class="pattern-icon" style="background: var(--color-bg-warm); color: var(--color-text-secondary); font-weight: 700; font-family: var(--font-display);">L</div>
+          <h4 class="pattern-title">Librarian &mdash; Research Asst.</h4>
+          <p class="pattern-desc">External docs search. When the crew needs to reference a framework's API or a library's changelog, the Librarian fetches it.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Group Chat Animation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Watch Them Work Together</h2>
+      <p>Here is a realistic delegation sequence. Sisyphus receives a task, scouts the codebase, delegates the heavy lifting, and calls in an advisor when things go sideways.</p>
+
+      <div class="chat-window" id="chat-module2">
+        <div class="chat-messages">
+          <div class="chat-message" data-msg="0" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-text-muted)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-text-muted)">User</span>
+              <p>Refactor the auth module to support OAuth2 and add tests.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="1" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>Got it. Let me scout the codebase first to understand the current auth structure.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="2" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>@Explore &mdash; scan for all files related to authentication. Find the current auth flow entry points.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="3" data-sender="explore" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-5)">E</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-5)">Explore</span>
+              <p>Found 12 files. Core auth logic is in src/auth/provider.ts, session middleware in src/middleware/auth.ts. Tests in src/auth/__tests__/.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="4" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>@Hephaestus &mdash; refactor src/auth/provider.ts to add an OAuth2 strategy. Keep backward compat with the existing session flow. Write tests when done.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="5" data-sender="hephaestus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hephaestus</span>
+              <p>Working on it. Created OAuth2Strategy class, wired token refresh, updated middleware. But 3 existing tests are now failing.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="6" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>Test failures after refactor. @Oracle &mdash; review the failing tests and Hephaestus's changes. What's the fix strategy?</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="7" data-sender="oracle" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">O</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Oracle</span>
+              <p>The tests mock the old single-strategy interface. Recommendation: update mocks to use the new StrategyProvider pattern. The session tests need a factory fixture, not direct instantiation.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="8" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>@Hephaestus &mdash; apply Oracle's recommendation. Update the test mocks, then verify all tests pass.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="9" data-sender="hephaestus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hephaestus</span>
+              <p>Done. All 14 tests passing (11 existing + 3 new OAuth2 tests). Refactor complete.</p>
+            </div>
+          </div>
+        </div>
+        <div class="chat-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module2-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Code-English Translation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">How an Agent Is Born</h2>
+      <p>Every agent is created by a <span class="term" data-definition="A factory function is a function that creates and returns an object. Instead of using 'new', you call the factory, which configures the object internally and hands it back ready to use. This lets you hide complex setup logic.">factory function</span>. Here is the real code that builds Sisyphus &mdash; the orchestrator that manages all other agents.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> MODE: <span class="code-function">AgentMode</span> = <span class="code-string">"primary"</span>;</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">export function</span> <span class="code-function">createSisyphusAgent</span>(</span>
+<span class="code-line">  <span class="code-property">model</span>, <span class="code-property">availableAgents</span>, ...</span>
+<span class="code-line">): <span class="code-function">AgentConfig</span> {</span>
+<span class="code-line">  <span class="code-keyword">const</span> tools = <span class="code-function">categorizeTools</span>(availableToolNames);</span>
+<span class="code-line">  <span class="code-keyword">const</span> prompt = <span class="code-function">buildDynamicSisyphusPrompt</span>(</span>
+<span class="code-line">    model, agents, tools, skills, ...</span>
+<span class="code-line">  );</span>
+<span class="code-line">  <span class="code-keyword">return</span> {</span>
+<span class="code-line">    <span class="code-property">description</span>: <span class="code-string">"Powerful AI orchestrator..."</span>,</span>
+<span class="code-line">    <span class="code-property">mode</span>: MODE,</span>
+<span class="code-line">    <span class="code-property">model</span>,</span>
+<span class="code-line">    <span class="code-property">prompt</span>,</span>
+<span class="code-line">    ...</span>
+<span class="code-line">  };</span>
+<span class="code-line">}</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">This agent runs in "primary" mode &mdash; it's the main agent the user talks to directly</p>
+            <p class="tl">Define a factory function that creates a Sisyphus agent, given a model and a list of available teammates</p>
+            <p class="tl">First, sort all available tools into categories (edit, search, run, etc.) so the prompt can explain each one</p>
+            <p class="tl">Then dynamically generate the system prompt &mdash; it changes based on which agents, tools, and skills are actually available right now</p>
+            <p class="tl">Finally, return the agent config object: a description for UIs, the mode, the AI model to use, and the generated prompt</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1f4a1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">CS Insight: Separation of Concerns</strong>
+          <p>Each agent has exactly one job and knows nothing about the others' internals. Sisyphus never writes code. Hephaestus never delegates. Oracle never edits files. This is the <span class="term" data-definition="The single responsibility principle states that every module or class should have one, and only one, reason to change. Applied to agents: each agent does one type of work, which makes the system easier to debug, test, and extend.">single responsibility principle</span> applied to AI &mdash; the same pattern that makes microservices, Unix pipes, and React components work. When each piece does one thing well, you can swap, upgrade, or debug any piece without breaking the rest.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Agent Modes & Model Matching -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Why Different Models for Different Agents?</h2>
+      <p>Not every task needs the most expensive AI. The system matches each agent to the <span class="term" data-definition="Model selection is the process of choosing which AI model runs a given agent. Expensive models (Claude Opus, GPT-5.4) handle complex reasoning. Cheaper, faster models handle simple tasks like search. This optimizes both cost and speed.">right model</span> for its job &mdash; like casting the right actor for each role.</p>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-1)">
+          <div class="step-num" style="background: var(--color-actor-1)">S</div>
+          <div class="step-body">
+            <strong>Sisyphus &rarr; Claude Opus / Kimi / GLM</strong>
+            <p>Orchestration requires understanding complex, multi-step requests and deciding which specialist handles what. Needs the smartest model available.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-2)">
+          <div class="step-num" style="background: var(--color-actor-2)">H</div>
+          <div class="step-body">
+            <strong>Hephaestus &rarr; GPT-5.4</strong>
+            <p>Deep autonomous coding requires sustained reasoning across many files. GPT-5.4 excels at long, self-directed implementation sessions.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-3)">
+          <div class="step-num" style="background: var(--color-actor-3)">O</div>
+          <div class="step-body">
+            <strong>Oracle &rarr; Read-only Advisor</strong>
+            <p>Only activated on failure escalation. Reads code and diagnostics, then returns strategic advice. Never writes &mdash; so it can use any strong reasoning model.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-5)">
+          <div class="step-num" style="background: var(--color-actor-5)">E</div>
+          <div class="step-body">
+            <strong>Explore &rarr; Fast, Cheap Model</strong>
+            <p>Just runs grep and glob. Doesn't need intelligence &mdash; needs speed. Uses the cheapest available model to keep costs down.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module2">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Right. The orchestrator's job is to analyze the request and pick the right specialist. If it also tried to do the work, it would lose the ability to parallelize and would mix concerns."
+             data-explanation-wrong="Sisyphus's entire value is in delegation. If it tried to code directly, it would lose the benefits of specialization — the same reason a film director doesn't act in their own movie.">
+          <h3 class="quiz-question">A user asks Sisyphus to fix a CSS bug. Why doesn't Sisyphus fix it directly, since it uses a powerful model?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Sisyphus doesn't have access to file editing tools</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Delegating to a specialist lets Sisyphus manage multiple tasks in parallel and keeps each agent focused on what it does best</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>CSS is too simple for Claude Opus to handle</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Exactly. Oracle is read-only by design. Giving it write access would violate separation of concerns — the advisor role only works if it can't accidentally make the problem worse."
+             data-explanation-wrong="Oracle is deliberately restricted to read-only operations. If you need to apply its recommendation, you send a worker agent (like Hephaestus) to do the implementation. This separation prevents the advisor from making things worse.">
+          <h3 class="quiz-question">Oracle identifies a performance issue in a database query. What happens next?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Oracle rewrites the query itself since it found the issue</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The system shuts down and asks the user to fix it manually</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Oracle returns its recommendation to Sisyphus, who then delegates the fix to a worker agent like Hephaestus</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Correct. Explore is cheap and fast — perfect for reconnaissance. Using GPT-5.4 to run a simple grep would be like hiring a lead actor to scout locations. You match capability to task complexity."
+             data-explanation-wrong="Cost and speed matter. Explore uses a cheap model because it only runs searches. Sending an expensive model to do simple grep would waste money and time — like hiring a lead actor just to scout locations.">
+          <h3 class="quiz-question">You're designing a new agent that only needs to check whether a file exists. Which model strategy makes the most sense?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use the cheapest, fastest model available — like Explore does — since the task requires no reasoning</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use GPT-5.4 to make sure it gets the file check right on the first try</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use Claude Opus because all agents should use the best model for reliability</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-3">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">How Agents Think</h1>
+      <p class="module-subtitle">Before any code gets written, every request passes through a triage system. Like a 911 dispatch center, the agent classifies your intent and routes to the right specialist.</p>
+    </div>
+
+    <!-- Screen 1: The 911 Metaphor + Intent Gate Flow Animation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The 911 Dispatch Center in Your Terminal</h2>
+      <p>When you call 911, the operator doesn&apos;t fight fires or chase criminals. They ask one question: <em>what kind of emergency is this?</em> Then they route to fire, medical, or police. Sisyphus works the same way.</p>
+      <p>Every single message you send hits the <span class="term" data-definition="The Intent Gate is Phase 0 of Sisyphus&apos;s processing pipeline. Before any work begins, it classifies the user&apos;s request into one of five categories (Trivial, Explicit, Exploratory, Open-ended, Ambiguous) to determine the correct routing strategy.">Intent Gate</span> before anything else happens. This is Phase 0 — the moment the agent decides <em>how</em> to think about your request.</p>
+
+      <div class="flow-animation" data-steps='[
+        {"highlight":"flow-actor-1","label":"User sends a message to Sisyphus"},
+        {"highlight":"flow-actor-2","label":"Intent Gate classifies the request into one of five types","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Sisyphus verbalizes its routing decision before acting","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Request delegated to the right specialist by CATEGORY","packet":true,"from":"actor-3","to":"actor-4"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">&#x1F464;</div><span>User</span></div>
+          <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">&#x1F6E1;</div><span>Intent Gate</span></div>
+          <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">&#x1F4AC;</div><span>Verbalize</span></div>
+          <div class="flow-actor" id="flow-actor-4"><div class="flow-actor-icon">&#x1F916;</div><span>Specialist</span></div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click &quot;Next Step&quot; to begin</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x1F3AF;</div>
+        <div class="callout-content">
+          <strong class="callout-title">CS Concept: Routing &amp; Single Responsibility</strong>
+          <p>This is the <span class="term" data-definition="The Single Responsibility Principle states that every module or component should do exactly one thing well. The Intent Gate only classifies. The dispatcher only routes. Specialists only execute. No component tries to do everything.">Single Responsibility Principle</span> in action. The Intent Gate only classifies — it never executes. The dispatcher only routes — it never classifies. Each component does one job well, like a well-run emergency center where the operator, dispatcher, and responders each have distinct roles.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: The Five Intent Types — Code-English Translation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Five Types of Intent</h2>
+      <p>Sisyphus follows an explicit ruleset to classify every incoming message. These aren&apos;t vague guidelines — they&apos;re deterministic rules baked into the <span class="term" data-definition="A system prompt is the set of instructions an AI agent receives before any user interaction. It defines the agent&apos;s personality, capabilities, and decision-making rules. Sisyphus&apos;s prompt contains the Intent Gate classification logic.">system prompt</span>.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">SISYPHUS RULES</span>
+          <pre><code>
+<span class="code-line"><span class="code-comment">### Step 1: Classify Request Type</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Trivial</span> <span class="code-comment">(single file, known location)</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Direct tools only</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Explicit</span> <span class="code-comment">(specific file/line, clear command)</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Execute directly</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Exploratory</span> <span class="code-comment">("How does X work?")</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Fire explore (1-3) + tools in parallel</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Open-ended</span> <span class="code-comment">("Improve", "Refactor")</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Assess codebase first</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Ambiguous</span> <span class="code-comment">(unclear scope)</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Ask ONE clarifying question</span></span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">First, figure out what kind of request this is...</p>
+            <p class="tl"><strong>Trivial:</strong> You know exactly where the file is and what to change. Just do it with tools, no delegation needed.</p>
+            <p class="tl"><strong>Explicit:</strong> The user gave a clear command like &quot;fix line 42 in utils.ts&quot;. Execute it directly, no questions asked.</p>
+            <p class="tl"><strong>Exploratory:</strong> The user wants to understand something. Launch 1-3 explore agents in parallel to search the codebase simultaneously.</p>
+            <p class="tl"><strong>Open-ended:</strong> Vague requests like &quot;make this better&quot;. First assess the full scope before doing anything.</p>
+            <p class="tl"><strong>Ambiguous:</strong> Can&apos;t tell what they mean? Ask exactly one clarifying question — never two, never zero.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1F4A1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Intent Verbalization</strong>
+          <p>After classifying, Sisyphus announces its routing decision out loud before acting — &quot;This is an exploratory request, I&apos;ll fire parallel explore agents.&quot; This makes the agent&apos;s thinking transparent and debuggable, like a 911 operator saying &quot;I&apos;m dispatching fire and medical&quot; before pressing the button.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Delegation Categories -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Delegation by Category, Not by Model</h2>
+      <p>Sisyphus never says &quot;send this to GPT-5.4&quot; or &quot;use Claude Opus.&quot; Instead, it delegates by <em>category</em> — describing <em>what kind of work</em> needs doing. The system maps categories to models behind the scenes.</p>
+      <p>This is like a hospital where doctors order &quot;imaging&quot; not &quot;use the Siemens MRI machine.&quot; The abstraction means you can swap models without rewriting any agent logic.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-info-light)">&#x1F3A8;</div>
+          <h4 class="pattern-title">visual-engineering</h4>
+          <p class="pattern-desc">UI work, CSS, component styling, layout fixes. Routes to models strong at visual reasoning and frontend code generation.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #F0EBF8">&#x1F9E0;</div>
+          <h4 class="pattern-title">deep</h4>
+          <p class="pattern-desc">Complex multi-file refactors, architecture decisions, intricate debugging. Gets the most powerful reasoning model available.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x26A1;</div>
+          <h4 class="pattern-title">quick</h4>
+          <p class="pattern-desc">Simple edits, typo fixes, straightforward tasks. Routes to fast, cost-efficient models that don&apos;t need heavy reasoning.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">&#x1F52E;</div>
+          <h4 class="pattern-title">ultrabrain</h4>
+          <p class="pattern-desc">The hardest problems: novel algorithms, cross-system design, critical decisions. Reserved for the absolute strongest model in the roster.</p>
+        </div>
+      </div>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">&#x1F504;</div>
+          <div class="step-body">
+            <strong>Session Continuity Saves 70%+ Tokens</strong>
+            <p>When a specialist is delegated work, it reuses the same <span class="term" data-definition="A session_id is a unique identifier that ties multiple agent interactions together. By reusing the same session_id, an agent can continue where it left off without re-reading the entire conversation history, saving over 70% of tokens.">session_id</span> across interactions. Instead of re-reading the entire conversation each time, agents continue where they left off — like a doctor reviewing their own notes instead of re-interviewing the patient.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">&#x1F500;</div>
+          <div class="step-body">
+            <strong>Parallel Execution</strong>
+            <p>For exploratory requests, multiple <span class="term" data-definition="Explore agents are lightweight specialist agents that search specific areas of the codebase in parallel. Sisyphus can fire 1-3 of them simultaneously to gather information from different parts of the code at once.">explore agents</span> and <span class="term" data-definition="Librarian agents are specialized agents focused on reading and understanding documentation, type definitions, and API surfaces. They work alongside explore agents to build a complete picture of how code works.">librarian agents</span> fire simultaneously. Three agents searching different parts of the codebase at once is faster than one agent searching sequentially.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Context-Completion Gate -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Context-Completion Gate</h2>
+      <p>Even after classification and delegation, there&apos;s one more checkpoint. Before any implementation begins, the <span class="term" data-definition="The Context-Completion Gate is a three-condition check that must pass before Sisyphus allows implementation to begin. It ensures the agent has enough information to act correctly, preventing premature code changes.">Context-Completion Gate</span> must be satisfied. Think of it as the surgical timeout — the pause before the first incision where the team confirms they have the right patient, right procedure, right site.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x2705;</div>
+          <h4 class="pattern-title">Condition 1: Scope Clarity</h4>
+          <p class="pattern-desc">The agent must know exactly which files and functions will be touched. No guessing, no &quot;I&apos;ll figure it out as I go.&quot;</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x2705;</div>
+          <h4 class="pattern-title">Condition 2: Pattern Knowledge</h4>
+          <p class="pattern-desc">The agent must understand the existing code patterns and conventions in the target area. No introducing alien styles.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x2705;</div>
+          <h4 class="pattern-title">Condition 3: Dependency Awareness</h4>
+          <p class="pattern-desc">The agent must map what depends on the code it&apos;s changing. Breaking a function that 12 other files import is not acceptable.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x1F6E1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why This Matters</strong>
+          <p>Without this gate, agents would start writing code the moment they see a request — like a surgeon cutting before checking the X-rays. The Context-Completion Gate is what separates a thoughtful agent from a reckless autocomplete. If any condition fails, the agent goes back to exploration.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module3">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Correct! &quot;How does X work?&quot; is a textbook Exploratory request. Sisyphus fires 1-3 explore agents in parallel to search the codebase simultaneously, then synthesizes their findings."
+             data-explanation-wrong="Not quite. &quot;How does the hook system work?&quot; is an Exploratory request — the user wants to understand something, not change it. Sisyphus would fire parallel explore agents to investigate.">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>A developer types: &quot;How does the hook system work? I need to understand the lifecycle before I add a new hook.&quot;</p>
+            </div>
+          </div>
+          <h3 class="quiz-question">How does the Intent Gate classify this request?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Open-ended — it&apos;s vague, so assess the codebase first</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Exploratory — fire parallel explore agents to investigate the hook system</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Ambiguous — ask a clarifying question about which hooks they mean</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Exactly! Sisyphus delegates by category (like &quot;deep&quot; or &quot;quick&quot;), never by model name. This abstraction lets you swap models without changing agent logic — the category describes the work, not the tool."
+             data-explanation-wrong="Sisyphus never references model names directly. It delegates by category — &quot;deep&quot;, &quot;quick&quot;, &quot;visual-engineering&quot;, or &quot;ultrabrain&quot;. The system maps categories to actual models behind the scenes.">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>You&apos;re reading the Sisyphus prompt and see a delegation call. Which of these would you expect to find?</p>
+            </div>
+          </div>
+          <h3 class="quiz-question">How does Sisyphus specify which agent to delegate to?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>By category: &quot;delegate to deep&quot; or &quot;delegate to visual-engineering&quot;</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>By model name: &quot;send this to GPT-5.4&quot; or &quot;use Claude Opus&quot;</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>By random selection — the system picks whichever model is cheapest</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="That&apos;s right! The Context-Completion Gate requires scope clarity, pattern knowledge, and dependency awareness before implementation begins. If any condition fails, the agent goes back to exploration rather than guessing."
+             data-explanation-wrong="The Context-Completion Gate has three conditions: scope clarity (which files?), pattern knowledge (what conventions?), and dependency awareness (what breaks if I change this?). All three must pass before any code gets written.">
+          <h3 class="quiz-question">A specialist agent has been delegated a refactoring task. What must happen before it starts writing code?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Nothing — once delegated, the agent should start coding immediately</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It must ask the user for permission to proceed</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It must pass the Context-Completion Gate: confirm scope, patterns, and dependencies</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-4" style="background: var(--color-bg-warm);">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">The Tools Arsenal</h1>
+      <p class="module-subtitle">Agents don't just think — they act. Here are the surgical instruments they use to read, edit, and understand your code.</p>
+    </div>
+
+    <!-- Screen 1: The Toolbox Overview -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">A Surgeon's Instruments, Not a Sledgehammer</h2>
+      <p>Think of a surgeon's operating room. They don't use one big tool for everything — they have scalpels, clamps, retractors, each designed for a specific job. One wrong instrument and the patient is in trouble.</p>
+      <p>OmO's agents work the same way. Each tool is purpose-built for a specific kind of code manipulation. The right tool for the right job means fewer mistakes and faster work.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">✏️</div>
+          <h4 class="pattern-title">Hashline Edit</h4>
+          <p class="pattern-desc">Content-hash validated edits. Every line tagged with a fingerprint. Zero stale-line errors.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: #E4F2F7">🔍</div>
+          <h4 class="pattern-title">LSP Tools</h4>
+          <p class="pattern-desc">IDE-level intelligence: rename across files, find references, jump to definitions, run diagnostics.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #F0EBF7">🌳</div>
+          <h4 class="pattern-title">AST-Grep</h4>
+          <p class="pattern-desc">Search code by structure, not text. Find "all functions that take 3 arguments" across 25 languages.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">🖥️</div>
+          <h4 class="pattern-title">Tmux / Interactive Bash</h4>
+          <p class="pattern-desc">Full interactive terminal. Run REPLs, debuggers, and TUI apps — the agent stays in session.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Hashline Edit — The Star of the Show -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Hashline Edit: The Breakthrough</h2>
+      <p>Most AI coding failures aren't the model's fault — they're the <span class="term" data-definition="A harness is the software layer that connects an AI model to the tools it uses (file editing, terminal, search). If the harness is bad, even a brilliant AI produces broken output. Think of it as the steering wheel of a car — a great engine is useless if the steering doesn't work.">harness</span>'s fault. The edit tool is usually the weak link. Here's the problem most tools have:</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid #C93B3B">
+          <div class="pattern-icon" style="background: #FDE8E8">❌</div>
+          <h4 class="pattern-title">Traditional Edit</h4>
+          <p class="pattern-desc">AI reads a file, then later tries to edit it by reproducing the exact text it saw. If the file changed (or the AI misremembers whitespace), the edit fails or corrupts the file.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">✅</div>
+          <h4 class="pattern-title">Hashline Edit</h4>
+          <p class="pattern-desc">Every line gets a unique content hash. The AI edits by referencing hash tags, not text. If the file changed, the hash won't match — edit rejected before corruption.</p>
+        </div>
+      </div>
+
+      <p>The result? Success rate jumped from <strong>6.7%</strong> to <strong>68.3%</strong> — just by changing the edit tool.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">WHAT THE AGENT SEES</span>
+          <pre><code>
+<span class="code-line"><span class="code-number">11</span><span class="code-comment">#VK</span>| <span class="code-keyword">function</span> <span class="code-function">hello</span>() {</span>
+<span class="code-line"><span class="code-number">22</span><span class="code-comment">#XJ</span>|   <span class="code-keyword">return</span> <span class="code-string">"world"</span>;</span>
+<span class="code-line"><span class="code-number">33</span><span class="code-comment">#MB</span>| }</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Line 11, hash "VK" — this is the function declaration. The hash is a fingerprint of this line's content.</p>
+            <p class="tl">Line 22, hash "XJ" — the return statement. If someone changes this line, "XJ" would become a different hash.</p>
+            <p class="tl">Line 33, hash "MB" — closing brace. The agent says "edit line #XJ" instead of reproducing text.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Content Addressing</strong>
+          <p>This idea — identifying data by its content hash instead of its position — is everywhere in computing. Git uses it to track file versions. IPFS uses it to store files across the internet. Bitcoin uses it to chain blocks together. It's one of the most powerful ideas in computer science: if the content changes, the address changes, so you always know if something has been tampered with.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: LSP Tools -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">LSP: IDE Superpowers for Agents</h2>
+      <p>When you use VS Code and right-click "Go to Definition" or "Rename Symbol" — that's <span class="term" data-definition="LSP (Language Server Protocol) is a standard created by Microsoft that lets any tool understand code the way an IDE does. It can find where functions are defined, what references them, and detect errors — all by talking to a 'language server' that understands the programming language.">LSP</span> at work. OmO gives agents those exact same powers.</p>
+
+      <div class="badge-list stagger-children">
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_goto_definition</code>
+          <span class="badge-desc">Jump to where a function or variable is defined — across any file in the project</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_find_references</code>
+          <span class="badge-desc">Find every place in the codebase that uses a specific function or variable</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_rename</code>
+          <span class="badge-desc">Rename a symbol everywhere it appears — safely, across all files at once</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_diagnostics</code>
+          <span class="badge-desc">Check for errors and warnings — like a spell-checker, but for code</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_symbols</code>
+          <span class="badge-desc">List all functions, classes, and variables in a file — a table of contents for code</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_prepare_rename</code>
+          <span class="badge-desc">Check if a rename is safe before doing it — like a dry run</span>
+        </div>
+      </div>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">export const</span> builtinTools: Record&lt;string, ToolDefinition&gt; = {</span>
+<span class="code-line">  lsp_goto_definition,</span>
+<span class="code-line">  lsp_find_references,</span>
+<span class="code-line">  lsp_symbols,</span>
+<span class="code-line">  lsp_diagnostics,</span>
+<span class="code-line">  lsp_prepare_rename,</span>
+<span class="code-line">  lsp_rename,</span>
+<span class="code-line">}</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Here's the list of tools that every agent gets by default...</p>
+            <p class="tl">Jump to where something is defined</p>
+            <p class="tl">Find everywhere something is used</p>
+            <p class="tl">List all the "ingredients" in a file</p>
+            <p class="tl">Run a health check on the code</p>
+            <p class="tl">Preview what a rename would change</p>
+            <p class="tl">Actually rename it across the whole project</p>
+            <p class="tl">All bundled together as "built-in tools"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Background Tools & Delegation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Background Agents & Task Delegation</h2>
+      <p>Beyond the surgical tools, agents also have the power to spawn other agents. The <span class="term" data-definition="A background agent is a separate AI instance that runs independently of the main agent. Think of it like sending an assistant to do research while you keep working — they come back with results when done.">background agent</span> system lets Sisyphus fire up 5+ specialists at once, each working on a different part of the problem.</p>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>task() — Delegate Work</strong>
+            <p>Sisyphus fires a <span class="term" data-definition="The task tool creates a new agent session with a specific category (visual-engineering, deep, quick, ultrabrain) and optional skills. It's how the orchestrator delegates work to specialists.">task</span> with a category and skills. The system picks the right model automatically.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>background_output() — Collect Results</strong>
+            <p>When a background agent finishes, Sisyphus retrieves its output and verifies the work.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>background_cancel() — Clean Up</strong>
+            <p>If an agent is no longer needed (task superseded or already answered), cancel it to save tokens.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">🔧</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why This Matters for You</strong>
+          <p>When you tell an AI agent to "add dark mode to my app", knowing about these tools helps you understand WHY the agent is running lsp_diagnostics after every edit (it's checking its own work), or why it fires 3 explore agents in parallel (it's searching different parts of the codebase simultaneously). You can steer it better when you know what instruments it has.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module4">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! The hash is a fingerprint of the line content. If someone (or another agent) changed the file since it was last read, the hash won't match and the edit is safely rejected. This prevents file corruption."
+             data-explanation-wrong="The hash isn't about speed or permissions — it's about detecting changes. If the file content changed since the agent last read it, the hash won't match, so the edit is rejected before it can corrupt anything.">
+          <h3 class="quiz-question">An agent tries to edit line #XJ in a file, but the edit is rejected. What most likely happened?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The agent doesn't have permission to edit that file</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The file was modified since the agent last read it, so the content hash no longer matches</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The file is too large for the edit tool to handle</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Right! lsp_rename understands the code structure — it knows the difference between a variable called 'user' and the word 'user' in a comment or string. It renames only the actual code references, across all files."
+             data-explanation-wrong="Find-and-replace would change 'user' everywhere — in comments, strings, and unrelated variables. lsp_rename understands code structure and only renames the actual symbol references.">
+          <h3 class="quiz-question">You want to rename a variable called "user" to "currentUser" across your whole project. Which approach is safest?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Find-and-replace "user" with "currentUser" in all files</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Ask the AI to manually edit each file where "user" appears</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use lsp_rename — it understands code structure and only renames the actual variable references</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! Running diagnostics after changes is how agents verify their own work. It catches type errors, missing imports, and syntax issues immediately — before they cascade into bigger problems."
+             data-explanation-wrong="Diagnostics aren't about file counting or test suites — they're the agent's quality check. After every edit, lsp_diagnostics scans for errors, ensuring the change didn't break anything.">
+          <h3 class="quiz-question">Why does Sisyphus run lsp_diagnostics after every significant code change?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To count how many files were changed</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To verify the edit didn't introduce errors — like a spell-checker for code that catches problems immediately</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To automatically run the project's test suite</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-5">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">The Safety Net</h1>
+      <p class="module-subtitle">80+ invisible hooks silently intercept, guard, and recover — so agents never go off the rails.</p>
+    </div>
+
+    <!-- Screen 1: The Invisible Guardian -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">An Invisible Army of Bodyguards</h2>
+      <p>Imagine a skyscraper with motion sensors, fire alarms, and security cameras on every floor. You never notice them — until something goes wrong. Then they kick in instantly, preventing disaster.</p>
+      <p>OmO has 80+ <span class="term" data-definition="A hook is a piece of code that automatically runs in response to a specific event — like a motion sensor that triggers when someone walks past. In OmO, hooks intercept agent actions to add guardrails, inject context, or recover from errors.">hooks</span> that work exactly like that. They intercept agent actions at every stage: before a message is sent, after a tool runs, when context gets too large, when an error occurs. The agent never sees most of them — they just silently make everything work better.</p>
+
+      <div class="flow-animation animate-in" data-steps='[
+        {"highlight":"flow-actor-1","label":"User sends a message to the agent"},
+        {"highlight":"flow-actor-2","label":"Pre-message hooks fire: inject context, check rules, add reminders","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Agent processes and responds with tool calls","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Post-tool hooks: validate output, check comments, truncate if needed","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-5","label":"Recovery hooks: handle errors, fallback models, session recovery","packet":true,"from":"actor-4","to":"actor-5"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">👤</div>
+            <span>User</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">🛡��</div>
+            <span>Pre-Hooks</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">🤖</div>
+            <span>Agent</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">✅</div>
+            <span>Post-Hooks</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-5">
+            <div class="flow-actor-icon">🔄</div>
+            <span>Recovery</span>
+          </div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click "Next Step" to see how hooks intercept every stage</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Hook Categories -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Three Layers of Protection</h2>
+      <p>Hooks are organized into three categories, created by three factory functions in the code:</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> core = <span class="code-function">createCoreHooks</span>({</span>
+<span class="code-line">  ctx, pluginConfig, modelCacheState, isHookEnabled</span>
+<span class="code-line">})</span>
+<span class="code-line"><span class="code-keyword">const</span> continuation = <span class="code-function">createContinuationHooks</span>({</span>
+<span class="code-line">  ctx, pluginConfig, backgroundManager, sessionRecovery</span>
+<span class="code-line">})</span>
+<span class="code-line"><span class="code-keyword">const</span> skill = <span class="code-function">createSkillHooks</span>({</span>
+<span class="code-line">  ctx, pluginConfig, mergedSkills, availableSkills</span>
+<span class="code-line">})</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Set up the core guardrails — comment checking, model fallbacks, context monitoring, error recovery...</p>
+            <p class="tl">Pass in the config so hooks know what the user wants</p>
+            <p class="tl">(end of core setup)</p>
+            <p class="tl">Set up the "keep going" hooks — todo enforcement, session recovery, background notifications...</p>
+            <p class="tl">These need access to the background agent manager to track parallel work</p>
+            <p class="tl">(end of continuation setup)</p>
+            <p class="tl">Set up skill-specific hooks — auto slash commands, category reminders...</p>
+            <p class="tl">These need to know which skills are loaded so they can inject the right context</p>
+            <p class="tl">(end of skill setup)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="icon-rows stagger-children">
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-accent-light)">🛡️</div>
+          <div>
+            <strong>Core Hooks (25+)</strong>
+            <p>Comment checker (no AI slop), model fallback, context window monitor, edit error recovery, hashline enhancer, tool output truncation, thinking block validator</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #E8F5EE">🔄</div>
+          <div>
+            <strong>Continuation Hooks (15+)</strong>
+            <p>Todo enforcer (yanks idle agents back to work), Ralph Loop (self-referential completion), session recovery, background notifications, <span class="term" data-definition="Preemptive compaction is when the system detects the context window is getting full and automatically summarizes older messages to make room — like clearing your desk of old papers to make space for new work, while keeping sticky notes with the important bits.">preemptive compaction</span></p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #FDF5E0">⚡</div>
+          <div>
+            <strong>Skill Hooks (10+)</strong>
+            <p>Auto slash command detection, category-skill reminders, agent usage hints, skill-embedded MCP activation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Star Hooks Deep Dive -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The MVPs: Hooks That Save Your Project</h2>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: #C93B3B">!</div>
+          <div class="step-body">
+            <strong>Comment Checker</strong>
+            <p>Scans every code change for AI-generated comment slop — vague comments like "// Handle the logic" or "// Process data". Forces agents to write comments a senior engineer would write, or skip them entirely.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-4)">⏰</div>
+          <div class="step-body">
+            <strong>Todo Continuation Enforcer</strong>
+            <p>If an agent goes idle with uncompleted todos, this hook injects a system reminder that essentially says "Hey, you're not done yet." It yanks the agent back to work. Your task gets finished, period.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-2)">��</div>
+          <div class="step-body">
+            <strong>Model Fallback</strong>
+            <p>If the primary AI model fails (rate limit, outage, error), this hook automatically switches to a <span class="term" data-definition="A fallback model is a backup AI model that takes over when the primary one fails. Like having a backup generator — if the main power goes out, the backup kicks in automatically so work continues uninterrupted.">fallback model</span> and retries. You configured the fallback chain; the hook handles the switching invisibly.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-3)">💾</div>
+          <div class="step-body">
+            <strong>Session Recovery</strong>
+            <p>If a session crashes — context window overflow, API failure, random error — this hook automatically recovers it. Saves state, restarts from where it left off. No lost work.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">����</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Defense in Depth</strong>
+          <p>This strategy — having multiple independent safety layers, each catching different kinds of failures — is called "defense in depth." It's the same principle behind airplane safety: seatbelts, airbags, crumple zones, and ABS brakes each handle a different failure mode. No single layer catches everything, but together they make catastrophic failure extremely unlikely.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Disabling Hooks -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">You're in Control</h2>
+      <p>Every hook can be disabled via your config file. The plugin reads a <code>disabled_hooks</code> list and skips any hook you don't want:</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> disabledHooks = <span class="code-keyword">new</span> <span class="code-function">Set</span>(</span>
+<span class="code-line">  pluginConfig.disabled_hooks ?? []</span>
+<span class="code-line">)</span>
+<span class="code-line"><span class="code-keyword">const</span> <span class="code-function">isHookEnabled</span> = (hookName) =></span>
+<span class="code-line">  !disabledHooks.<span class="code-function">has</span>(hookName)</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Make a list of hooks the user wants to turn off...</p>
+            <p class="tl">Read the list from their config (if they didn't set one, use an empty list)</p>
+            <p class="tl">(end of list creation)</p>
+            <p class="tl">To check if a hook should run...</p>
+            <p class="tl">Just check: "is this hook's name NOT in the disabled list?"</p>
+          </div>
+        </div>
+      </div>
+
+      <p>This gives you fine-grained control. Don't like the comment checker? Disable just that one hook. Everything else keeps working.</p>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module5">
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Right! The model fallback hook detects the failure and automatically switches to a backup model. This is exactly why configuring fallback_models in your config matters — it determines which backup kicks in."
+             data-explanation-wrong="The fallback hook handles this automatically. When the primary model fails, it switches to the next model in the fallback chain without any manual intervention needed.">
+          <h3 class="quiz-question">Your agent is using Claude Opus but Anthropic's API goes down mid-task. What happens?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The agent crashes and you lose all progress</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The agent pauses and asks you to manually switch models</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model fallback hook automatically switches to a backup model and retries</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! The todo continuation enforcer exists precisely for this — it detects when an agent goes idle with unfinished work and injects a reminder to keep going. It's the 'disciplinarian' hook."
+             data-explanation-wrong="The todo continuation enforcer handles this. When it detects the agent has stopped but has uncompleted todos, it injects a system reminder that essentially says 'you have unfinished work' — pulling the agent back on task.">
+          <h3 class="quiz-question">An agent completes 3 out of 5 todo items and then seems to stop working. Which hook saves you?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The comment checker — it forces the agent to finish documenting</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The todo continuation enforcer — it detects idle agents with unfinished todos and yanks them back to work</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The session recovery hook — it restarts the entire session from scratch</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-6" style="background: var(--color-bg-warm);">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">The Big Picture</h1>
+      <p class="module-subtitle">Zoom out. See how every piece connects — and why this architecture lets you build faster than ever.</p>
+    </div>
+
+    <!-- Screen 1: Architecture Overview -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Full Map</h2>
+      <p>Think of the entire system as a city. Each neighborhood has a purpose, roads connect them, and traffic lights (hooks) keep everything flowing safely. Let's see the whole city at once.</p>
+
+      <div class="arch-diagram animate-in">
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Entry Point — Plugin Initialization</h4>
+          <div class="arch-component" data-desc="The main entry point. When OpenCode starts, this function loads config, creates managers, wires tools, sets up hooks, and returns the plugin interface. Everything starts here.">
+            <div class="arch-icon">🚀</div>
+            <span>index.ts</span>
+          </div>
+          <div class="arch-component" data-desc="Reads your configuration file (oh-my-openagent.jsonc). Supports JSONC (comments allowed), partial parsing (bad sections get skipped, good ones still load), and automatic migration from legacy config formats.">
+            <div class="arch-icon">⚙️</div>
+            <span>plugin-config.ts</span>
+          </div>
+          <div class="arch-component" data-desc="Orchestrates creating the BackgroundManager (parallel agents), SkillMcpManager (skill-embedded servers), and TmuxSessionManager (interactive terminals). These three managers power the runtime.">
+            <div class="arch-icon">🏗️</div>
+            <span>create-managers.ts</span>
+          </div>
+        </div>
+
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Agents — The AI Team</h4>
+          <div class="arch-component" data-desc="The orchestrator. Sisyphus has model-specific prompt variants (Claude, GPT-5.4, Gemini) that are dynamically built based on available agents, tools, skills, and categories. He plans, delegates, and verifies.">
+            <div class="arch-icon">👑</div>
+            <span>Sisyphus</span>
+          </div>
+          <div class="arch-component" data-desc="The autonomous deep worker. Runs on GPT-5.4 by default. Gets a goal, not a recipe — explores the codebase independently, researches patterns, and executes end-to-end.">
+            <div class="arch-icon">🔨</div>
+            <span>Hephaestus</span>
+          </div>
+          <div class="arch-component" data-desc="Read-only strategic advisor. Cannot write or edit files — only reads and thinks. Called for architecture decisions, debugging after 2+ failures, and self-review of significant work.">
+            <div class="arch-icon">🔮</div>
+            <span>Oracle</span>
+          </div>
+          <div class="arch-component" data-desc="The strategic planner. Interview mode: questions you, identifies scope, and builds a detailed plan BEFORE any code is written. Used by the /start-work command.">
+            <div class="arch-icon">📋</div>
+            <span>Prometheus</span>
+          </div>
+        </div>
+
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Tools — What Agents Can Do</h4>
+          <div class="arch-component" data-desc="Content-hash validated file editing. Every line tagged with a hash fingerprint. If the file changed since last read, edits are rejected before corruption. The single biggest reliability improvement.">
+            <div class="arch-icon">✏️</div>
+            <span>Hashline Edit</span>
+          </div>
+          <div class="arch-component" data-desc="Full LSP integration: goto definition, find references, rename, diagnostics, symbols. Gives agents the same code intelligence that VS Code has.">
+            <div class="arch-icon">🔍</div>
+            <span>LSP Suite</span>
+          </div>
+          <div class="arch-component" data-desc="Structure-aware code search across 25 languages. Find patterns like 'all async functions that call fetch' — something text search can't do.">
+            <div class="arch-icon">🌳</div>
+            <span>AST-Grep</span>
+          </div>
+          <div class="arch-component" data-desc="Persistent interactive terminal sessions via tmux. Run REPLs, debuggers, TUI apps. The agent maintains the session across multiple interactions.">
+            <div class="arch-icon">🖥️</div>
+            <span>Tmux</span>
+          </div>
+        </div>
+
+        <div class="arch-zone">
+          <h4 class="arch-zone-label">Hooks — The Invisible Guardrails</h4>
+          <div class="arch-component" data-desc="25+ core hooks: comment checker, model fallback, context window monitoring, edit error recovery, tool output truncation, hashline enhancement, thinking block validation.">
+            <div class="arch-icon">🛡️</div>
+            <span>Core Hooks</span>
+          </div>
+          <div class="arch-component" data-desc="15+ continuation hooks: todo enforcer, Ralph Loop, session recovery, background notifications, preemptive compaction, stop-continuation guard.">
+            <div class="arch-icon">🔄</div>
+            <span>Continuation</span>
+          </div>
+          <div class="arch-component" data-desc="10+ skill hooks: auto slash commands, category-skill reminders, agent usage hints, Claude Code compatibility hooks for loading external skills/MCPs/commands.">
+            <div class="arch-icon">⚡</div>
+            <span>Skill Hooks</span>
+          </div>
+        </div>
+
+        <div class="arch-description">Click any component to learn what it does</div>
+      </div>
+    </div>
+
+    <!-- Screen 2: The Project Structure -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">How the Code Is Organized</h2>
+      <p>The <span class="term" data-definition="A monorepo is a single code repository that contains multiple related projects or packages. Instead of having separate repos for each piece, everything lives together — making it easier to share code and keep things in sync.">monorepo</span> has a clear hierarchy. Every directory has a single responsibility.</p>
+
+      <div class="file-tree animate-in">
+        <div class="ft-folder open">
+          <span class="ft-name">src/</span>
+          <span class="ft-desc">All source code lives here</span>
+          <div class="ft-children">
+            <div class="ft-folder">
+              <span class="ft-name">agents/</span>
+              <span class="ft-desc">Agent definitions — Sisyphus, Hephaestus, Oracle, Prometheus, Explore, Librarian, Momus, Metis</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">tools/</span>
+              <span class="ft-desc">Everything agents can DO — hashline-edit, LSP, AST-grep, interactive-bash, skill tools, session manager</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">hooks/</span>
+              <span class="ft-desc">80+ event interceptors organized by concern — each hook is its own directory with focused logic</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">features/</span>
+              <span class="ft-desc">Major subsystems — background agents, skills loader, Claude Code compatibility, MCP integration, task management</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">shared/</span>
+              <span class="ft-desc">170+ utility files — model resolution, config parsing, session management, error classification</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">plugin/</span>
+              <span class="ft-desc">The glue layer — tool registry, hook factories, agent builders, skill context</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">config/</span>
+              <span class="ft-desc">Configuration schema (Zod validated), type definitions, defaults</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">cli/</span>
+              <span class="ft-desc">Command-line tools — the "doctor" diagnostic command, config manager</span>
+            </div>
+            <div class="ft-file">
+              <span class="ft-name">index.ts</span>
+              <span class="ft-desc">The entry point — where everything comes together</span>
+            </div>
+          </div>
+        </div>
+        <div class="ft-folder">
+          <span class="ft-name">packages/</span>
+          <span class="ft-desc">Platform-specific binary builds (darwin-arm64, linux-x64, windows-x64, etc.)</span>
+        </div>
+        <div class="ft-folder">
+          <span class="ft-name">docs/</span>
+          <span class="ft-desc">User-facing documentation — installation guide, orchestration guide, features reference</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: The Plugin Lifecycle -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">From Boot to Shutdown: The Full Lifecycle</h2>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>OpenCode Calls the Plugin</strong>
+            <p>OpenCode finds "oh-my-openagent" in its plugin list and calls the exported <span class="term" data-definition="An async function is a function that can pause while waiting for something (like reading a file or calling an API) and resume when the result is ready — instead of blocking everything until it finishes.">async</span> function with a context object containing the project directory and client.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Config Loading</strong>
+            <p>The plugin reads your <span class="term" data-definition="JSONC is JSON with Comments — regular JSON format but you can add notes and trailing commas. Much friendlier for config files since you can annotate your settings.">JSONC</span> config file, validates it with <span class="term" data-definition="Zod is a TypeScript library for data validation. You describe what shape data should have, and Zod checks if actual data matches — rejecting invalid data with helpful error messages.">Zod</span> schemas, and gracefully handles invalid sections (skipping them while loading the rest).</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Manager Creation</strong>
+            <p>Background agent manager, skill MCP manager, and tmux session manager are initialized. These are the runtime engines that power parallel execution.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Tool & Skill Registration</strong>
+            <p>All built-in tools (LSP, hashline, grep, glob) plus skill-provided tools are assembled. Skills can bring their own MCP servers that spin up on-demand.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Hook Wiring</strong>
+            <p>80+ hooks are created across three layers (core, continuation, skill). Each one registers for specific events and runs its logic when triggered.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <strong>Plugin Interface Returned</strong>
+            <p>The assembled agents, tools, hooks, and commands are packaged into a plugin interface and handed back to OpenCode. The system is live.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Design Principles -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Design Philosophy</h2>
+      <p>Now that you've seen every layer, here are the principles that hold everything together:</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🎯</div>
+          <h4 class="pattern-title">Right Model, Right Job</h4>
+          <p class="pattern-desc">Instead of using one AI for everything, each agent gets the model that's strongest at its specific task. Claude for orchestration, GPT for deep work, models matched to strengths.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: #E4F2F7">⚡</div>
+          <h4 class="pattern-title">Parallel by Default</h4>
+          <p class="pattern-desc">Explore agents, background tasks, file reads — everything that CAN run in parallel DOES run in parallel. Sequential execution is the exception, not the rule.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #F0EBF7">🛡️</div>
+          <h4 class="pattern-title">Defense in Depth</h4>
+          <p class="pattern-desc">80+ hooks at every checkpoint. Model fallbacks. Session recovery. Hash-validated edits. Multiple independent safety layers catch different failure modes.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">🔌</div>
+          <h4 class="pattern-title">Everything Is Configurable</h4>
+          <p class="pattern-desc">Disable any hook, override any agent's model, add custom skills, change delegation categories. Opinionated defaults, but nothing is locked down.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Composition Over Inheritance</strong>
+          <p>Notice how OmO doesn't build one giant monolithic system. Instead, it composes small, focused pieces: agents are separate from tools, tools are separate from hooks, hooks are separate from skills. Each piece can be added, removed, or replaced independently. This "composition" approach is one of the most important architectural patterns in modern software — it's why LEGO blocks are more versatile than a pre-molded toy.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: What You've Learned & Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Final Check: Can You Navigate This Codebase?</h2>
+
+      <div class="quiz-container" id="quiz-module6">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Right! The hooks/ directory contains all event interceptors. The todo continuation enforcer would be a continuation hook that detects idle agents with unfinished todos."
+             data-explanation-wrong="Hooks live in src/hooks/, organized by concern. The todo continuation enforcer is a continuation hook — it intercepts the 'agent idle' event and checks for unfinished todos.">
+          <h3 class="quiz-question">You want to modify how the "todo enforcer" works. Where in the codebase would you look?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>src/agents/ — since it affects agent behavior</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>src/hooks/todo-continuation-enforcer/ — hooks intercept events, and this one enforces todo completion</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>src/tools/ — since todos are a tool feature</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Exactly! The plugin-config.ts file handles config loading with partial parsing. Invalid sections get skipped while valid ones still load — so a typo in one setting doesn't break everything."
+             data-explanation-wrong="The config system uses 'partial parsing' — it validates each section independently. If one section has errors, it's skipped, but all the valid sections still load normally. This lives in plugin-config.ts.">
+          <h3 class="quiz-question">A user has a typo in their agent override config. What happens when the plugin loads?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The invalid section is skipped, but the rest of the config loads normally</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The entire plugin crashes and refuses to start</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>All settings are reset to defaults</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Correct! Composition means each piece (agents, tools, hooks) is independent and can be swapped or extended without affecting the others. This is exactly why you can disable individual hooks, override agent models, or add custom skills — each piece is self-contained."
+             data-explanation-wrong="The composition principle means pieces are independent and swappable. You can disable a hook without affecting agents, override a model without changing tools, or add a skill without touching hooks. Everything connects through clean interfaces, not tight coupling.">
+          <h3 class="quiz-question">Why can you disable a single hook without breaking the rest of the system?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Because hooks don't actually do anything important</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Because disabling a hook just hides its output but it still runs</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Because the architecture uses composition — each piece is independent and connects through clean interfaces</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+      </div>
+
+      <div class="callout callout-info animate-in" style="margin-top: var(--space-8);">
+        <div class="callout-icon">🎓</div>
+        <div class="callout-content">
+          <strong class="callout-title">You Made It!</strong>
+          <p>You now understand how Oh My OpenCode works under the hood — from the plugin entry point, through the agent orchestration system, to the tools and hooks that make it all reliable. Next time you type "ultrawork", you'll know exactly what's happening behind the scenes.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+  </main>
+
+</body>
+</html>

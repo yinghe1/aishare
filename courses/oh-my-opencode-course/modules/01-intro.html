@@ -1,0 +1,198 @@
+<section class="module" id="module-1">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">What Is This Thing?</h1>
+      <p class="module-subtitle">You type one word. An entire AI dev team wakes up. Here's what's really happening.</p>
+    </div>
+
+    <!-- Screen 1: The Problem -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Problem: AI Coding Tools Are Fragmented</h2>
+      <p>Imagine you're building software with AI assistants. You've got Claude Code for orchestration, GPT for reasoning, Gemini for creativity. Each one is good at different things. But switching between them? Configuring workflows? Debugging when things break?</p>
+      <p>That's what <span class="term" data-definition="Oh My OpenCode (OmO) is a plugin for OpenCode — an open-source AI coding tool. Think of it as a 'batteries-included' upgrade pack that adds multi-model orchestration, parallel agents, and professional-grade tools.">Oh My OpenCode</span> solves. It's a single plugin that turns a basic AI coding tool into a full AI development team.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid #C93B3B">
+          <div class="pattern-icon" style="background: #FDE8E8">😫</div>
+          <h4 class="pattern-title">Without OmO</h4>
+          <p class="pattern-desc">Manually switching between AI models. Copy-pasting context. Configuring each tool separately. Debugging agents yourself.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">✨</div>
+          <h4 class="pattern-title">With OmO</h4>
+          <p class="pattern-desc">Type "ultrawork". The right model picks the right task. Agents run in parallel. Everything just works.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: The One-Word Magic -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">One Word: <code style="color: var(--color-accent); font-family: var(--font-mono);">ultrawork</code></h2>
+      <p>When you type <code>ultrawork</code> (or just <code>ulw</code>), here's the chain reaction that fires off under the hood:</p>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Plugin Loads</strong>
+            <p>OpenCode calls the Oh My OpenCode <span class="term" data-definition="A plugin is an add-on that extends what a program can do — like installing an app on your phone to add new features. OpenCode supports plugins that add agents, tools, and hooks.">plugin</span>. It reads your config, sets up tools, and wires everything together.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Sisyphus Wakes Up</strong>
+            <p>The main orchestrator agent — Sisyphus — activates. He's your project manager who delegates to specialists.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Agents Get Assigned</strong>
+            <p>Sisyphus analyzes your request, creates a todo list, and fires off background agents in parallel — each on the AI model best suited for the job.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Work Gets Done</strong>
+            <p>Agents read files, write code, run diagnostics, and verify their own output. Hooks silently guard against mistakes. The loop continues until every todo is complete.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: What It Actually Is -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Under the Hood: A Plugin for OpenCode</h2>
+      <p>Oh My OpenCode is a <span class="term" data-definition="TypeScript is a programming language built on top of JavaScript. It adds 'types' — labels that tell the computer what kind of data a variable holds (text, number, list, etc.) — which helps catch mistakes before the code runs.">TypeScript</span> plugin for <span class="term" data-definition="OpenCode is an open-source AI coding assistant that runs in your terminal. Think of it like Claude Code or Cursor, but open-source — anyone can extend it with plugins.">OpenCode</span>. When OpenCode starts, it loads the plugin, which injects agents, tools, and hooks into the system.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> OhMyOpenCodePlugin: <span class="code-function">Plugin</span> = <span class="code-keyword">async</span> (ctx) => {</span>
+<span class="code-line">  <span class="code-keyword">const</span> pluginConfig = <span class="code-function">loadPluginConfig</span>(ctx.directory, ctx)</span>
+<span class="code-line">  <span class="code-keyword">const</span> managers = <span class="code-function">createManagers</span>({ ctx, pluginConfig, ... })</span>
+<span class="code-line">  <span class="code-keyword">const</span> toolsResult = <span class="code-keyword">await</span> <span class="code-function">createTools</span>({ ctx, pluginConfig, managers })</span>
+<span class="code-line">  <span class="code-keyword">const</span> hooks = <span class="code-function">createHooks</span>({ ctx, pluginConfig, ... })</span>
+<span class="code-line">  <span class="code-keyword">return</span> { <span class="code-property">name</span>: <span class="code-string">"oh-my-openagent"</span>, ...pluginInterface }</span>
+<span class="code-line">}</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">When OpenCode starts up, run this setup function...</p>
+            <p class="tl">First, read the user's configuration file to know their preferences</p>
+            <p class="tl">Create the "managers" — background task runner, skill loader, etc.</p>
+            <p class="tl">Set up all the tools agents can use (LSP, edit, grep, etc.)</p>
+            <p class="tl">Wire up 80+ hooks that silently guard against mistakes</p>
+            <p class="tl">Hand everything back to OpenCode as a named plugin</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: The Plugin Pattern</strong>
+          <p>Instead of building a whole new app, OmO extends an existing one. This is like adding a turbocharger to an engine — the car is the same, but it performs completely differently. In software, this pattern is called a "plugin architecture" and it's how tools like VS Code extensions and browser add-ons work too.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: The Tech Stack -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Tech Stack at a Glance</h2>
+
+      <div class="icon-rows stagger-children">
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-accent-light)">🔷</div>
+          <div>
+            <strong>TypeScript + Bun</strong>
+            <p><span class="term" data-definition="Bun is a fast JavaScript/TypeScript runtime — the engine that actually runs the code. It's an alternative to Node.js, known for being significantly faster at starting up and running scripts.">Bun</span> runs the code. TypeScript catches bugs before they happen. Together they make a fast, reliable foundation.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #E8F5EE">🤖</div>
+          <div>
+            <strong>Multi-Model AI</strong>
+            <p>Claude Opus for orchestration. GPT-5.4 for deep work. Kimi K2.5 and GLM-5 as alternatives. Each agent gets the model that's best at its job.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #FDF5E0">🔌</div>
+          <div>
+            <strong>OpenCode Plugin SDK</strong>
+            <p>The <span class="term" data-definition="An SDK (Software Development Kit) is a collection of pre-built tools and code that helps developers build on top of an existing platform — like a LEGO starter kit that gives you the basic pieces to build with.">SDK</span> from OpenCode that lets plugins register agents, tools, hooks, and commands.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #FDEEE9">🛠️</div>
+          <div>
+            <strong>LSP + AST-Grep</strong>
+            <p><span class="term" data-definition="LSP (Language Server Protocol) is a standard that gives tools IDE-level understanding of code — it can find definitions, rename variables across files, and detect errors, just like VS Code does.">LSP</span> gives IDE-level code intelligence. <span class="term" data-definition="AST-Grep is a tool that searches code by understanding its structure (the 'abstract syntax tree'), not just text patterns. It can find 'all function calls that take 3 arguments' — something regular search can't do.">AST-Grep</span> enables structure-aware code search and rewriting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module1">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! OmO is a plugin that adds capabilities to OpenCode — it doesn't replace it. This plugin pattern lets you keep all your existing setup while gaining new powers."
+             data-explanation-wrong="Not quite. OmO extends OpenCode rather than replacing it. It's a plugin that adds agents, tools, and hooks on top of the existing platform.">
+          <h3 class="quiz-question">A friend asks: "Should I uninstall Claude Code to use Oh My OpenCode?" What do you tell them?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — OmO is a complete replacement for all AI coding tools</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — OmO is a plugin for OpenCode, not a standalone tool. It extends what OpenCode can do</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — OmO only works if you remove all other AI tools first</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Right! When you type ultrawork, the plugin loads your config, wakes up Sisyphus (the orchestrator), who then analyzes your request and delegates to specialist agents. It's a chain reaction, not a single step."
+             data-explanation-wrong="The real magic is the chain reaction: config loads, Sisyphus wakes up, analyzes intent, creates todos, delegates to specialists in parallel. Each step triggers the next.">
+          <h3 class="quiz-question">When you type "ultrawork", what actually happens first?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>AI immediately starts writing code in your project</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It opens a web browser to search for solutions</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The plugin loads config, wakes up the orchestrator agent, who analyzes your request before taking any action</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>

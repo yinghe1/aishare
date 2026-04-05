@@ -1,0 +1,265 @@
+<section class="module" id="module-4" style="background: var(--color-bg-warm);">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">The Tools Arsenal</h1>
+      <p class="module-subtitle">Agents don't just think — they act. Here are the surgical instruments they use to read, edit, and understand your code.</p>
+    </div>
+
+    <!-- Screen 1: The Toolbox Overview -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">A Surgeon's Instruments, Not a Sledgehammer</h2>
+      <p>Think of a surgeon's operating room. They don't use one big tool for everything — they have scalpels, clamps, retractors, each designed for a specific job. One wrong instrument and the patient is in trouble.</p>
+      <p>OmO's agents work the same way. Each tool is purpose-built for a specific kind of code manipulation. The right tool for the right job means fewer mistakes and faster work.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">✏️</div>
+          <h4 class="pattern-title">Hashline Edit</h4>
+          <p class="pattern-desc">Content-hash validated edits. Every line tagged with a fingerprint. Zero stale-line errors.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: #E4F2F7">🔍</div>
+          <h4 class="pattern-title">LSP Tools</h4>
+          <p class="pattern-desc">IDE-level intelligence: rename across files, find references, jump to definitions, run diagnostics.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #F0EBF7">🌳</div>
+          <h4 class="pattern-title">AST-Grep</h4>
+          <p class="pattern-desc">Search code by structure, not text. Find "all functions that take 3 arguments" across 25 languages.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">🖥️</div>
+          <h4 class="pattern-title">Tmux / Interactive Bash</h4>
+          <p class="pattern-desc">Full interactive terminal. Run REPLs, debuggers, and TUI apps — the agent stays in session.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Hashline Edit — The Star of the Show -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Hashline Edit: The Breakthrough</h2>
+      <p>Most AI coding failures aren't the model's fault — they're the <span class="term" data-definition="A harness is the software layer that connects an AI model to the tools it uses (file editing, terminal, search). If the harness is bad, even a brilliant AI produces broken output. Think of it as the steering wheel of a car — a great engine is useless if the steering doesn't work.">harness</span>'s fault. The edit tool is usually the weak link. Here's the problem most tools have:</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid #C93B3B">
+          <div class="pattern-icon" style="background: #FDE8E8">❌</div>
+          <h4 class="pattern-title">Traditional Edit</h4>
+          <p class="pattern-desc">AI reads a file, then later tries to edit it by reproducing the exact text it saw. If the file changed (or the AI misremembers whitespace), the edit fails or corrupts the file.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">✅</div>
+          <h4 class="pattern-title">Hashline Edit</h4>
+          <p class="pattern-desc">Every line gets a unique content hash. The AI edits by referencing hash tags, not text. If the file changed, the hash won't match — edit rejected before corruption.</p>
+        </div>
+      </div>
+
+      <p>The result? Success rate jumped from <strong>6.7%</strong> to <strong>68.3%</strong> — just by changing the edit tool.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">WHAT THE AGENT SEES</span>
+          <pre><code>
+<span class="code-line"><span class="code-number">11</span><span class="code-comment">#VK</span>| <span class="code-keyword">function</span> <span class="code-function">hello</span>() {</span>
+<span class="code-line"><span class="code-number">22</span><span class="code-comment">#XJ</span>|   <span class="code-keyword">return</span> <span class="code-string">"world"</span>;</span>
+<span class="code-line"><span class="code-number">33</span><span class="code-comment">#MB</span>| }</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Line 11, hash "VK" — this is the function declaration. The hash is a fingerprint of this line's content.</p>
+            <p class="tl">Line 22, hash "XJ" — the return statement. If someone changes this line, "XJ" would become a different hash.</p>
+            <p class="tl">Line 33, hash "MB" — closing brace. The agent says "edit line #XJ" instead of reproducing text.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Content Addressing</strong>
+          <p>This idea — identifying data by its content hash instead of its position — is everywhere in computing. Git uses it to track file versions. IPFS uses it to store files across the internet. Bitcoin uses it to chain blocks together. It's one of the most powerful ideas in computer science: if the content changes, the address changes, so you always know if something has been tampered with.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: LSP Tools -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">LSP: IDE Superpowers for Agents</h2>
+      <p>When you use VS Code and right-click "Go to Definition" or "Rename Symbol" — that's <span class="term" data-definition="LSP (Language Server Protocol) is a standard created by Microsoft that lets any tool understand code the way an IDE does. It can find where functions are defined, what references them, and detect errors — all by talking to a 'language server' that understands the programming language.">LSP</span> at work. OmO gives agents those exact same powers.</p>
+
+      <div class="badge-list stagger-children">
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_goto_definition</code>
+          <span class="badge-desc">Jump to where a function or variable is defined — across any file in the project</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_find_references</code>
+          <span class="badge-desc">Find every place in the codebase that uses a specific function or variable</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_rename</code>
+          <span class="badge-desc">Rename a symbol everywhere it appears — safely, across all files at once</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_diagnostics</code>
+          <span class="badge-desc">Check for errors and warnings — like a spell-checker, but for code</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_symbols</code>
+          <span class="badge-desc">List all functions, classes, and variables in a file — a table of contents for code</span>
+        </div>
+        <div class="badge-item animate-in">
+          <code class="badge-code">lsp_prepare_rename</code>
+          <span class="badge-desc">Check if a rename is safe before doing it — like a dry run</span>
+        </div>
+      </div>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">export const</span> builtinTools: Record&lt;string, ToolDefinition&gt; = {</span>
+<span class="code-line">  lsp_goto_definition,</span>
+<span class="code-line">  lsp_find_references,</span>
+<span class="code-line">  lsp_symbols,</span>
+<span class="code-line">  lsp_diagnostics,</span>
+<span class="code-line">  lsp_prepare_rename,</span>
+<span class="code-line">  lsp_rename,</span>
+<span class="code-line">}</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Here's the list of tools that every agent gets by default...</p>
+            <p class="tl">Jump to where something is defined</p>
+            <p class="tl">Find everywhere something is used</p>
+            <p class="tl">List all the "ingredients" in a file</p>
+            <p class="tl">Run a health check on the code</p>
+            <p class="tl">Preview what a rename would change</p>
+            <p class="tl">Actually rename it across the whole project</p>
+            <p class="tl">All bundled together as "built-in tools"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Background Tools & Delegation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Background Agents & Task Delegation</h2>
+      <p>Beyond the surgical tools, agents also have the power to spawn other agents. The <span class="term" data-definition="A background agent is a separate AI instance that runs independently of the main agent. Think of it like sending an assistant to do research while you keep working — they come back with results when done.">background agent</span> system lets Sisyphus fire up 5+ specialists at once, each working on a different part of the problem.</p>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>task() — Delegate Work</strong>
+            <p>Sisyphus fires a <span class="term" data-definition="The task tool creates a new agent session with a specific category (visual-engineering, deep, quick, ultrabrain) and optional skills. It's how the orchestrator delegates work to specialists.">task</span> with a category and skills. The system picks the right model automatically.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>background_output() — Collect Results</strong>
+            <p>When a background agent finishes, Sisyphus retrieves its output and verifies the work.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>background_cancel() — Clean Up</strong>
+            <p>If an agent is no longer needed (task superseded or already answered), cancel it to save tokens.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">🔧</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why This Matters for You</strong>
+          <p>When you tell an AI agent to "add dark mode to my app", knowing about these tools helps you understand WHY the agent is running lsp_diagnostics after every edit (it's checking its own work), or why it fires 3 explore agents in parallel (it's searching different parts of the codebase simultaneously). You can steer it better when you know what instruments it has.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module4">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! The hash is a fingerprint of the line content. If someone (or another agent) changed the file since it was last read, the hash won't match and the edit is safely rejected. This prevents file corruption."
+             data-explanation-wrong="The hash isn't about speed or permissions — it's about detecting changes. If the file content changed since the agent last read it, the hash won't match, so the edit is rejected before it can corrupt anything.">
+          <h3 class="quiz-question">An agent tries to edit line #XJ in a file, but the edit is rejected. What most likely happened?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The agent doesn't have permission to edit that file</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The file was modified since the agent last read it, so the content hash no longer matches</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The file is too large for the edit tool to handle</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Right! lsp_rename understands the code structure — it knows the difference between a variable called 'user' and the word 'user' in a comment or string. It renames only the actual code references, across all files."
+             data-explanation-wrong="Find-and-replace would change 'user' everywhere — in comments, strings, and unrelated variables. lsp_rename understands code structure and only renames the actual symbol references.">
+          <h3 class="quiz-question">You want to rename a variable called "user" to "currentUser" across your whole project. Which approach is safest?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Find-and-replace "user" with "currentUser" in all files</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Ask the AI to manually edit each file where "user" appears</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use lsp_rename — it understands code structure and only renames the actual variable references</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! Running diagnostics after changes is how agents verify their own work. It catches type errors, missing imports, and syntax issues immediately — before they cascade into bigger problems."
+             data-explanation-wrong="Diagnostics aren't about file counting or test suites — they're the agent's quality check. After every edit, lsp_diagnostics scans for errors, ensuring the change didn't break anything.">
+          <h3 class="quiz-question">Why does Sisyphus run lsp_diagnostics after every significant code change?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To count how many files were changed</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To verify the edit didn't introduce errors — like a spell-checker for code that catches problems immediately</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To automatically run the project's test suite</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>

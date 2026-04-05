@@ -1,0 +1,263 @@
+<section class="module" id="module-3">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">How Agents Think</h1>
+      <p class="module-subtitle">Before any code gets written, every request passes through a triage system. Like a 911 dispatch center, the agent classifies your intent and routes to the right specialist.</p>
+    </div>
+
+    <!-- Screen 1: The 911 Metaphor + Intent Gate Flow Animation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The 911 Dispatch Center in Your Terminal</h2>
+      <p>When you call 911, the operator doesn&apos;t fight fires or chase criminals. They ask one question: <em>what kind of emergency is this?</em> Then they route to fire, medical, or police. Sisyphus works the same way.</p>
+      <p>Every single message you send hits the <span class="term" data-definition="The Intent Gate is Phase 0 of Sisyphus&apos;s processing pipeline. Before any work begins, it classifies the user&apos;s request into one of five categories (Trivial, Explicit, Exploratory, Open-ended, Ambiguous) to determine the correct routing strategy.">Intent Gate</span> before anything else happens. This is Phase 0 — the moment the agent decides <em>how</em> to think about your request.</p>
+
+      <div class="flow-animation" data-steps='[
+        {"highlight":"flow-actor-1","label":"User sends a message to Sisyphus"},
+        {"highlight":"flow-actor-2","label":"Intent Gate classifies the request into one of five types","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Sisyphus verbalizes its routing decision before acting","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Request delegated to the right specialist by CATEGORY","packet":true,"from":"actor-3","to":"actor-4"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">&#x1F464;</div><span>User</span></div>
+          <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">&#x1F6E1;</div><span>Intent Gate</span></div>
+          <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">&#x1F4AC;</div><span>Verbalize</span></div>
+          <div class="flow-actor" id="flow-actor-4"><div class="flow-actor-icon">&#x1F916;</div><span>Specialist</span></div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click &quot;Next Step&quot; to begin</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x1F3AF;</div>
+        <div class="callout-content">
+          <strong class="callout-title">CS Concept: Routing &amp; Single Responsibility</strong>
+          <p>This is the <span class="term" data-definition="The Single Responsibility Principle states that every module or component should do exactly one thing well. The Intent Gate only classifies. The dispatcher only routes. Specialists only execute. No component tries to do everything.">Single Responsibility Principle</span> in action. The Intent Gate only classifies — it never executes. The dispatcher only routes — it never classifies. Each component does one job well, like a well-run emergency center where the operator, dispatcher, and responders each have distinct roles.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: The Five Intent Types — Code-English Translation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Five Types of Intent</h2>
+      <p>Sisyphus follows an explicit ruleset to classify every incoming message. These aren&apos;t vague guidelines — they&apos;re deterministic rules baked into the <span class="term" data-definition="A system prompt is the set of instructions an AI agent receives before any user interaction. It defines the agent&apos;s personality, capabilities, and decision-making rules. Sisyphus&apos;s prompt contains the Intent Gate classification logic.">system prompt</span>.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">SISYPHUS RULES</span>
+          <pre><code>
+<span class="code-line"><span class="code-comment">### Step 1: Classify Request Type</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Trivial</span> <span class="code-comment">(single file, known location)</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Direct tools only</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Explicit</span> <span class="code-comment">(specific file/line, clear command)</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Execute directly</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Exploratory</span> <span class="code-comment">("How does X work?")</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Fire explore (1-3) + tools in parallel</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Open-ended</span> <span class="code-comment">("Improve", "Refactor")</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Assess codebase first</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">Ambiguous</span> <span class="code-comment">(unclear scope)</span></span>
+<span class="code-line">  <span class="code-operator">-&gt;</span> <span class="code-string">Ask ONE clarifying question</span></span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">First, figure out what kind of request this is...</p>
+            <p class="tl"><strong>Trivial:</strong> You know exactly where the file is and what to change. Just do it with tools, no delegation needed.</p>
+            <p class="tl"><strong>Explicit:</strong> The user gave a clear command like &quot;fix line 42 in utils.ts&quot;. Execute it directly, no questions asked.</p>
+            <p class="tl"><strong>Exploratory:</strong> The user wants to understand something. Launch 1-3 explore agents in parallel to search the codebase simultaneously.</p>
+            <p class="tl"><strong>Open-ended:</strong> Vague requests like &quot;make this better&quot;. First assess the full scope before doing anything.</p>
+            <p class="tl"><strong>Ambiguous:</strong> Can&apos;t tell what they mean? Ask exactly one clarifying question — never two, never zero.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1F4A1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Intent Verbalization</strong>
+          <p>After classifying, Sisyphus announces its routing decision out loud before acting — &quot;This is an exploratory request, I&apos;ll fire parallel explore agents.&quot; This makes the agent&apos;s thinking transparent and debuggable, like a 911 operator saying &quot;I&apos;m dispatching fire and medical&quot; before pressing the button.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Delegation Categories -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Delegation by Category, Not by Model</h2>
+      <p>Sisyphus never says &quot;send this to GPT-5.4&quot; or &quot;use Claude Opus.&quot; Instead, it delegates by <em>category</em> — describing <em>what kind of work</em> needs doing. The system maps categories to models behind the scenes.</p>
+      <p>This is like a hospital where doctors order &quot;imaging&quot; not &quot;use the Siemens MRI machine.&quot; The abstraction means you can swap models without rewriting any agent logic.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-info-light)">&#x1F3A8;</div>
+          <h4 class="pattern-title">visual-engineering</h4>
+          <p class="pattern-desc">UI work, CSS, component styling, layout fixes. Routes to models strong at visual reasoning and frontend code generation.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #F0EBF8">&#x1F9E0;</div>
+          <h4 class="pattern-title">deep</h4>
+          <p class="pattern-desc">Complex multi-file refactors, architecture decisions, intricate debugging. Gets the most powerful reasoning model available.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x26A1;</div>
+          <h4 class="pattern-title">quick</h4>
+          <p class="pattern-desc">Simple edits, typo fixes, straightforward tasks. Routes to fast, cost-efficient models that don&apos;t need heavy reasoning.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">&#x1F52E;</div>
+          <h4 class="pattern-title">ultrabrain</h4>
+          <p class="pattern-desc">The hardest problems: novel algorithms, cross-system design, critical decisions. Reserved for the absolute strongest model in the roster.</p>
+        </div>
+      </div>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">&#x1F504;</div>
+          <div class="step-body">
+            <strong>Session Continuity Saves 70%+ Tokens</strong>
+            <p>When a specialist is delegated work, it reuses the same <span class="term" data-definition="A session_id is a unique identifier that ties multiple agent interactions together. By reusing the same session_id, an agent can continue where it left off without re-reading the entire conversation history, saving over 70% of tokens.">session_id</span> across interactions. Instead of re-reading the entire conversation each time, agents continue where they left off — like a doctor reviewing their own notes instead of re-interviewing the patient.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">&#x1F500;</div>
+          <div class="step-body">
+            <strong>Parallel Execution</strong>
+            <p>For exploratory requests, multiple <span class="term" data-definition="Explore agents are lightweight specialist agents that search specific areas of the codebase in parallel. Sisyphus can fire 1-3 of them simultaneously to gather information from different parts of the code at once.">explore agents</span> and <span class="term" data-definition="Librarian agents are specialized agents focused on reading and understanding documentation, type definitions, and API surfaces. They work alongside explore agents to build a complete picture of how code works.">librarian agents</span> fire simultaneously. Three agents searching different parts of the codebase at once is faster than one agent searching sequentially.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Context-Completion Gate -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Context-Completion Gate</h2>
+      <p>Even after classification and delegation, there&apos;s one more checkpoint. Before any implementation begins, the <span class="term" data-definition="The Context-Completion Gate is a three-condition check that must pass before Sisyphus allows implementation to begin. It ensures the agent has enough information to act correctly, preventing premature code changes.">Context-Completion Gate</span> must be satisfied. Think of it as the surgical timeout — the pause before the first incision where the team confirms they have the right patient, right procedure, right site.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x2705;</div>
+          <h4 class="pattern-title">Condition 1: Scope Clarity</h4>
+          <p class="pattern-desc">The agent must know exactly which files and functions will be touched. No guessing, no &quot;I&apos;ll figure it out as I go.&quot;</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x2705;</div>
+          <h4 class="pattern-title">Condition 2: Pattern Knowledge</h4>
+          <p class="pattern-desc">The agent must understand the existing code patterns and conventions in the target area. No introducing alien styles.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-success)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">&#x2705;</div>
+          <h4 class="pattern-title">Condition 3: Dependency Awareness</h4>
+          <p class="pattern-desc">The agent must map what depends on the code it&apos;s changing. Breaking a function that 12 other files import is not acceptable.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x1F6E1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why This Matters</strong>
+          <p>Without this gate, agents would start writing code the moment they see a request — like a surgeon cutting before checking the X-rays. The Context-Completion Gate is what separates a thoughtful agent from a reckless autocomplete. If any condition fails, the agent goes back to exploration.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module3">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Correct! &quot;How does X work?&quot; is a textbook Exploratory request. Sisyphus fires 1-3 explore agents in parallel to search the codebase simultaneously, then synthesizes their findings."
+             data-explanation-wrong="Not quite. &quot;How does the hook system work?&quot; is an Exploratory request — the user wants to understand something, not change it. Sisyphus would fire parallel explore agents to investigate.">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>A developer types: &quot;How does the hook system work? I need to understand the lifecycle before I add a new hook.&quot;</p>
+            </div>
+          </div>
+          <h3 class="quiz-question">How does the Intent Gate classify this request?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Open-ended — it&apos;s vague, so assess the codebase first</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Exploratory — fire parallel explore agents to investigate the hook system</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Ambiguous — ask a clarifying question about which hooks they mean</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Exactly! Sisyphus delegates by category (like &quot;deep&quot; or &quot;quick&quot;), never by model name. This abstraction lets you swap models without changing agent logic — the category describes the work, not the tool."
+             data-explanation-wrong="Sisyphus never references model names directly. It delegates by category — &quot;deep&quot;, &quot;quick&quot;, &quot;visual-engineering&quot;, or &quot;ultrabrain&quot;. The system maps categories to actual models behind the scenes.">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>You&apos;re reading the Sisyphus prompt and see a delegation call. Which of these would you expect to find?</p>
+            </div>
+          </div>
+          <h3 class="quiz-question">How does Sisyphus specify which agent to delegate to?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>By category: &quot;delegate to deep&quot; or &quot;delegate to visual-engineering&quot;</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>By model name: &quot;send this to GPT-5.4&quot; or &quot;use Claude Opus&quot;</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>By random selection — the system picks whichever model is cheapest</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="That&apos;s right! The Context-Completion Gate requires scope clarity, pattern knowledge, and dependency awareness before implementation begins. If any condition fails, the agent goes back to exploration rather than guessing."
+             data-explanation-wrong="The Context-Completion Gate has three conditions: scope clarity (which files?), pattern knowledge (what conventions?), and dependency awareness (what breaks if I change this?). All three must pass before any code gets written.">
+          <h3 class="quiz-question">A specialist agent has been delegated a refactoring task. What must happen before it starts writing code?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Nothing — once delegated, the agent should start coding immediately</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It must ask the user for permission to proceed</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It must pass the Context-Completion Gate: confirm scope, patterns, and dependencies</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>

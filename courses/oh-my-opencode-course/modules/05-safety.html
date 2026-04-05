@@ -1,0 +1,246 @@
+<section class="module" id="module-5">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">The Safety Net</h1>
+      <p class="module-subtitle">80+ invisible hooks silently intercept, guard, and recover — so agents never go off the rails.</p>
+    </div>
+
+    <!-- Screen 1: The Invisible Guardian -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">An Invisible Army of Bodyguards</h2>
+      <p>Imagine a skyscraper with motion sensors, fire alarms, and security cameras on every floor. You never notice them — until something goes wrong. Then they kick in instantly, preventing disaster.</p>
+      <p>OmO has 80+ <span class="term" data-definition="A hook is a piece of code that automatically runs in response to a specific event — like a motion sensor that triggers when someone walks past. In OmO, hooks intercept agent actions to add guardrails, inject context, or recover from errors.">hooks</span> that work exactly like that. They intercept agent actions at every stage: before a message is sent, after a tool runs, when context gets too large, when an error occurs. The agent never sees most of them — they just silently make everything work better.</p>
+
+      <div class="flow-animation animate-in" data-steps='[
+        {"highlight":"flow-actor-1","label":"User sends a message to the agent"},
+        {"highlight":"flow-actor-2","label":"Pre-message hooks fire: inject context, check rules, add reminders","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Agent processes and responds with tool calls","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Post-tool hooks: validate output, check comments, truncate if needed","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-5","label":"Recovery hooks: handle errors, fallback models, session recovery","packet":true,"from":"actor-4","to":"actor-5"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">👤</div>
+            <span>User</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">🛡��</div>
+            <span>Pre-Hooks</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">🤖</div>
+            <span>Agent</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">✅</div>
+            <span>Post-Hooks</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-5">
+            <div class="flow-actor-icon">🔄</div>
+            <span>Recovery</span>
+          </div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click "Next Step" to see how hooks intercept every stage</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Hook Categories -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Three Layers of Protection</h2>
+      <p>Hooks are organized into three categories, created by three factory functions in the code:</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> core = <span class="code-function">createCoreHooks</span>({</span>
+<span class="code-line">  ctx, pluginConfig, modelCacheState, isHookEnabled</span>
+<span class="code-line">})</span>
+<span class="code-line"><span class="code-keyword">const</span> continuation = <span class="code-function">createContinuationHooks</span>({</span>
+<span class="code-line">  ctx, pluginConfig, backgroundManager, sessionRecovery</span>
+<span class="code-line">})</span>
+<span class="code-line"><span class="code-keyword">const</span> skill = <span class="code-function">createSkillHooks</span>({</span>
+<span class="code-line">  ctx, pluginConfig, mergedSkills, availableSkills</span>
+<span class="code-line">})</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Set up the core guardrails — comment checking, model fallbacks, context monitoring, error recovery...</p>
+            <p class="tl">Pass in the config so hooks know what the user wants</p>
+            <p class="tl">(end of core setup)</p>
+            <p class="tl">Set up the "keep going" hooks — todo enforcement, session recovery, background notifications...</p>
+            <p class="tl">These need access to the background agent manager to track parallel work</p>
+            <p class="tl">(end of continuation setup)</p>
+            <p class="tl">Set up skill-specific hooks — auto slash commands, category reminders...</p>
+            <p class="tl">These need to know which skills are loaded so they can inject the right context</p>
+            <p class="tl">(end of skill setup)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="icon-rows stagger-children">
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-accent-light)">🛡️</div>
+          <div>
+            <strong>Core Hooks (25+)</strong>
+            <p>Comment checker (no AI slop), model fallback, context window monitor, edit error recovery, hashline enhancer, tool output truncation, thinking block validator</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #E8F5EE">🔄</div>
+          <div>
+            <strong>Continuation Hooks (15+)</strong>
+            <p>Todo enforcer (yanks idle agents back to work), Ralph Loop (self-referential completion), session recovery, background notifications, <span class="term" data-definition="Preemptive compaction is when the system detects the context window is getting full and automatically summarizes older messages to make room — like clearing your desk of old papers to make space for new work, while keeping sticky notes with the important bits.">preemptive compaction</span></p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: #FDF5E0">⚡</div>
+          <div>
+            <strong>Skill Hooks (10+)</strong>
+            <p>Auto slash command detection, category-skill reminders, agent usage hints, skill-embedded MCP activation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Star Hooks Deep Dive -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The MVPs: Hooks That Save Your Project</h2>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: #C93B3B">!</div>
+          <div class="step-body">
+            <strong>Comment Checker</strong>
+            <p>Scans every code change for AI-generated comment slop — vague comments like "// Handle the logic" or "// Process data". Forces agents to write comments a senior engineer would write, or skip them entirely.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-4)">⏰</div>
+          <div class="step-body">
+            <strong>Todo Continuation Enforcer</strong>
+            <p>If an agent goes idle with uncompleted todos, this hook injects a system reminder that essentially says "Hey, you're not done yet." It yanks the agent back to work. Your task gets finished, period.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-2)">��</div>
+          <div class="step-body">
+            <strong>Model Fallback</strong>
+            <p>If the primary AI model fails (rate limit, outage, error), this hook automatically switches to a <span class="term" data-definition="A fallback model is a backup AI model that takes over when the primary one fails. Like having a backup generator — if the main power goes out, the backup kicks in automatically so work continues uninterrupted.">fallback model</span> and retries. You configured the fallback chain; the hook handles the switching invisibly.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-3)">💾</div>
+          <div class="step-body">
+            <strong>Session Recovery</strong>
+            <p>If a session crashes — context window overflow, API failure, random error — this hook automatically recovers it. Saves state, restarts from where it left off. No lost work.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">����</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Defense in Depth</strong>
+          <p>This strategy — having multiple independent safety layers, each catching different kinds of failures — is called "defense in depth." It's the same principle behind airplane safety: seatbelts, airbags, crumple zones, and ABS brakes each handle a different failure mode. No single layer catches everything, but together they make catastrophic failure extremely unlikely.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Disabling Hooks -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">You're in Control</h2>
+      <p>Every hook can be disabled via your config file. The plugin reads a <code>disabled_hooks</code> list and skips any hook you don't want:</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> disabledHooks = <span class="code-keyword">new</span> <span class="code-function">Set</span>(</span>
+<span class="code-line">  pluginConfig.disabled_hooks ?? []</span>
+<span class="code-line">)</span>
+<span class="code-line"><span class="code-keyword">const</span> <span class="code-function">isHookEnabled</span> = (hookName) =></span>
+<span class="code-line">  !disabledHooks.<span class="code-function">has</span>(hookName)</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Make a list of hooks the user wants to turn off...</p>
+            <p class="tl">Read the list from their config (if they didn't set one, use an empty list)</p>
+            <p class="tl">(end of list creation)</p>
+            <p class="tl">To check if a hook should run...</p>
+            <p class="tl">Just check: "is this hook's name NOT in the disabled list?"</p>
+          </div>
+        </div>
+      </div>
+
+      <p>This gives you fine-grained control. Don't like the comment checker? Disable just that one hook. Everything else keeps working.</p>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module5">
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Right! The model fallback hook detects the failure and automatically switches to a backup model. This is exactly why configuring fallback_models in your config matters — it determines which backup kicks in."
+             data-explanation-wrong="The fallback hook handles this automatically. When the primary model fails, it switches to the next model in the fallback chain without any manual intervention needed.">
+          <h3 class="quiz-question">Your agent is using Claude Opus but Anthropic's API goes down mid-task. What happens?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The agent crashes and you lose all progress</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The agent pauses and asks you to manually switch models</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model fallback hook automatically switches to a backup model and retries</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! The todo continuation enforcer exists precisely for this — it detects when an agent goes idle with unfinished work and injects a reminder to keep going. It's the 'disciplinarian' hook."
+             data-explanation-wrong="The todo continuation enforcer handles this. When it detects the agent has stopped but has uncompleted todos, it injects a system reminder that essentially says 'you have unfinished work' — pulling the agent back on task.">
+          <h3 class="quiz-question">An agent completes 3 out of 5 todo items and then seems to stop working. Which hook saves you?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The comment checker — it forces the agent to finish documenting</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The todo continuation enforcer — it detects idle agents with unfinished todos and yanks them back to work</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The session recovery hook — it restarts the entire session from scratch</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>

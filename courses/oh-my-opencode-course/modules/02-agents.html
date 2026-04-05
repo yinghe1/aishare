@@ -1,0 +1,305 @@
+<section class="module" id="module-2">
+  <div class="module-content">
+
+    <div class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Meet the Agents</h1>
+      <p class="module-subtitle">A film crew where every member is an AI. The director delegates, the lead actor improvises, and the script doctor never touches the camera.</p>
+    </div>
+
+    <!-- Screen 1: The Film Crew Metaphor + Agent Cards -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">The Production Crew</h2>
+      <p>Oh My OpenCode doesn't use one AI for everything. It runs a team of <span class="term" data-definition="A discipline agent is a specialized AI worker configured with a specific model, prompt, and set of tools tailored for one type of work. Each agent has a 'discipline' — like an actor cast for a specific role.">discipline agents</span>, each cast for a specific role. Think of it like a film production crew.</p>
+
+      <div class="pattern-cards stagger-children">
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: #FDEEE9; color: var(--color-actor-1); font-weight: 700; font-family: var(--font-display);">S</div>
+          <h4 class="pattern-title">Sisyphus &mdash; The Director</h4>
+          <p class="pattern-desc">Claude Opus / Kimi / GLM. <span class="term" data-definition="An orchestrator is the 'brain' agent that receives the user's request, breaks it into tasks, and delegates each task to the right specialist agent. It doesn't do the work itself — it manages who does.">Orchestrator</span> who reads the script, assigns scenes, and never picks up a camera.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-info-light); color: var(--color-actor-2); font-weight: 700; font-family: var(--font-display);">H</div>
+          <h4 class="pattern-title">Hephaestus &mdash; Lead Actor</h4>
+          <p class="pattern-desc">GPT-5.4. Deep <span class="term" data-definition="An autonomous worker agent operates independently once given a task. It reads files, writes code, runs checks, and loops until the work is complete — without asking the orchestrator for help at each step.">autonomous worker</span> who figures things out on set, improvising through complex scenes.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #EEEAFF; color: var(--color-actor-3); font-weight: 700; font-family: var(--font-display);">O</div>
+          <h4 class="pattern-title">Oracle &mdash; Script Doctor</h4>
+          <p class="pattern-desc">Read-only strategic advisor. Called in when something fails &mdash; reviews the situation and recommends rewrites, but never touches the code.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0; color: var(--color-actor-4); font-weight: 700; font-family: var(--font-display);">P</div>
+          <h4 class="pattern-title">Prometheus &mdash; Pre-Production</h4>
+          <p class="pattern-desc">Strategic planner using <span class="term" data-definition="Interview mode is a planning technique where the AI asks the user clarifying questions before generating a plan. Instead of guessing, it interviews you to understand scope, constraints, and goals — like a pre-production meeting.">interview mode</span>. Maps out the entire project before anyone starts working.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-success-light); color: var(--color-actor-5); font-weight: 700; font-family: var(--font-display);">E</div>
+          <h4 class="pattern-title">Explore &mdash; Location Scout</h4>
+          <p class="pattern-desc">Fast codebase grep. Scans the entire project in seconds to find relevant files, patterns, and structure before the real work begins.</p>
+        </div>
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-text-muted)">
+          <div class="pattern-icon" style="background: var(--color-bg-warm); color: var(--color-text-secondary); font-weight: 700; font-family: var(--font-display);">L</div>
+          <h4 class="pattern-title">Librarian &mdash; Research Asst.</h4>
+          <p class="pattern-desc">External docs search. When the crew needs to reference a framework's API or a library's changelog, the Librarian fetches it.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Group Chat Animation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Watch Them Work Together</h2>
+      <p>Here is a realistic delegation sequence. Sisyphus receives a task, scouts the codebase, delegates the heavy lifting, and calls in an advisor when things go sideways.</p>
+
+      <div class="chat-window" id="chat-module2">
+        <div class="chat-messages">
+          <div class="chat-message" data-msg="0" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-text-muted)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-text-muted)">User</span>
+              <p>Refactor the auth module to support OAuth2 and add tests.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="1" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>Got it. Let me scout the codebase first to understand the current auth structure.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="2" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>@Explore &mdash; scan for all files related to authentication. Find the current auth flow entry points.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="3" data-sender="explore" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-5)">E</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-5)">Explore</span>
+              <p>Found 12 files. Core auth logic is in src/auth/provider.ts, session middleware in src/middleware/auth.ts. Tests in src/auth/__tests__/.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="4" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>@Hephaestus &mdash; refactor src/auth/provider.ts to add an OAuth2 strategy. Keep backward compat with the existing session flow. Write tests when done.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="5" data-sender="hephaestus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hephaestus</span>
+              <p>Working on it. Created OAuth2Strategy class, wired token refresh, updated middleware. But 3 existing tests are now failing.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="6" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>Test failures after refactor. @Oracle &mdash; review the failing tests and Hephaestus's changes. What's the fix strategy?</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="7" data-sender="oracle" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">O</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Oracle</span>
+              <p>The tests mock the old single-strategy interface. Recommendation: update mocks to use the new StrategyProvider pattern. The session tests need a factory fixture, not direct instantiation.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="8" data-sender="sisyphus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Sisyphus</span>
+              <p>@Hephaestus &mdash; apply Oracle's recommendation. Update the test mocks, then verify all tests pass.</p>
+            </div>
+          </div>
+          <div class="chat-message" data-msg="9" data-sender="hephaestus" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hephaestus</span>
+              <p>Done. All 14 tests passing (11 existing + 3 new OAuth2 tests). Refactor complete.</p>
+            </div>
+          </div>
+        </div>
+        <div class="chat-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module2-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Code-English Translation -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">How an Agent Is Born</h2>
+      <p>Every agent is created by a <span class="term" data-definition="A factory function is a function that creates and returns an object. Instead of using 'new', you call the factory, which configures the object internally and hands it back ready to use. This lets you hide complex setup logic.">factory function</span>. Here is the real code that builds Sisyphus &mdash; the orchestrator that manages all other agents.</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">const</span> MODE: <span class="code-function">AgentMode</span> = <span class="code-string">"primary"</span>;</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">export function</span> <span class="code-function">createSisyphusAgent</span>(</span>
+<span class="code-line">  <span class="code-property">model</span>, <span class="code-property">availableAgents</span>, ...</span>
+<span class="code-line">): <span class="code-function">AgentConfig</span> {</span>
+<span class="code-line">  <span class="code-keyword">const</span> tools = <span class="code-function">categorizeTools</span>(availableToolNames);</span>
+<span class="code-line">  <span class="code-keyword">const</span> prompt = <span class="code-function">buildDynamicSisyphusPrompt</span>(</span>
+<span class="code-line">    model, agents, tools, skills, ...</span>
+<span class="code-line">  );</span>
+<span class="code-line">  <span class="code-keyword">return</span> {</span>
+<span class="code-line">    <span class="code-property">description</span>: <span class="code-string">"Powerful AI orchestrator..."</span>,</span>
+<span class="code-line">    <span class="code-property">mode</span>: MODE,</span>
+<span class="code-line">    <span class="code-property">model</span>,</span>
+<span class="code-line">    <span class="code-property">prompt</span>,</span>
+<span class="code-line">    ...</span>
+<span class="code-line">  };</span>
+<span class="code-line">}</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">This agent runs in "primary" mode &mdash; it's the main agent the user talks to directly</p>
+            <p class="tl">Define a factory function that creates a Sisyphus agent, given a model and a list of available teammates</p>
+            <p class="tl">First, sort all available tools into categories (edit, search, run, etc.) so the prompt can explain each one</p>
+            <p class="tl">Then dynamically generate the system prompt &mdash; it changes based on which agents, tools, and skills are actually available right now</p>
+            <p class="tl">Finally, return the agent config object: a description for UIs, the mode, the AI model to use, and the generated prompt</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1f4a1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">CS Insight: Separation of Concerns</strong>
+          <p>Each agent has exactly one job and knows nothing about the others' internals. Sisyphus never writes code. Hephaestus never delegates. Oracle never edits files. This is the <span class="term" data-definition="The single responsibility principle states that every module or class should have one, and only one, reason to change. Applied to agents: each agent does one type of work, which makes the system easier to debug, test, and extend.">single responsibility principle</span> applied to AI &mdash; the same pattern that makes microservices, Unix pipes, and React components work. When each piece does one thing well, you can swap, upgrade, or debug any piece without breaking the rest.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Agent Modes & Model Matching -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Why Different Models for Different Agents?</h2>
+      <p>Not every task needs the most expensive AI. The system matches each agent to the <span class="term" data-definition="Model selection is the process of choosing which AI model runs a given agent. Expensive models (Claude Opus, GPT-5.4) handle complex reasoning. Cheaper, faster models handle simple tasks like search. This optimizes both cost and speed.">right model</span> for its job &mdash; like casting the right actor for each role.</p>
+
+      <div class="step-cards stagger-children">
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-1)">
+          <div class="step-num" style="background: var(--color-actor-1)">S</div>
+          <div class="step-body">
+            <strong>Sisyphus &rarr; Claude Opus / Kimi / GLM</strong>
+            <p>Orchestration requires understanding complex, multi-step requests and deciding which specialist handles what. Needs the smartest model available.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-2)">
+          <div class="step-num" style="background: var(--color-actor-2)">H</div>
+          <div class="step-body">
+            <strong>Hephaestus &rarr; GPT-5.4</strong>
+            <p>Deep autonomous coding requires sustained reasoning across many files. GPT-5.4 excels at long, self-directed implementation sessions.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-3)">
+          <div class="step-num" style="background: var(--color-actor-3)">O</div>
+          <div class="step-body">
+            <strong>Oracle &rarr; Read-only Advisor</strong>
+            <p>Only activated on failure escalation. Reads code and diagnostics, then returns strategic advice. Never writes &mdash; so it can use any strong reasoning model.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in" style="border-left-color: var(--color-actor-5)">
+          <div class="step-num" style="background: var(--color-actor-5)">E</div>
+          <div class="step-body">
+            <strong>Explore &rarr; Fast, Cheap Model</strong>
+            <p>Just runs grep and glob. Doesn't need intelligence &mdash; needs speed. Uses the cheapest available model to keep costs down.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 5: Quiz -->
+    <div class="screen animate-in">
+      <h2 class="screen-heading">Check Your Understanding</h2>
+
+      <div class="quiz-container" id="quiz-module2">
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Right. The orchestrator's job is to analyze the request and pick the right specialist. If it also tried to do the work, it would lose the ability to parallelize and would mix concerns."
+             data-explanation-wrong="Sisyphus's entire value is in delegation. If it tried to code directly, it would lose the benefits of specialization — the same reason a film director doesn't act in their own movie.">
+          <h3 class="quiz-question">A user asks Sisyphus to fix a CSS bug. Why doesn't Sisyphus fix it directly, since it uses a powerful model?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Sisyphus doesn't have access to file editing tools</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Delegating to a specialist lets Sisyphus manage multiple tasks in parallel and keeps each agent focused on what it does best</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>CSS is too simple for Claude Opus to handle</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Exactly. Oracle is read-only by design. Giving it write access would violate separation of concerns — the advisor role only works if it can't accidentally make the problem worse."
+             data-explanation-wrong="Oracle is deliberately restricted to read-only operations. If you need to apply its recommendation, you send a worker agent (like Hephaestus) to do the implementation. This separation prevents the advisor from making things worse.">
+          <h3 class="quiz-question">Oracle identifies a performance issue in a database query. What happens next?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Oracle rewrites the query itself since it found the issue</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The system shuts down and asks the user to fix it manually</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Oracle returns its recommendation to Sisyphus, who then delegates the fix to a worker agent like Hephaestus</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Correct. Explore is cheap and fast — perfect for reconnaissance. Using GPT-5.4 to run a simple grep would be like hiring a lead actor to scout locations. You match capability to task complexity."
+             data-explanation-wrong="Cost and speed matter. Explore uses a cheap model because it only runs searches. Sending an expensive model to do simple grep would waste money and time — like hiring a lead actor just to scout locations.">
+          <h3 class="quiz-question">You're designing a new agent that only needs to check whether a file exists. Which model strategy makes the most sense?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use the cheapest, fastest model available — like Explore does — since the task requires no reasoning</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use GPT-5.4 to make sure it gets the file check right on the first try</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use Claude Opus because all agents should use the best model for reliability</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</section>
