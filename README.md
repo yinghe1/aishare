@@ -12,7 +12,7 @@ Format to access after you checkin to github: https://<username>.github.io/<repo
 ```
 
 - If you want more technical wiki for codebase:
-    -  You can use deepwiki. Here is a sample :[oh-my-openagent deepwiki](https://deepwiki.com/code-yeongyu/oh-my-openagent/2.2-agent-orchestration)
+    -  You can use deepwiki. Here is a sample :[oh-my-openagent deepwiki](https://deepwiki.com/code-yeongyu/oh-my-openagent/2.2-agent-orchestration) ![oh-my-openagent sample Deepwiki](ohmyopencodeDeepWiki.png)
     -  From codebase to diagram: [oh-my-mermaid](https://github.com/oh-my-mermaid/oh-my-mermaid)
 
 
