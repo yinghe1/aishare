@@ -8,5 +8,10 @@
 
 - Sample generated course: [oh-my-opencode-course](https://yinghe1.github.io/aishare/courses/oh-my-opencode-course/). Format to access after you checkin to github: https://<username>.github.io/<repo>/subfolder/
 
+- If you want more technical wiki for codebase:
+    -  You can use deepwiki. Here is a sample :[oh-my-openagent deepwiki](https://deepwiki.com/code-yeongyu/oh-my-openagent/2.2-agent-orchestration)
+    -  From codebase to diagram: [oh-my-mermaid](https://github.com/oh-my-mermaid/oh-my-mermaid)
+
+
 
 MIT License
