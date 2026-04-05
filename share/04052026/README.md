@@ -1,5 +1,6 @@
 Useful links for the slides:
 
+- https://yinghe1.github.io/aishare/share/04052026/slides04052026.html
 - https://github.com/yinghe1/aishare?tab=readme-ov-file
 - https://github.com/yinghe1?tab=stars
 - https://github.com/code-yeongyu/oh-my-openagent
