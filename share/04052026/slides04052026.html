@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalize Your FREE AI Learning</title>
+
+    <!-- Fonts: Bricolage Grotesque (display) + DM Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (PROFESSIONAL DARK)
+           Deep navy/charcoal backgrounds, sharp blue + teal accents
+           =========================================== */
+        :root {
+            /* Colors — Dark mode palette */
+            --bg-primary: #0b0f1a;
+            --bg-surface: #111827;
+            --bg-card: #1a2133;
+            --bg-card-hover: #1f2942;
+            --text-primary: #e8edf5;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-blue-light: rgba(59, 130, 246, 0.12);
+            --accent-blue-mid: rgba(59, 130, 246, 0.22);
+            --accent-teal: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-emerald: #10b981;
+            --accent-navy: #475569;
+            --border-dim: rgba(148, 163, 184, 0.1);
+            --border-active: rgba(59, 130, 246, 0.3);
+            --link-color: #60a5fa;
+            --link-hover: #93bbfd;
+            --glow-blue: rgba(59, 130, 246, 0.15);
+
+            /* Typography — MUST use clamp() */
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+            /* Spacing */
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --element-gap: clamp(0.25rem, 1vw, 1rem);
+
+            /* Animation */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        /* ===========================================
+           BASE RESET
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===========================================
+           VIEWPORT FITTING: MANDATORY BASE STYLES
+           =========================================== */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+        }
+        .card, .container, .content-box {
+            max-width: min(90vw, 1000px);
+            max-height: min(80vh, 700px);
+        }
+        .feature-list, .bullet-list { gap: clamp(0.4rem, 1vh, 1rem); }
+        .feature-list li, .bullet-list li { font-size: var(--body-size); line-height: 1.4; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+        img, .image-container {
+            max-width: 100%;
+            max-height: min(50vh, 400px);
+            object-fit: contain;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+            }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ===========================================
+           GLOBAL TYPOGRAPHY & LAYOUT
+           =========================================== */
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.01em;
+        }
+        h1 { font-size: var(--title-size); font-weight: 800; }
+        h2 { font-size: var(--h2-size); }
+        h3 { font-size: var(--h3-size); }
+        p, li { font-size: var(--body-size); line-height: 1.6; }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+        a:hover {
+            color: var(--link-hover);
+            border-bottom-color: var(--link-hover);
+        }
+
+        /* ===========================================
+           ANIMATIONS — Subtle, fast, professional
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s var(--ease-out-expo),
+                        transform 0.5s var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.12s; }
+        .reveal:nth-child(3) { transition-delay: 0.19s; }
+        .reveal:nth-child(4) { transition-delay: 0.26s; }
+        .reveal:nth-child(5) { transition-delay: 0.33s; }
+        .reveal:nth-child(6) { transition-delay: 0.40s; }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* ===========================================
+           NAVIGATION DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(0.75rem, 2vw, 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1vh, 12px);
+            z-index: 999;
+        }
+        .nav-dot {
+            width: clamp(7px, 0.8vw, 9px);
+            height: clamp(7px, 0.8vw, 9px);
+            border-radius: 50%;
+            background: var(--border-dim);
+            border: 1px solid var(--text-muted);
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+        .nav-dot.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: scale(1.4);
+            box-shadow: 0 0 8px var(--glow-blue);
+        }
+
+        /* ===========================================
+           SLIDE NUMBER
+           =========================================== */
+        .slide-number {
+            position: absolute;
+            top: clamp(1rem, 3vw, 2rem);
+            right: clamp(2.5rem, 5vw, 4rem);
+            font-family: var(--font-body);
+            font-size: clamp(0.65rem, 1vw, 0.85rem);
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+
+        /* ===========================================
+           DECORATIVE ELEMENTS
+           Subtle glows and geometric accents
+           =========================================== */
+        .deco-line {
+            position: absolute;
+            background: var(--accent-blue);
+            opacity: 0.08;
+        }
+        .deco-line.h { height: 1px; }
+        .deco-line.v { width: 1px; }
+        .deco-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        /* Subtle grid background */
+        .grid-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+            background-size: clamp(30px, 5vw, 60px) clamp(30px, 5vw, 60px);
+            pointer-events: none;
+        }
+
+        /* ===========================================
+           SLIDE 1: TITLE / HOOK
+           =========================================== */
+        .slide-hook {
+            background: var(--bg-primary);
+            align-items: center;
+            text-align: center;
+        }
+        .slide-hook .slide-content {
+            align-items: center;
+            max-width: min(85vw, 800px);
+            margin: 0 auto;
+        }
+        .hook-label {
+            font-family: var(--font-body);
+            font-size: var(--small-size);
+            font-weight: 600;
+            color: var(--accent-blue);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
+        }
+        .hook-question {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 5.5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.08;
+            color: var(--text-primary);
+            margin-bottom: var(--content-gap);
+            letter-spacing: -0.02em;
+        }
+        .hook-sub {
+            font-size: clamp(0.85rem, 1.8vw, 1.25rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+        .hook-svg { margin-top: var(--content-gap); }
+
+        /* Left accent bar on title slide */
+        .slide-hook::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 4px;
+            background: linear-gradient(180deg, var(--accent-blue) 0%, var(--accent-teal) 100%);
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ===========================================
+           SLIDE 2: LEARNING METHODS
+           =========================================== */
+        .slide-methods {
+            background: var(--bg-surface);
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+            margin-top: var(--content-gap);
+        }
+        @media (max-width: 700px) {
+            .methods-grid { grid-template-columns: 1fr; }
+        }
+        .method-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: clamp(0.75rem, 2vw, 1.5rem);
+            border: 1px solid var(--border-dim);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.8vw, 0.6rem);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .method-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            border-color: var(--border-active);
+        }
+        .method-card h3 {
+            font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+            color: var(--text-primary);
+        }
+        .method-card p {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+        }
+        .method-card .method-author {
+            font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .method-card a {
+            font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+            font-size: clamp(0.6rem, 0.9vw, 0.78rem);
+            display: inline-block;
+            padding: clamp(2px, 0.3vw, 4px) clamp(6px, 0.8vw, 10px);
+            background: var(--accent-blue-light);
+            border-radius: 4px;
+            border-bottom: none;
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+        .method-card a:hover {
+            background: var(--accent-blue-mid);
+            border-bottom: none;
+        }
+        .method-icon {
+            width: clamp(32px, 5vw, 44px);
+            height: clamp(32px, 5vw, 44px);
+        }
+        .method-num {
+            font-family: var(--font-display);
+            font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+            font-weight: 800;
+            color: var(--accent-blue);
+            opacity: 0.5;
+            margin-bottom: clamp(0.1rem, 0.3vh, 0.2rem);
+        }
+
+        /* ===========================================
+           SLIDE 3: PRACTICE GUIDE
+           =========================================== */
+        .slide-practice {
+            background: var(--bg-primary);
+        }
+        .practice-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(0.75rem, 2.5vw, 2rem);
+            margin-top: var(--content-gap);
+            align-items: start;
+        }
+        @media (max-width: 700px) {
+            .practice-layout { grid-template-columns: 1fr; }
+        }
+        .svgs-stack {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.8vh, 0.5rem);
+            align-items: center;
+        }
+        .principles-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.8vh, 0.75rem);
+        }
+        .principles-list li {
+            padding-left: clamp(0.75rem, 1.5vw, 1.25rem);
+            position: relative;
+            font-size: var(--body-size);
+        }
+        .principles-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: clamp(6px, 0.8vw, 10px);
+            width: 6px;
+            height: 6px;
+            border-radius: 1px;
+            background: var(--accent-blue);
+        }
+        .agent-ref {
+            margin-top: clamp(0.5rem, 1.5vh, 1rem);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+        }
+
+        /* ===========================================
+           SLIDE 4: TEAM SKILLS
+           =========================================== */
+        .slide-skills {
+            background: var(--bg-surface);
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+            margin-top: var(--content-gap);
+        }
+        @media (max-width: 700px) {
+            .skills-grid { grid-template-columns: 1fr; }
+        }
+        .skill-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: clamp(1rem, 2.5vw, 2rem);
+            text-align: center;
+            border: 1px solid var(--border-dim);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        .skill-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+        .skill-card h3 {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            margin-top: clamp(0.3rem, 0.8vh, 0.5rem);
+            color: var(--text-primary);
+        }
+        .skill-card .skill-link {
+            font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+            font-size: clamp(0.6rem, 0.9vw, 0.78rem);
+            color: var(--accent-blue);
+            margin-top: clamp(0.2rem, 0.5vh, 0.4rem);
+            display: inline-block;
+            font-weight: 500;
+        }
+        .skill-icon-wrap {
+            width: clamp(40px, 6vw, 56px);
+            height: clamp(40px, 6vw, 56px);
+            margin: 0 auto;
+        }
+
+        /* ===========================================
+           SLIDE 5: AGENT HARNESS
+           =========================================== */
+        .slide-harness {
+            background: var(--bg-primary);
+        }
+        .harness-cols {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+            margin-top: var(--content-gap);
+        }
+        @media (max-width: 700px) {
+            .harness-cols { grid-template-columns: 1fr; }
+        }
+        .harness-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: clamp(0.75rem, 2vw, 1.5rem);
+            border-top: 3px solid var(--accent-blue);
+            border-left: 1px solid var(--border-dim);
+            border-right: 1px solid var(--border-dim);
+            border-bottom: 1px solid var(--border-dim);
+        }
+        .harness-card:nth-child(2) { border-top-color: var(--accent-teal); }
+        .harness-card:nth-child(3) { border-top-color: var(--accent-emerald); }
+        .harness-card h3 {
+            font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.4rem);
+        }
+        .harness-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.15rem, 0.4vh, 0.3rem);
+        }
+        .harness-card li {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            padding-left: clamp(0.6rem, 1vw, 0.9rem);
+            position: relative;
+        }
+        .harness-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: clamp(6px, 0.7vw, 9px);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+        .harness-card .card-num {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 800;
+            color: var(--accent-blue);
+            opacity: 0.2;
+            line-height: 1;
+            margin-bottom: clamp(0.2rem, 0.5vh, 0.4rem);
+        }
+        .harness-card:nth-child(2) .card-num { color: var(--accent-teal); }
+        .harness-card:nth-child(3) .card-num { color: var(--accent-emerald); }
+        .sample-ref {
+            margin-top: clamp(0.3rem, 1vh, 0.6rem);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+        }
+        .sample-ref a {
+            font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+            font-size: clamp(0.6rem, 0.85vw, 0.75rem);
+        }
+
+        /* ===========================================
+           SLIDE 6: EVOLUTION PATH
+           =========================================== */
+        .slide-evolution {
+            background: var(--bg-surface);
+        }
+        .evolution-layers {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.3rem, 0.8vh, 0.6rem);
+            margin-top: var(--content-gap);
+            max-width: min(90vw, 850px);
+        }
+        .evo-row {
+            display: grid;
+            grid-template-columns: clamp(50px, 8vw, 80px) 1fr clamp(80px, 15vw, 160px);
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+            align-items: center;
+            padding: clamp(0.4rem, 1vh, 0.75rem) clamp(0.5rem, 1.5vw, 1rem);
+            border-radius: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            transition: border-color 0.2s ease;
+        }
+        .evo-row:hover { border-color: var(--border-active); }
+        .evo-level {
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+            font-weight: 800;
+        }
+        .evo-desc { font-size: var(--body-size); }
+        .evo-desc strong {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .evo-desc span {
+            color: var(--text-secondary);
+            font-size: var(--small-size);
+        }
+        .evo-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.25rem, 0.5vw, 0.5rem);
+        }
+        .evo-bar {
+            height: clamp(6px, 1vh, 10px);
+            border-radius: 99px;
+            transition: width 1s var(--ease-out-expo);
+        }
+        .evo-pct {
+            font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+            color: var(--text-muted);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .evo-row.l12 .evo-bar { background: var(--accent-blue); width: 85%; }
+        .evo-row.l3 .evo-bar { background: var(--accent-teal); width: 70%; }
+        .evo-row.l4 .evo-bar { background: var(--accent-amber); width: 25%; }
+        .evo-row.l5 .evo-bar { background: var(--accent-navy); width: 5%; }
+        .evo-row.l12 .evo-level { color: var(--accent-blue); }
+        .evo-row.l3 .evo-level { color: var(--accent-teal); }
+        .evo-row.l4 .evo-level { color: var(--accent-amber); }
+        .evo-row.l5 .evo-level { color: var(--text-muted); }
+
+        .evo-note {
+            margin-top: clamp(0.5rem, 1.5vh, 1rem);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           SVG INFOGRAPHIC SHARED STYLES
+           =========================================== */
+        .slide-svg { flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- ===================================================
+         SLIDE 1: HOOK — Steve Jobs style opening
+         =================================================== -->
+    <section class="slide slide-hook" data-slide="0">
+        <!-- Ambient glow decorations -->
+        <div class="deco-glow decorative" style="width:clamp(200px,30vw,400px);height:clamp(200px,30vw,400px);top:-10%;right:-5%;background:var(--accent-blue);opacity:0.06;"></div>
+        <div class="deco-glow decorative" style="width:clamp(150px,20vw,300px);height:clamp(150px,20vw,300px);bottom:-5%;left:-3%;background:var(--accent-teal);opacity:0.04;"></div>
+
+        <div class="slide-content">
+            <p class="reveal hook-label">
+                The question is&hellip;
+            </p>
+            <h1 class="reveal hook-question">
+                Every week there&rsquo;s a new AI tool,<br>a new skill, a new pattern.
+            </h1>
+            <p class="reveal hook-sub">
+                Tools. Skills. Flows. Patterns.&mdash;The landscape shifts faster than anyone can keep up. So how do you actually learn what matters?
+            </p>
+
+            <!-- SVG: chaos → clarity -->
+            <svg class="reveal hook-svg" viewBox="0 0 400 80" width="clamp(200px,40vw,400px)" height="clamp(40px,8vh,80px)" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="30" cy="25" r="3" fill="#64748b" opacity="0.4"/>
+                <circle cx="55" cy="55" r="3" fill="#64748b" opacity="0.3"/>
+                <circle cx="70" cy="20" r="3" fill="#64748b" opacity="0.5"/>
+                <circle cx="90" cy="50" r="3" fill="#64748b" opacity="0.35"/>
+                <circle cx="110" cy="30" r="3" fill="#64748b" opacity="0.45"/>
+                <circle cx="45" cy="42" r="3" fill="#64748b" opacity="0.25"/>
+                <circle cx="85" cy="65" r="3" fill="#64748b" opacity="0.3"/>
+                <circle cx="120" cy="55" r="3" fill="#64748b" opacity="0.4"/>
+                <line x1="130" y1="25" x2="170" y2="40" stroke="#64748b" stroke-width="1" opacity="0.3"/>
+                <line x1="130" y1="55" x2="170" y2="40" stroke="#64748b" stroke-width="1" opacity="0.3"/>
+                <line x1="170" y1="40" x2="350" y2="40" stroke="var(--accent-blue)" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M340 30 L355 40 L340 50" stroke="var(--accent-blue)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <circle cx="370" cy="40" r="8" stroke="var(--accent-blue)" stroke-width="1.5" fill="none" opacity="0.3"/>
+                <circle cx="370" cy="40" r="3" fill="var(--accent-blue)"/>
+            </svg>
+        </div>
+        <span class="slide-number">01 / 06</span>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 2: 3 FREE LEARNING METHODS
+         =================================================== -->
+    <section class="slide slide-methods" data-slide="1">
+        <div class="deco-line h decorative" style="width:clamp(40px,6vw,80px);bottom:clamp(2rem,4vw,3rem);right:clamp(2rem,4vw,3rem);"></div>
+
+        <div class="slide-content">
+            <h2 class="reveal">Practical Way to Personalize Learning</h2>
+            <p class="reveal" style="color:var(--text-secondary);font-size:var(--body-size);margin-top:clamp(0.2rem,0.5vh,0.4rem);">Three free, AI-powered methods to learn what matters to you.</p>
+
+            <div class="methods-grid">
+                <!-- Method 1 -->
+                <div class="method-card reveal">
+                    <div class="method-num">01</div>
+                    <svg class="method-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="3" y="6" width="38" height="28" rx="3" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <line x1="3" y1="12" x2="41" y2="12" stroke="var(--accent-blue)" stroke-width="1" opacity="0.3"/>
+                        <path d="M12 20L18 26L32 16" stroke="var(--accent-teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="8" y="38" width="28" height="2" rx="1" fill="var(--border-dim)"/>
+                    </svg>
+                    <h3>GitHub to a Single HTML Course</h3>
+                    <p>Turn any codebase into a personalized interactive course</p>
+                    <a href="https://github.com/zarazhangrui/codebase-to-course" target="_blank" rel="noopener">codebase-to-course</a>
+                    <span class="method-author">by Zara Zhang</span>
+                </div>
+
+                <!-- Method 2 -->
+                <div class="method-card reveal">
+                    <div class="method-num">02</div>
+                    <svg class="method-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="22" cy="16" r="7" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <circle cx="12" cy="32" r="5" stroke="var(--accent-teal)" stroke-width="1.5"/>
+                        <circle cx="32" cy="32" r="5" stroke="var(--accent-teal)" stroke-width="1.5"/>
+                        <line x1="18" y1="22" x2="14" y2="28" stroke="var(--border-dim)" stroke-width="1.5"/>
+                        <line x1="26" y1="22" x2="30" y2="28" stroke="var(--border-dim)" stroke-width="1.5"/>
+                    </svg>
+                    <h3>Follow the Builder</h3>
+                    <p>Learn by tracking what top AI builders create and share</p>
+                    <a href="https://github.com/zarazhangrui/follow-builders" target="_blank" rel="noopener">follow-builders</a>
+                    <span class="method-author">by Zara Zhang</span>
+                </div>
+
+                <!-- Method 3 -->
+                <div class="method-card reveal">
+                    <div class="method-num">03</div>
+                    <svg class="method-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="4" y="4" width="16" height="16" rx="2" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <rect x="24" y="4" width="16" height="16" rx="2" stroke="var(--accent-teal)" stroke-width="1.5"/>
+                        <rect x="4" y="24" width="16" height="16" rx="2" stroke="var(--accent-teal)" stroke-width="1.5"/>
+                        <rect x="24" y="24" width="16" height="16" rx="2" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <line x1="20" y1="12" x2="24" y2="12" stroke="var(--border-dim)" stroke-width="1.5"/>
+                        <line x1="12" y1="20" x2="12" y2="24" stroke="var(--border-dim)" stroke-width="1.5"/>
+                        <line x1="32" y1="20" x2="32" y2="24" stroke="var(--border-dim)" stroke-width="1.5"/>
+                    </svg>
+                    <h3>Agentic Design Patterns</h3>
+                    <p>Understand repeatable patterns for building AI agents</p>
+                    <span class="method-author">by Antonio Gulli</span>
+                </div>
+            </div>
+        </div>
+        <span class="slide-number">02 / 06</span>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 3: PRACTICE GUIDE
+         Existing cycle SVG + NEW decompose/recompose SVG
+         =================================================== -->
+    <section class="slide slide-practice" data-slide="2">
+        <div class="deco-glow decorative" style="width:clamp(150px,20vw,250px);height:clamp(150px,20vw,250px);top:5%;right:0;background:var(--accent-teal);opacity:0.04;"></div>
+
+        <div class="slide-content">
+            <h2 class="reveal">After Learning: Think &rarr; Act &rarr; Feedback &rarr; Iterate</h2>
+
+            <div class="practice-layout">
+                <!-- Left: STACKED SVGs (cycle + decompose/recompose) -->
+                <div class="svgs-stack reveal">
+                    <!-- SVG 1: Cycle process (existing, slightly smaller) -->
+                    <svg class="slide-svg" viewBox="0 0 280 170" width="clamp(160px,25vw,260px)" height="clamp(90px,14vh,160px)" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="140" cy="85" r="55" stroke="var(--border-dim)" stroke-width="2" stroke-dasharray="4 3"/>
+                        <rect x="123" y="18" width="34" height="24" rx="5" fill="var(--accent-blue)" opacity="0.12" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <text x="140" y="34" text-anchor="middle" font-size="10" fill="var(--accent-blue)" font-family="DM Sans, sans-serif" font-weight="600">Think</text>
+                        <rect x="188" y="73" width="34" height="24" rx="5" fill="var(--accent-teal)" opacity="0.12" stroke="var(--accent-teal)" stroke-width="1.5"/>
+                        <text x="205" y="89" text-anchor="middle" font-size="10" fill="var(--accent-teal)" font-family="DM Sans, sans-serif" font-weight="600">Act</text>
+                        <rect x="117" y="128" width="46" height="24" rx="5" fill="var(--accent-amber)" opacity="0.12" stroke="var(--accent-amber)" stroke-width="1.5"/>
+                        <text x="140" y="144" text-anchor="middle" font-size="9" fill="var(--accent-amber)" font-family="DM Sans, sans-serif" font-weight="600">Feedback</text>
+                        <rect x="55" y="73" width="38" height="24" rx="5" fill="var(--accent-emerald)" opacity="0.12" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                        <text x="74" y="89" text-anchor="middle" font-size="9" fill="var(--accent-emerald)" font-family="DM Sans, sans-serif" font-weight="600">Iterate</text>
+                        <path d="M155 38 L190 72" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk)"/>
+                        <path d="M200 100 L158 128" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk)"/>
+                        <path d="M120 140 L88 100" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk)"/>
+                        <path d="M78 73 L128 42" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk)"/>
+                        <defs>
+                            <marker id="arrowDk" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                                <path d="M0,0 L8,3 L0,6" fill="var(--text-muted)"/>
+                            </marker>
+                        </defs>
+                    </svg>
+
+                    <!-- SVG 2: Decompose & Recompose -->
+                    <svg class="slide-svg" viewBox="0 0 280 100" width="clamp(160px,25vw,260px)" height="clamp(55px,9vh,95px)" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <!-- Whole block on left -->
+                        <rect x="8" y="30" width="50" height="40" rx="6" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="0"/>
+                        <text x="33" y="54" text-anchor="middle" font-size="9" fill="var(--accent-blue)" font-family="DM Sans, sans-serif" font-weight="600">Whole</text>
+                        <!-- Decompose arrow -->
+                        <path d="M62 50 L88 50" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk2)"/>
+                        <text x="75" y="43" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif">split</text>
+                        <!-- Parts in middle -->
+                        <rect x="92" y="12" width="28" height="22" rx="4" stroke="var(--accent-teal)" stroke-width="1.2"/>
+                        <text x="106" y="27" text-anchor="middle" font-size="7" fill="var(--accent-teal)" font-family="DM Sans, sans-serif" font-weight="500">Part A</text>
+                        <rect x="92" y="39" width="28" height="22" rx="4" stroke="var(--accent-teal)" stroke-width="1.2"/>
+                        <text x="106" y="54" text-anchor="middle" font-size="7" fill="var(--accent-teal)" font-family="DM Sans, sans-serif" font-weight="500">Part B</text>
+                        <rect x="92" y="66" width="28" height="22" rx="4" stroke="var(--accent-teal)" stroke-width="1.2"/>
+                        <text x="106" y="81" text-anchor="middle" font-size="7" fill="var(--accent-teal)" font-family="DM Sans, sans-serif" font-weight="500">Part C</text>
+                        <!-- Recompose arrow -->
+                        <path d="M124 50 L150 50" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk2)"/>
+                        <text x="137" y="43" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif">solve</text>
+                        <!-- Solved parts -->
+                        <rect x="154" y="12" width="28" height="22" rx="4" fill="var(--accent-emerald)" opacity="0.15" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                        <path d="M163 23 L167 27 L173 19" stroke="var(--accent-emerald)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="154" y="39" width="28" height="22" rx="4" fill="var(--accent-emerald)" opacity="0.15" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                        <path d="M163 50 L167 54 L173 46" stroke="var(--accent-emerald)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="154" y="66" width="28" height="22" rx="4" fill="var(--accent-emerald)" opacity="0.15" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                        <path d="M163 77 L167 81 L173 73" stroke="var(--accent-emerald)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Compose arrow -->
+                        <path d="M186 50 L212 50" stroke="var(--text-muted)" stroke-width="1.2" marker-end="url(#arrowDk2)"/>
+                        <text x="199" y="43" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif">join</text>
+                        <!-- Recomposed whole -->
+                        <rect x="216" y="25" width="56" height="50" rx="6" fill="var(--accent-blue)" opacity="0.1" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <text x="244" y="47" text-anchor="middle" font-size="8" fill="var(--accent-blue)" font-family="DM Sans, sans-serif" font-weight="600">Coherent</text>
+                        <text x="244" y="59" text-anchor="middle" font-size="8" fill="var(--accent-blue)" font-family="DM Sans, sans-serif" font-weight="600">Solution</text>
+                        <defs>
+                            <marker id="arrowDk2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+                                <path d="M0,0 L7,2.5 L0,5" fill="var(--text-muted)"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- Right: Principles -->
+                <div>
+                    <h3 class="reveal" style="color:var(--accent-blue);margin-bottom:clamp(0.3rem,0.8vh,0.6rem);">Principals as Map</h3>
+                    <ul class="principles-list">
+                        <li class="reveal"><strong>Decompose and recompose</strong> &mdash; break problems into parts, reassemble into solutions</li>
+                        <li class="reveal"><strong>Generalization</strong> &mdash; solve the general case first, add speciality on top</li>
+                        <li class="reveal"><strong>Scale</strong> &mdash; design for parallel use and multiple process patterns</li>
+                    </ul>
+                    <p class="reveal agent-ref">
+                        Reference: <a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">harness-engineering</a> &mdash; OpenAI&rsquo;s lessons on agent task completion
+                    </p>
+                </div>
+            </div>
+        </div>
+        <span class="slide-number">03 / 06</span>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 4: TEAM SKILL CONTRIBUTIONS
+         =================================================== -->
+    <section class="slide slide-skills" data-slide="3">
+        <div class="deco-glow decorative" style="width:clamp(120px,18vw,220px);height:clamp(120px,18vw,220px);top:-5%;left:-3%;background:var(--accent-blue);opacity:0.05;"></div>
+
+        <div class="slide-content" style="align-items:center;text-align:center;">
+            <h2 class="reveal">My Team&rsquo;s 3 Skill Contributions</h2>
+
+            <div class="skills-grid" style="margin-top:var(--content-gap);">
+                <a class="skill-card reveal" href="http://skill1TODO" target="_blank" rel="noopener">
+                    <svg class="skill-icon-wrap" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="8" y="8" width="40" height="40" rx="8" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <path d="M20 28 L26 34 L36 22" stroke="var(--accent-teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h3>Skill 1</h3>
+                    <span class="skill-link">skill1TODO</span>
+                </a>
+
+                <a class="skill-card reveal" href="http://skill2TODO" target="_blank" rel="noopener">
+                    <svg class="skill-icon-wrap" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="28" cy="28" r="20" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                        <path d="M20 28 L28 20 L36 28 L28 36Z" stroke="var(--accent-teal)" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                    <h3>Skill 2</h3>
+                    <span class="skill-link">skill2TODO</span>
+                </a>
+
+                <a class="skill-card reveal" href="http://skill3TODO" target="_blank" rel="noopener">
+                    <svg class="skill-icon-wrap" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <polygon points="28,8 48,44 8,44" stroke="var(--accent-blue)" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                        <circle cx="28" cy="32" r="6" stroke="var(--accent-teal)" stroke-width="1.5"/>
+                    </svg>
+                    <h3>Skill 3</h3>
+                    <span class="skill-link">skill3TODO</span>
+                </a>
+            </div>
+        </div>
+        <span class="slide-number">04 / 06</span>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 5: AGENT HARNESS CONCEPTS
+         Cards + NEW expanding scope infographic
+         =================================================== -->
+    <section class="slide slide-harness grid-bg" data-slide="4">
+        <div class="slide-content">
+            <h2 class="reveal">Agent Harness: Three Pillars</h2>
+            <p class="reveal" style="color:var(--text-secondary);font-size:var(--body-size);margin-top:clamp(0.1rem,0.3vh,0.2rem);">Tell it what to do. Limit what it can do. Check what it did.</p>
+
+            <div class="harness-cols">
+                <div class="harness-card reveal">
+                    <div class="card-num">1</div>
+                    <h3>Context Engineering</h3>
+                    <ul>
+                        <li>Feed the right information at the right time</li>
+                        <li>Not everything &mdash; curated + dynamic context</li>
+                    </ul>
+                </div>
+                <div class="harness-card reveal">
+                    <div class="card-num">2</div>
+                    <h3>Architectural Constraints</h3>
+                    <ul>
+                        <li>Rules, tests, linters, permissions</li>
+                        <li>Prevent invalid or unsafe actions</li>
+                    </ul>
+                </div>
+                <div class="harness-card reveal">
+                    <div class="card-num">3</div>
+                    <h3>Continuous Validation</h3>
+                    <ul>
+                        <li>Test outputs</li>
+                        <li>Catch errors</li>
+                        <li>Enforce correctness</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- NEW SVG: Expanding scope — Local → Next Level → Global harness -->
+            <svg class="reveal slide-svg" viewBox="0 0 480 100" width="clamp(280px,50vw,480px)" height="clamp(55px,9vh,100px)" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="margin-top:clamp(0.3rem,1vh,0.8rem);align-self:center;">
+                <!-- Local harness (innermost) -->
+                <circle cx="140" cy="50" r="22" stroke="var(--accent-blue)" stroke-width="2" fill="var(--accent-blue)" fill-opacity="0.08"/>
+                <text x="140" y="47" text-anchor="middle" font-size="8" fill="var(--accent-blue)" font-family="DM Sans, sans-serif" font-weight="600">Local</text>
+                <text x="140" y="57" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif">1 task</text>
+
+                <!-- Expanding arrow 1 -->
+                <path d="M165 50 L195 50" stroke="var(--text-muted)" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <path d="M189 45 L198 50 L189 55" stroke="var(--text-muted)" stroke-width="1.2" fill="none"/>
+
+                <!-- Next-level harness (middle ring) -->
+                <circle cx="250" cy="50" r="35" stroke="var(--accent-teal)" stroke-width="2" fill="var(--accent-teal)" fill-opacity="0.06"/>
+                <circle cx="250" cy="50" r="18" stroke="var(--accent-teal)" stroke-width="1" stroke-dasharray="3 2" opacity="0.4"/>
+                <text x="250" y="44" text-anchor="middle" font-size="8" fill="var(--accent-teal)" font-family="DM Sans, sans-serif" font-weight="600">Orchestrated</text>
+                <text x="250" y="56" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif">multi-agent</text>
+
+                <!-- Expanding arrow 2 -->
+                <path d="M288 50 L318 50" stroke="var(--text-muted)" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <path d="M312 45 L321 50 L312 55" stroke="var(--text-muted)" stroke-width="1.2" fill="none"/>
+
+                <!-- Global harness (outermost) -->
+                <circle cx="380" cy="50" r="46" stroke="var(--accent-emerald)" stroke-width="2" fill="var(--accent-emerald)" fill-opacity="0.04"/>
+                <circle cx="380" cy="50" r="30" stroke="var(--accent-emerald)" stroke-width="1" stroke-dasharray="3 2" opacity="0.3"/>
+                <circle cx="380" cy="50" r="15" stroke="var(--accent-emerald)" stroke-width="1" stroke-dasharray="3 2" opacity="0.2"/>
+                <text x="380" y="44" text-anchor="middle" font-size="8" fill="var(--accent-emerald)" font-family="DM Sans, sans-serif" font-weight="600">Global</text>
+                <text x="380" y="56" text-anchor="middle" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif">end-to-end</text>
+
+                <!-- Scope label -->
+                <text x="8" y="95" font-size="7" fill="var(--text-muted)" font-family="DM Sans, sans-serif" font-weight="500" letter-spacing="0.08em">SCOPE</text>
+                <line x1="40" y1="93" x2="470" y2="93" stroke="var(--text-muted)" stroke-width="0.8" opacity="0.3"/>
+                <path d="M464 89 L472 93 L464 97" stroke="var(--text-muted)" stroke-width="0.8" fill="none" opacity="0.3"/>
+            </svg>
+
+            <p class="reveal sample-ref">
+                Sample: <a href="https://github.com/code-yeongyu/oh-my-openagent" target="_blank" rel="noopener">oh-my-openagent</a>
+                &nbsp;|&nbsp; Course: <a href="https://yinghe1.github.io/aishare/courses/oh-my-opencode-course/" target="_blank" rel="noopener">oh-my-opencode-course</a>
+            </p>
+        </div>
+        <span class="slide-number">05 / 06</span>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 6: EVOLUTION PATH
+         =================================================== -->
+    <section class="slide slide-evolution" data-slide="5">
+        <div class="deco-glow decorative" style="width:clamp(180px,25vw,300px);height:clamp(180px,25vw,300px);bottom:-10%;right:-5%;background:var(--accent-blue);opacity:0.04;"></div>
+
+        <div class="slide-content">
+            <h2 class="reveal">Evolution Path</h2>
+            <p class="reveal" style="color:var(--text-secondary);font-size:var(--body-size);margin-top:clamp(0.1rem,0.3vh,0.2rem);">Think of it as layers &mdash; where is your team today?</p>
+
+            <div class="evolution-layers">
+                <div class="evo-row l12 reveal">
+                    <span class="evo-level">L1 & L2</span>
+                    <div class="evo-desc">
+                        <strong>Prompt Chaining &amp; Skills</strong>
+                        <span>Static workflow &middot; Reusable functions</span>
+                    </div>
+                    <div class="evo-bar-wrap">
+                        <div class="evo-bar"></div>
+                        <span class="evo-pct">40–50%</span>
+                    </div>
+                </div>
+                <div class="evo-row l3 reveal">
+                    <span class="evo-level">L3</span>
+                    <div class="evo-desc">
+                        <strong>Harness</strong>
+                        <span>Controlled loop + validation</span>
+                    </div>
+                    <div class="evo-bar-wrap">
+                        <div class="evo-bar"></div>
+                        <span class="evo-pct">35–45%</span>
+                    </div>
+                </div>
+                <div class="evo-row l4 reveal">
+                    <span class="evo-level">L4</span>
+                    <div class="evo-desc">
+                        <strong>Semi-autonomous Agent</strong>
+                        <span>Dynamic planning + memory</span>
+                    </div>
+                    <div class="evo-bar-wrap">
+                        <div class="evo-bar"></div>
+                        <span class="evo-pct">5–15%</span>
+                    </div>
+                </div>
+                <div class="evo-row l5 reveal">
+                    <span class="evo-level">L5</span>
+                    <div class="evo-desc">
+                        <strong>Autonomous Agent</strong>
+                        <span>Self-directed + adaptive</span>
+                    </div>
+                    <div class="evo-bar-wrap">
+                        <div class="evo-bar"></div>
+                        <span class="evo-pct">&lt;1%</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="reveal evo-note">We will learn and equip ourselves with knowledge to navigate this journey together &mdash; from where we are to where the industry is heading.</p>
+        </div>
+        <span class="slide-number">06 / 06</span>
+    </section>
+
+    <!-- ===========================================
+         SLIDE PRESENTATION CONTROLLER
+         =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+                this.setupWheelNav();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const idx = Array.from(this.slides).indexOf(entry.target);
+                            if (idx !== -1) {
+                                this.currentSlide = idx;
+                                this.updateNavDots();
+                                this.updateProgressBar();
+                            }
+                        }
+                    });
+                }, { threshold: 0.5 });
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide + 1);
+                    } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code)) {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide - 1);
+                    } else if (e.code === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.code === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+                document.addEventListener('touchend', (e) => {
+                    const diff = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        this.goToSlide(this.currentSlide + (diff > 0 ? 1 : -1));
+                    }
+                }, { passive: true });
+            }
+
+            setupWheelNav() {
+                let lastWheel = 0;
+                document.addEventListener('wheel', (e) => {
+                    const now = Date.now();
+                    if (now - lastWheel < 800) return;
+                    lastWheel = now;
+                    if (e.deltaY > 30) this.goToSlide(this.currentSlide + 1);
+                    else if (e.deltaY < -30) this.goToSlide(this.currentSlide - 1);
+                }, { passive: true });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgressBar();
+            }
+
+            updateProgressBar() {
+                if (!this.progressBar) return;
+                const pct = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = pct + '%';
+            }
+
+            setupNavDots() {
+                const container = document.getElementById('navDots');
+                if (!container) return;
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    container.appendChild(dot);
+                });
+                this.dots = container.querySelectorAll('.nav-dot');
+            }
+
+            updateNavDots() {
+                if (!this.dots) return;
+                this.dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentSlide);
+                });
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.slides.length) return;
+                this.currentSlide = index;
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                this.updateNavDots();
+                this.updateProgressBar();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+        });
+    </script>
+</body>
+</html>

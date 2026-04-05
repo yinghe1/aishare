@@ -1,6 +1,7 @@
 Simple steps for setup:
 - star the github project you like and they are at:
 https://github.com/USERNAME?tab=stars https://github.com/yinghe1?tab=stars
+https://github.com/[your-username]?tab=following https://github.com/yinghe1?tab=following
 - Use the following to learn FREE
 ```
 git clone https://github.com/zarazhangrui/frontend-slides.git ~/.claude/skills/frontend-slides
