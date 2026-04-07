@@ -6,3 +6,4 @@ Useful links for the slides:
 - https://github.com/code-yeongyu/oh-my-openagent
 - https://yinghe1.github.io/aishare/courses/oh-my-opencode-course/
 - https://deepwiki.com/code-yeongyu/oh-my-openagent/2.2-agent-orchestration
+- https://yinghe1.github.io/aishare/share/04052026/agent_loop_explainer.html
