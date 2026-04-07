@@ -261,7 +261,7 @@
     <h2>4) Step-by-step mapping</h2>
     <div class="grid">
       <div class="card">
-        <h3>1. Observation</h3>
+        <h3>1. Observation - this is the context</h3>
         <p>OpenClaw gathers the current state:</p>
         <ul>
           <li>user request</li>
@@ -271,7 +271,7 @@
         </ul>
       </div>
       <div class="card">
-        <h3>2. Reasoning</h3>
+        <h3>2. Reasoning - this is the decision step</h3>
         <p>The LLM decides what to do next:</p>
         <ul>
           <li>answer now</li>
@@ -292,13 +292,21 @@
         </ul>
       </div>
       <div class="card">
-        <h3>4. State update</h3>
+        <h3>4. State update - memory</h3>
         <p>The result is fed back in:</p>
         <ul>
           <li>append result to memory</li>
           <li>update context window</li>
           <li>store logs or artifacts</li>
           <li>prepare next decision</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>5. Loop Continuation</h3>
+        <p>The system asks: Do I have enough to finish?</p>
+        <ul>
+          <li>no -> loop again</li>
+          <li>yes -> return final answer</li>
         </ul>
       </div>
     </div>
