@@ -4,7 +4,7 @@ Track engineering blogs:
 TODO: make a feed for latest
 
 Generated or read:
-- https://yinghe1.github.io/aishare/agent/agent_loop_explainer.html
+- https://yinghe1.github.io/aishare/share/agent/agent_loop_explainer.html
 - https://www.anthropic.com/engineering/managed-agents super good 
 
 
