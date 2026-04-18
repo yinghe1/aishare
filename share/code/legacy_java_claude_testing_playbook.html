@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legacy Java Testing Playbook with Claude</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #182242;
+      --text: #eaf0ff;
+      --muted: #a9b7d9;
+      --accent: #7cc4ff;
+      --accent-2: #8ef0c6;
+      --warn: #ffd27a;
+      --border: #2a3768;
+      --code: #0f1530;
+      --good: #9bf2b1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+      color: var(--text);
+      background: linear-gradient(180deg, #0a0f1f 0%, #10172e 100%);
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(124,196,255,.12), rgba(142,240,198,.08));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: 2.2rem; margin: 0 0 10px; }
+    h2 {
+      margin-top: 34px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      font-size: 1.45rem;
+    }
+    h3 { margin-top: 24px; font-size: 1.1rem; }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .card {
+      background: rgba(18,25,51,.9);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .callout {
+      background: rgba(255,210,122,.08);
+      border-left: 4px solid var(--warn);
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 16px 0;
+    }
+    .success {
+      background: rgba(155,242,177,.08);
+      border-left: 4px solid var(--good);
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin: 16px 0;
+    }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace;
+    }
+    pre {
+      background: var(--code);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      overflow-x: auto;
+      color: #dce8ff;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      background: rgba(18,25,51,.8);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: rgba(124,196,255,.08); }
+    tr:last-child td { border-bottom: none; }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(124,196,255,.14);
+      color: var(--accent);
+      border: 1px solid rgba(124,196,255,.25);
+      font-size: .85rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .footer {
+      margin-top: 36px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    a { color: var(--accent); }
+    ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="pill">Legacy Java</div>
+      <div class="pill">Claude Workflow</div>
+      <div class="pill">Coverage + Mutation + E2E</div>
+      <h1>Legacy Java Testing Playbook with Claude</h1>
+      <p class="muted">A practical operating model for using Claude to raise unit coverage, mutation coverage, and end-to-end test depth in a legacy Java application without over-automating the wrong parts.</p>
+      <div class="callout">
+        <strong>Core recommendation:</strong> use Claude inside your own repo with deterministic scripts, test harnesses, and CI gates. Managed agents are usually not required for a single legacy Java application whose main goal is code understanding, test generation, execution, and iterative hardening.
+      </div>
+    </section>
+
+    <h2>1) What this playbook is optimizing for</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Primary outcome</h3>
+        <p>Increase meaningful test protection, not just vanity metrics.</p>
+      </div>
+      <div class="card">
+        <h3>Secondary outcome</h3>
+        <p>Make legacy code more testable with small, safe refactors rather than large rewrites.</p>
+      </div>
+      <div class="card">
+        <h3>Constraint</h3>
+        <p>Preserve production behavior unless a refactor is explicitly proposed and justified.</p>
+      </div>
+      <div class="card">
+        <h3>Reality check</h3>
+        <p>100% unit, 100% mutation, and 100% e2e can be a governance target, but not always a good engineering target. This playbook shows how to pursue it with minimal waste.</p>
+      </div>
+    </div>
+
+    <h2>2) Do you need managed agents?</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Best fit</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>One legacy Java repo, active developer involvement, frequent local runs</td>
+          <td>Claude Code / IDE / API in your repo</td>
+          <td>Fastest feedback loop. Easy to inspect diffs, run tests, and guide refactors.</td>
+        </tr>
+        <tr>
+          <td>Many repos, long-running autonomous task processing, queue-based orchestration</td>
+          <td>Agent platform or managed agents</td>
+          <td>Better when work must continue across sessions and systems.</td>
+        </tr>
+        <tr>
+          <td>Strict compliance, internal infrastructure, custom toolchain</td>
+          <td>Self-hosted orchestration around Claude API</td>
+          <td>Lets you enforce your own controls, audit, and execution model.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="success">
+      <strong>Default answer:</strong> no, you do not need managed agents for this testing problem. You need a disciplined repo workflow, clear instructions, and CI that enforces the non-negotiables.
+    </div>
+
+    <h2>3) Best operating model</h2>
+    <ol>
+      <li>Claude explores the codebase and produces a testability map.</li>
+      <li>Claude adds characterization tests before risky refactors.</li>
+      <li>Claude proposes tiny refactors that create seams for dependency injection and observability.</li>
+      <li>Unit tests are generated in small batches and validated by real commands.</li>
+      <li>PIT mutation results are used to harden weak tests.</li>
+      <li>E2E is focused on critical business journeys, not every line of code.</li>
+      <li>CI gates decide pass/fail. The model does not.</li>
+    </ol>
+
+    <h2>4) Recommended test stack</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Unit tests</h3>
+        <p>JUnit 5, Mockito, AssertJ</p>
+      </div>
+      <div class="card">
+        <h3>Coverage</h3>
+        <p>JaCoCo for line and branch coverage</p>
+      </div>
+      <div class="card">
+        <h3>Mutation</h3>
+        <p>PIT (pitest) for mutation score and surviving mutant analysis</p>
+      </div>
+      <div class="card">
+        <h3>Integration boundaries</h3>
+        <p>Testcontainers, WireMock, MockWebServer, REST-assured</p>
+      </div>
+      <div class="card">
+        <h3>E2E UI</h3>
+        <p>Playwright if you have a browser UI</p>
+      </div>
+      <div class="card">
+        <h3>Execution rails</h3>
+        <p>Makefile, Gradle tasks, Maven profiles, CI pipelines, pre-merge gates</p>
+      </div>
+    </div>
+
+    <h2>5) Coverage philosophy for legacy systems</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>What to optimize</th>
+          <th>Common trap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Unit coverage</td>
+          <td>Behavior and branch coverage in business logic</td>
+          <td>Trivial tests that only instantiate objects or call getters</td>
+        </tr>
+        <tr>
+          <td>Mutation coverage</td>
+          <td>Strong assertions and observable outcomes</td>
+          <td>Adding more mocks instead of better assertions</td>
+        </tr>
+        <tr>
+          <td>E2E coverage</td>
+          <td>Critical user journeys and failure recovery</td>
+          <td>Trying to cover every branch through browser tests</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>6) Rollout phases</h2>
+
+    <h3>Phase 1 — Create a testability map</h3>
+    <ul>
+      <li>Inventory modules, frameworks, and package responsibilities.</li>
+      <li>Identify side-effect boundaries: DB, HTTP, file system, queues, scheduler, time, randomness.</li>
+      <li>Flag code smells: God classes, static global access, hidden singletons, large methods, mixed concerns.</li>
+      <li>Rank packages by business criticality and change frequency.</li>
+    </ul>
+    <pre>Expected deliverable from Claude:
+- package/module inventory
+- risk map
+- test seam candidates
+- likely dead code
+- easiest coverage wins
+- highest-value mutation targets
+- highest-value e2e flows</pre>
+
+    <h3>Phase 2 — Freeze behavior with characterization tests</h3>
+    <ul>
+      <li>Write tests around existing behavior before refactoring fragile code.</li>
+      <li>Capture current output, persistence effects, emitted events, and error handling.</li>
+      <li>Use approval/golden style outputs only when behavior is hard to express with fine-grained assertions.</li>
+    </ul>
+
+    <h3>Phase 3 — Introduce test seams</h3>
+    <ul>
+      <li>Wrap static calls and globals behind interfaces.</li>
+      <li>Extract pure logic from orchestration-heavy classes.</li>
+      <li>Inject clocks, UUID generators, HTTP clients, repositories, and adapters.</li>
+      <li>Break giant methods into observable units.</li>
+    </ul>
+
+    <h3>Phase 4 — Raise unit and branch coverage</h3>
+    <ul>
+      <li>Generate tests package by package, not repo-wide all at once.</li>
+      <li>Require every test to state the behavior it protects.</li>
+      <li>Prefer AssertJ-rich assertions and state verification over mocking everything.</li>
+    </ul>
+
+    <h3>Phase 5 — Mutation hardening</h3>
+    <ul>
+      <li>Run PIT on touched modules first.</li>
+      <li>For every surviving mutant, classify it:</li>
+      <ul>
+        <li>missing assertion</li>
+        <li>too much mocking</li>
+        <li>dead code</li>
+        <li>equivalent mutant</li>
+        <li>needs small refactor for observability</li>
+      </ul>
+      <li>Strengthen tests before adding new ones.</li>
+    </ul>
+
+    <h3>Phase 6 — Lean E2E for critical flows</h3>
+    <ul>
+      <li>Cover the smallest set of high-value workflows that proves the system works as a whole.</li>
+      <li>Include failure and recovery, not just happy paths.</li>
+      <li>Push combinatorial detail down into unit/integration tests.</li>
+    </ul>
+
+    <h2>7) Practical definition of “100%”</h2>
+    <div class="callout">
+      <strong>Recommended interpretation:</strong> if leadership requires 100%, define it precisely. “100% e2e coverage” should mean all critical business flows and key states are covered, not that every line is hit through UI automation.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Reasonable interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>100% unit</td>
+          <td>All production classes in scope have line and branch tests, with explicit exclusions for generated/framework glue if policy allows.</td>
+        </tr>
+        <tr>
+          <td>100% mutation</td>
+          <td>All killable mutants in scope are killed, with reviewed suppressions for true equivalent mutants.</td>
+        </tr>
+        <tr>
+          <td>100% e2e</td>
+          <td>All mission-critical workflows, roles, major states, and failure-recovery paths are covered by system-level tests.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>8) Repo conventions for Claude</h2>
+    <p>Create a <code>CLAUDE.md</code> file at the repo root with strict rules.</p>
+    <pre># CLAUDE.md
+
+You are acting as a senior Java test architect for this legacy application.
+
+Goals:
+1) maximize meaningful unit and branch coverage
+2) maximize meaningful mutation coverage with PIT
+3) create a lean but complete e2e suite for critical business journeys
+4) preserve production behavior unless a refactor is explicitly proposed and justified
+
+Rules:
+- Never change production logic just to satisfy tests.
+- Start with characterization tests for fragile legacy areas.
+- Prefer stronger assertions over more mocks.
+- Prefer integration tests when behavior crosses boundaries and heavy mocking would hide risk.
+- For every generated test, add a short comment describing the behavior under test.
+- When mutation survives, first strengthen assertions, then consider a small refactor for observability.
+- Keep diffs small and grouped by package or workflow.
+- After changes, run the repo's mandated commands and report the results.
+
+Required report after each batch:
+- files changed
+- tests added
+- coverage delta
+- mutation delta
+- surviving mutants and likely reason
+- risky assumptions or refactors</pre>
+
+    <h2>9) Command rails Claude should always run</h2>
+    <p>Wrap your project commands so Claude can execute the same standard path every time.</p>
+    <pre># Example Makefile
+unit:
+	./mvnw -q -DskipITs test
+
+coverage:
+	./mvnw -q test jacoco:report
+
+mutation:
+	./mvnw -q -DskipITs org.pitest:pitest-maven:mutationCoverage
+
+integration:
+	./mvnw -q -Pintegration verify
+
+e2e:
+	./run-e2e.sh
+
+smoke:
+	make unit coverage
+
+full-check:
+	make unit coverage mutation integration e2e</pre>
+
+    <h2>10) CI quality gates</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Gate</th>
+          <th>What it prevents</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>JaCoCo threshold</td>
+          <td>Coverage regression and untested additions</td>
+        </tr>
+        <tr>
+          <td>PIT threshold</td>
+          <td>Weak assertions and shallow tests</td>
+        </tr>
+        <tr>
+          <td>Smoke e2e pack</td>
+          <td>Basic user flow breakage</td>
+        </tr>
+        <tr>
+          <td>Selective integration tests</td>
+          <td>Broken DB/API/message broker boundaries</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>11) Maven examples</h2>
+
+    <h3>JaCoCo</h3>
+    <pre>&lt;plugin&gt;
+  &lt;groupId&gt;org.jacoco&lt;/groupId&gt;
+  &lt;artifactId&gt;jacoco-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;0.8.11&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;prepare-agent&lt;/goal&gt;
+      &lt;/goals&gt;
+    &lt;/execution&gt;
+    &lt;execution&gt;
+      &lt;id&gt;report&lt;/id&gt;
+      &lt;phase&gt;test&lt;/phase&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;report&lt;/goal&gt;
+        &lt;goal&gt;check&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;configuration&gt;
+        &lt;rules&gt;
+          &lt;rule&gt;
+            &lt;element&gt;BUNDLE&lt;/element&gt;
+            &lt;limits&gt;
+              &lt;limit&gt;
+                &lt;counter&gt;LINE&lt;/counter&gt;
+                &lt;value&gt;COVEREDRATIO&lt;/value&gt;
+                &lt;minimum&gt;1.00&lt;/minimum&gt;
+              &lt;/limit&gt;
+              &lt;limit&gt;
+                &lt;counter&gt;BRANCH&lt;/counter&gt;
+                &lt;value&gt;COVEREDRATIO&lt;/value&gt;
+                &lt;minimum&gt;1.00&lt;/minimum&gt;
+              &lt;/limit&gt;
+            &lt;/limits&gt;
+          &lt;/rule&gt;
+        &lt;/rules&gt;
+      &lt;/configuration&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</pre>
+
+    <h3>PIT</h3>
+    <pre>&lt;plugin&gt;
+  &lt;groupId&gt;org.pitest&lt;/groupId&gt;
+  &lt;artifactId&gt;pitest-maven&lt;/artifactId&gt;
+  &lt;version&gt;1.15.8&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;targetClasses&gt;
+      &lt;param&gt;com.yourcompany.*&lt;/param&gt;
+    &lt;/targetClasses&gt;
+    &lt;targetTests&gt;
+      &lt;param&gt;com.yourcompany.*&lt;/param&gt;
+    &lt;/targetTests&gt;
+    &lt;mutationThreshold&gt;100&lt;/mutationThreshold&gt;
+    &lt;outputFormats&gt;
+      &lt;param&gt;HTML&lt;/param&gt;
+      &lt;param&gt;XML&lt;/param&gt;
+    &lt;/outputFormats&gt;
+    &lt;threads&gt;4&lt;/threads&gt;
+    &lt;timestampedReports&gt;false&lt;/timestampedReports&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</pre>
+
+    <div class="callout">
+      Start with lower thresholds on the first pass if your repo is far from the target, then ratchet upward per package. If leadership insists on immediate 100%, expect significant cleanup and suppression review work.</div>
+
+    <h2>12) Gradle examples</h2>
+    <pre>plugins {
+  id 'java'
+  id 'jacoco'
+  id 'info.solidsoft.pitest' version '1.15.0'
+}
+
+jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 1.0
+      }
+      limit {
+        counter = 'BRANCH'
+        value = 'COVEREDRATIO'
+        minimum = 1.0
+      }
+    }
+  }
+}
+
+pitest {
+  targetClasses = ['com.yourcompany.*']
+  targetTests = ['com.yourcompany.*']
+  mutationThreshold = 100
+  outputFormats = ['HTML', 'XML']
+  threads = 4
+  timestampedReports = false
+}</pre>
+
+    <h2>13) How Claude should work package by package</h2>
+    <pre>Iteration loop:
+1. Pick one package or one business workflow.
+2. Read production code and existing tests.
+3. Summarize current behavior and risks.
+4. Add or improve characterization tests.
+5. Propose the smallest safe refactor if testability is poor.
+6. Generate unit tests.
+7. Run unit + coverage.
+8. Run PIT on touched scope.
+9. Analyze surviving mutants.
+10. Strengthen tests or refactor for observability.
+11. Run smoke e2e if the workflow is user-visible.
+12. Produce a concise report.</pre>
+
+    <h2>14) Claude prompts you can reuse</h2>
+
+    <h3>A. Initial mapping prompt</h3>
+    <pre>You are reviewing a legacy Java application to improve meaningful unit coverage, mutation coverage, and e2e reliability.
+
+Tasks:
+- map the package structure and module responsibilities
+- identify business-critical flows
+- identify side-effect boundaries: DB, HTTP, file system, queues, schedulers, time, randomness
+- identify hard-to-test areas and why they are hard to test
+- identify dead code or suspicious low-value code
+- recommend a phased coverage plan ranked by value and difficulty
+
+Output format:
+1. package/module map
+2. critical workflow map
+3. test seam opportunities
+4. top 10 coverage wins
+5. top 10 mutation-risk areas
+6. top 10 e2e workflow candidates</pre>
+
+    <h3>B. Unit test generation prompt</h3>
+    <pre>Act as a senior Java test engineer.
+
+For the selected package:
+- read existing production code and tests
+- do not change production behavior
+- generate tests for meaningful branches and edge cases
+- avoid trivial tests and avoid overspecifying internals
+- prefer assertive behavior-focused tests over mock-heavy tests
+- comment each test with the behavior it protects
+- run tests and report failures clearly
+
+At the end provide:
+- files changed
+- why each new test matters
+- missing seams that limit test quality</pre>
+
+    <h3>C. Mutation analysis prompt</h3>
+    <pre>PIT reports surviving mutants in the selected package.
+
+For each survivor:
+- explain what behavior changed
+- classify the reason the mutant survived
+- propose the smallest improvement to kill it
+- prefer stronger assertions before adding mocks
+- identify equivalent mutants separately
+- only propose production refactors if they improve observability or separability without changing behavior
+
+Return a table with:
+- class
+- mutant type
+- likely reason survived
+- recommended fix
+- whether it is likely equivalent</pre>
+
+    <h3>D. E2E design prompt</h3>
+    <pre>Design a lean e2e suite for this application.
+
+Requirements:
+- cover business-critical workflows only
+- include auth/permissions, validation failure, dependency failure, retry/recovery, and persistence verification where relevant
+- minimize brittle UI selectors and repeated setup
+- identify which checks belong in e2e versus integration versus unit
+
+Output:
+1. prioritized flow list
+2. reasons each flow belongs in e2e
+3. Playwright or REST-assured test skeletons
+4. test data and environment requirements</pre>
+
+    <h2>15) How to handle surviving mutants intelligently</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Mutant pattern</th>
+          <th>What it usually means</th>
+          <th>What to do</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Conditional boundary changed and survived</td>
+          <td>Edge case missing</td>
+          <td>Add boundary assertions for exact branch behavior</td>
+        </tr>
+        <tr>
+          <td>Return value mutation survived</td>
+          <td>Test never asserted the actual outcome</td>
+          <td>Assert returned data, persisted state, or emitted side effect</td>
+        </tr>
+        <tr>
+          <td>Void call removal survived</td>
+          <td>Interaction or side-effect not observed</td>
+          <td>Verify side effect through state or meaningful interaction checks</td>
+        </tr>
+        <tr>
+          <td>Math/operator mutation survived</td>
+          <td>Weak assertions</td>
+          <td>Strengthen exact-value assertions and boundary cases</td>
+        </tr>
+        <tr>
+          <td>Equivalent mutant</td>
+          <td>No observable semantic difference</td>
+          <td>Suppress with review, document why</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>16) E2E flow model</h2>
+    <p>For a legacy business app, define e2e around workflows, not pages.</p>
+    <pre>Recommended e2e flow categories:
+- sign in / role-based access
+- create primary business entity
+- edit and persist changes
+- invalid input / validation handling
+- approval or review workflow
+- downstream dependency failure and user-visible recovery
+- retries / idempotency / duplicate submission protection
+- search / retrieval / reporting path
+- audit trail or event emission verification
+- logout / session expiration / permission denial</pre>
+
+    <h2>17) Anti-patterns to avoid</h2>
+    <ul>
+      <li>Changing production logic only to make tests pass.</li>
+      <li>Generating thousands of shallow tests with almost no assertions.</li>
+      <li>Mocking the entire world so mutation survives anyway.</li>
+      <li>Trying to get 100% e2e by pushing all branch coverage into browser tests.</li>
+      <li>Running PIT across the entire monolith on every tiny change.</li>
+      <li>Ignoring equivalent mutants and wasting time fighting the tool.</li>
+    </ul>
+
+    <h2>18) Suggested implementation path for the first 30 days</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Primary goal</th>
+          <th>Output</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Map the repo, define scope, add command rails, baseline metrics</td>
+          <td>Coverage baseline, mutation baseline, flow inventory, CLAUDE.md, CI skeleton</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Characterization tests and seams for top-risk packages</td>
+          <td>Stable first package, safer refactor boundaries</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Raise unit and branch coverage package by package</td>
+          <td>Visible progress on critical modules</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>PIT hardening and first lean e2e pack</td>
+          <td>Higher confidence tests, smoke system validation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>19) Final recommendation</h2>
+    <div class="success">
+      The best way to use Claude here is: <strong>Claude in-repo + strict repo instructions + deterministic commands + CI gates + phased coverage strategy.</strong>
+      <br /><br />
+      Use managed agents only if you need cloud-hosted, stateful, cross-session autonomous execution at scale. For a legacy Java testing push, they are usually optional, not necessary.
+    </div>
+
+    <div class="footer">
+      Built as a practical single-page playbook for direct download and team sharing.
+    </div>
+  </div>
+</body>
+</html>
