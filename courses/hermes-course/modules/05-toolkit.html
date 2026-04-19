@@ -1,0 +1,499 @@
+<section class="module" id="module-5" style="background: var(--color-bg)">
+  <div class="module-content">
+
+    <!-- ═══════════════════════════════════════════════════════ HEADER -->
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">40+ Powers — The Toolkit</h1>
+      <p class="module-subtitle">Every tool Hermes wields, how toolsets control access, and the safety gate that protects you from dangerous commands</p>
+    </header>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 1: The Tool Zoo -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Tool Zoo</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-6)">
+        When you ask Hermes to build a REST API, it doesn&rsquo;t guess what commands to run. It has 40+ specific <span class="term" data-definition="A named capability Hermes can invoke to take a real-world action — like running a shell command, reading a file, or searching the web. Tools are the hands that let Hermes act, not just talk.">tools</span> — each purpose-built for exactly one kind of task. Think of it like a Swiss Army knife: every blade is specialized, retractable when not needed, and there&rsquo;s a safety lock for the dangerous ones.
+      </p>
+
+      <div class="pattern-cards animate-in stagger-children">
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-info-light)">💻</div>
+          <h4 class="pattern-title">Terminal Tools</h4>
+          <p class="pattern-desc">Run <span class="term" data-definition="An instruction typed into a terminal that tells the operating system to do something — like 'git status' or 'npm install'. Also called a shell command or CLI command.">shell commands</span>, manage background processes, interact with <span class="term" data-definition="A version control system that tracks changes to files over time. Git lets you save snapshots of your code, collaborate with others, and roll back mistakes.">git</span>, and execute scripts inside any configured runtime environment.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-success-light)">📄</div>
+          <h4 class="pattern-title">File Tools</h4>
+          <p class="pattern-desc">Read, write, <span class="term" data-definition="Apply a patch — a set of targeted changes that modifies only specific lines in a file, rather than rewriting the whole thing. Like surgical edits.">patch</span>, and search through your entire codebase. These are the most-used tools in any coding session.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: #EEE8F7">🌐</div>
+          <h4 class="pattern-title">Web Tools</h4>
+          <p class="pattern-desc">Search the internet, browse any URL, and extract structured content from web pages. Hermes can read documentation, Stack Overflow answers, and live APIs without leaving your terminal.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: #FDF5E0">🧠</div>
+          <h4 class="pattern-title">Memory Tools</h4>
+          <p class="pattern-desc">Read and write to <span class="term" data-definition="A plain-text file where Hermes stores facts about you and your projects — preferences, recurring patterns, credentials structure, anything it should remember between sessions.">MEMORY.md</span> and <span class="term" data-definition="A plain-text file where Hermes stores facts specific to you as a person — your name, working style, preferences. Injected into every conversation as context.">USER.md</span>. This is how Hermes builds up knowledge about you and your projects over time.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">📋</div>
+          <h4 class="pattern-title">Skills Tools</h4>
+          <p class="pattern-desc">List, view, and invoke <span class="term" data-definition="A saved, reusable procedure Hermes created from a past complex task. Like a recipe card — Hermes writes it once, then follows it automatically next time the same situation arises.">skills</span>. Skills are Hermes&rsquo; learned knowledge — procedures it wrote for itself after solving hard problems.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid #2D8B55">
+          <div class="pattern-icon" style="background: var(--color-success-light)">🤖</div>
+          <h4 class="pattern-title">Delegation</h4>
+          <p class="pattern-desc">Spawn and manage <span class="term" data-definition="A smaller AI agent that a parent agent creates to handle a specific sub-task in parallel. Like hiring a temporary assistant for one part of a bigger project — they work independently and report back.">subagents</span> to work on sub-tasks in parallel. One Hermes can become many, each focused on a different piece of your request.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid #8B6BAE">
+          <div class="pattern-icon" style="background: #EEE8F7">⏰</div>
+          <h4 class="pattern-title">Cron Tools</h4>
+          <p class="pattern-desc">Create and manage <span class="term" data-definition="A scheduled task that runs automatically at a specific time or interval — like 'every Monday at 9am, check my inbox and summarize new messages.' Named after the Unix cron scheduler.">scheduled tasks</span>. Tell Hermes to run a report every morning, check a price every hour, or back up files every night.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid #C96B2A">
+          <div class="pattern-icon" style="background: #FDF0E0">🎤</div>
+          <h4 class="pattern-title">Voice &amp; Vision</h4>
+          <p class="pattern-desc"><span class="term" data-definition="Convert spoken audio into written text. Hermes uses a speech-to-text model to turn voice memos into transcripts it can then process.">Transcribe</span> audio files and analyze images. Drop a voice memo or screenshot into a session and Hermes reads it the same way it reads a text file.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-info)">
+          <div class="pattern-icon" style="background: var(--color-info-light)">🔌</div>
+          <h4 class="pattern-title">MCP Tools</h4>
+          <p class="pattern-desc">Connect to external services like Google Drive, Gmail, and GitHub via the <span class="term" data-definition="Model Context Protocol — a standard for connecting AI agents to external services. Like a universal adapter plug: instead of custom code per service, MCP provides a consistent interface Hermes already speaks.">Model Context Protocol</span>. Each connected service appears to Hermes as a set of native tools.</p>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">📦</div>
+        <div class="callout-content">
+          <strong class="callout-title">Where tools live in the code</strong>
+          <p>All tools are registered in <code>tools/registry.py</code>. The agent selects which ones to load based on the active <span class="term" data-definition="A named group of related tools that can be enabled or disabled together. Like a permission tier — subscribe to 'web' and get all web-browsing capabilities at once.">toolset</span> configuration. You never need to touch this file — but knowing it exists tells you exactly where to look when you want to understand what Hermes can do.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 2: Toolsets — The Permission System -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Toolsets — The Permission System</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-6)">
+        Tools are grouped into <span class="term" data-definition="A named group of related tools that can be enabled or disabled as a unit. Enabling a toolset gives Hermes access to every tool in that category. Disabling it removes all of them.">toolsets</span> — named permission tiers. Instead of toggling 40 individual tools, you enable or disable entire categories. It&rsquo;s the difference between handing someone a whole toolbox vs. one specific wrench.
+      </p>
+
+      <div class="badge-list animate-in">
+        <div class="badge-item">
+          <code class="badge-code">terminal</code>
+          <span class="badge-desc">Run shell commands, manage processes, execute scripts in the runtime environment</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">file</code>
+          <span class="badge-desc">Read, write, patch, and search files in the local filesystem</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">web</code>
+          <span class="badge-desc">Search Google, browse URLs, extract structured content from web pages</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">memory</code>
+          <span class="badge-desc">Read and write to MEMORY.md and USER.md — Hermes&rsquo; long-term notes</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">skills</code>
+          <span class="badge-desc">List, view, and invoke saved skill procedures from the skills library</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">delegation</code>
+          <span class="badge-desc">Spawn subagents to handle sub-tasks in parallel — the multiplier tool</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">moa</code>
+          <span class="badge-desc"><span class="term" data-definition="Mixture-of-Agents — a mode where multiple AI models collaborate on a single response, each contributing their strengths. Hermes routes different parts of a task to whichever model is best at that type of work.">Mixture-of-agents</span> mode — route sub-tasks to multiple AI models simultaneously for higher-quality results</span>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-content">
+          <strong class="callout-title">Subagents get a restricted toolset</strong>
+          <p>When Hermes delegates work to a subagent, that subagent receives a narrower toolset: <code>terminal</code>, <code>file</code>, and <code>web</code> only. No delegation (subagents cannot spawn further subagents by default), no memory writes, no moa. This is a deliberate safety boundary — controlled recursion, not unlimited sprawl.</p>
+        </div>
+      </div>
+
+      <div class="callout animate-in" style="background: var(--color-info-light); border-left: 4px solid var(--color-info); border-radius: var(--radius-md); padding: var(--space-6); margin-top: var(--space-6); display: flex; gap: var(--space-4)">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why this matters to you</strong>
+          <p>Knowing the toolset system means you can tell Hermes exactly what it&rsquo;s allowed to touch — and what it isn&rsquo;t. Running Hermes in a read-only audit mode? Disable <code>terminal</code>, <code>file</code> writes, and <code>delegation</code>. Running an automated pipeline? Disable <code>memory</code> writes so it doesn&rsquo;t pollute your notes with automation artifacts.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 3: The Dangerous Command Gate -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Dangerous Command Gate</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-6)">
+        Before Hermes runs any <span class="term" data-definition="An instruction typed into a terminal that tells the operating system to do something. Shell commands can read files, delete folders, change permissions, format drives — they have real-world consequences.">shell command</span>, it checks it against a list of dangerous patterns. If the command matches, execution halts and you get to decide what happens next. This is your safety net.
+      </p>
+
+      <!-- Code ↔ English Translation -->
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE — tools/approval.py</span>
+          <pre><code>
+<span class="code-line"><span class="code-property">DANGEROUS_PATTERNS</span> <span class="code-operator">=</span> [</span>
+<span class="code-line">  (<span class="code-string">r&apos;\brm\s+(-[^\s]*\s+)*/&apos;</span>,</span>
+<span class="code-line">    <span class="code-string">&quot;delete in root path&quot;</span>),</span>
+<span class="code-line">  (<span class="code-string">r&apos;\brm\s+-[^\s]*r&apos;</span>,</span>
+<span class="code-line">    <span class="code-string">&quot;recursive delete&quot;</span>),</span>
+<span class="code-line">  (<span class="code-string">r&apos;\brm\s+--recursive\b&apos;</span>,</span>
+<span class="code-line">    <span class="code-string">&quot;recursive delete (long flag)&quot;</span>),</span>
+<span class="code-line">  (<span class="code-string">r&apos;\bchmod\s+(-[^\s]*\s+)*&apos;</span></span>
+<span class="code-line">   <span class="code-string">r&apos;(777|666|o\+[rwx]*w|a\+[rwx]*w)\b&apos;</span>,</span>
+<span class="code-line">    <span class="code-string">&quot;world/other-writable permissions&quot;</span>),</span>
+<span class="code-line">]</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><code>DANGEROUS_PATTERNS</code> is a list of pairs: each pair is a <span class="term" data-definition="Regular expression — a pattern-matching language for text. It describes a pattern rather than an exact string. For example, the pattern '\brm\s+-[^\s]*r' matches any command starting with 'rm' followed by a flag containing the letter r — like rm -rf, rm -r, rm -Rf.">regex</span> pattern and a human-readable description of why it&rsquo;s dangerous.</p>
+            <p class="tl">The first three patterns catch variations of <code>rm -rf</code> — the delete-everything command. The <code>\b</code> anchors mean the pattern only matches the word <em>rm</em>, not a longer word like <em>prompt</em>.</p>
+            <p class="tl">The <code>chmod 777</code> pattern catches attempts to make files world-writable — a common security mistake that opens files to any user or process on the system.</p>
+            <p class="tl">There are 40+ patterns in total, covering: SQL DROP/DELETE, disk formatting, fork bombs, piping remote scripts to shell, git force pushes, and self-termination commands. Every real danger has a named pattern.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approval levels -->
+      <h3 class="animate-in" style="margin: var(--space-10) 0 var(--space-4)">Three Approval Levels</h3>
+      <div class="icon-rows animate-in stagger-children">
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-success)">✅</div>
+          <div>
+            <strong>Approve Once</strong>
+            <p>Allow this specific command right now, for this one invocation only. Next time the same command appears, Hermes will ask again.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-info)">🔓</div>
+          <div>
+            <strong>Approve for Session</strong>
+            <p>Allow this pattern for the rest of this conversation. When you close the session and start a new one, the approval resets. Useful for repetitive workflows in a single work session.</p>
+          </div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-4)">📝</div>
+          <div>
+            <strong>Add to <span class="term" data-definition="A list of commands or patterns pre-approved to run without asking. The opposite of a blocklist — it says what IS allowed rather than what is not. Stored in config.yaml and survives across sessions.">Allowlist</span></strong>
+            <p>Save this pattern permanently to <code>config.yaml</code>. Hermes will never ask about it again, across all future sessions. Use this for commands you run all the time in automated workflows.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-6)">
+        <div class="callout-icon">🤖</div>
+        <div class="callout-content">
+          <strong class="callout-title">Smart approval — the auto-approver</strong>
+          <p>Hermes uses a fast secondary AI model to pre-screen flagged commands. If the model determines the command is clearly low-risk in context, it auto-approves silently. You are only interrupted when the command is <em>genuinely</em> ambiguous or dangerous — not for every false alarm.</p>
+        </div>
+      </div>
+
+      <!-- Group Chat Animation -->
+      <h3 class="animate-in" style="margin: var(--space-10) 0 var(--space-4)">Live Example: Approval in Action</h3>
+      <div class="chat-window" id="chat-module-5">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">User</span>
+              <p>Clean up the old build artifacts — delete everything in the dist/ folder.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>I will run: <code>rm -rf ./dist</code></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="safety" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">SafetyCheck</span>
+              <p>HOLD — recursive delete detected. This matches dangerous pattern: <strong>recursive delete</strong>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>Pausing for approval. User, I want to run: <code>rm -rf ./dist</code> — delete the entire dist/ folder. Approve?</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">User</span>
+              <p>Yes, that is safe.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>Got it. Running... Done. dist/ deleted. Do you want me to add this pattern to your allowlist?</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">User</span>
+              <p>Yes, always allow rm -rf ./dist</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>Added to allowlist. I will never ask about this again.</p>
+            </div>
+          </div>
+
+        </div>
+        <div class="chat-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module-5-typing-avatar" style="background: var(--color-actor-2)">H</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 4: MCP — Connect to Anything -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">MCP — Connect to Anything</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-6)">
+        The <span class="term" data-definition="Model Context Protocol — an open standard for connecting AI agents to external services. Rather than each tool needing custom integration code, MCP provides a universal interface: any service that speaks MCP immediately works with any agent that speaks MCP.">Model Context Protocol</span> turns Hermes into a universal connector. Google Drive, Gmail, GitHub, Notion, Slack — if there&rsquo;s an MCP <span class="term" data-definition="A small program that runs alongside Hermes and translates between an external service's API and the MCP standard. You install a connector once; Hermes uses it automatically.">connector</span> for it, Hermes can read and write it.
+      </p>
+
+      <div class="step-cards animate-in stagger-children">
+
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>You enable a connector</strong>
+            <p>Add the connector to your config — for example, the Google Drive MCP server. Hermes discovers it automatically on next startup.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Hermes guides you through <span class="term" data-definition="A secure login standard where you authorize an app to access your accounts without sharing your password. You log in on the service's own website and it gives Hermes a limited-access token. Like giving someone a valet key — works for one specific purpose, can be revoked anytime.">OAuth</span> login — once</strong>
+            <p>The first time you use a connected service, Hermes walks you through authenticating on that service&rsquo;s own website. You log in directly — Hermes never sees your password.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Credentials are stored securely</strong>
+            <p>The access <span class="term" data-definition="A secret string a service gives you after login that proves you're authorized. Like a temporary key-card — valid for a limited time and can be revoked without changing your password.">token</span> is saved in Hermes&rsquo; local credential store. Future sessions reuse it automatically — no re-login needed until the token expires.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Google Drive appears as native tools</strong>
+            <p>Hermes now has tools like <code>gdrive_list_files</code>, <code>gdrive_read_doc</code>, <code>gdrive_create_doc</code>. They show up exactly like built-in tools — no special syntax needed.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Hermes reads, searches, and writes your Drive</strong>
+            <p>Ask "find my Q3 budget spreadsheet and summarize it" — Hermes searches Drive, reads the file, and replies. All in one message, same as any other task.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-6)">
+        <div class="callout-icon">🔍</div>
+        <div class="callout-content">
+          <strong class="callout-title">The AI cannot tell the difference</strong>
+          <p>MCP tools look exactly like built-in tools to the AI model. The model does not know or care whether it&rsquo;s reading a local file or a Google Doc — it just receives the content as text. This means every skill Hermes has for analyzing code or summarizing documents works equally well on MCP-sourced data.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 5: Match the Task + Quiz -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Match the Task</h2>
+
+      <p class="animate-in" style="margin-bottom: var(--space-6); max-width: 60ch">
+        Drag each task to the toolset that would handle it. Some tasks may feel ambiguous — that&rsquo;s the point. Think about what kind of operation is actually happening.
+      </p>
+
+      <!-- Drag-and-Drop -->
+      <div class="dnd-container animate-in" id="dnd-module-5">
+        <p style="margin-bottom: var(--space-4); color: var(--color-text-secondary)">Drag each task to the right toolset:</p>
+        <div class="dnd-chips">
+          <div class="dnd-chip" draggable="true" data-answer="web">Browse Stack Overflow</div>
+          <div class="dnd-chip" draggable="true" data-answer="terminal">Run npm install</div>
+          <div class="dnd-chip" draggable="true" data-answer="file">Write a config file</div>
+          <div class="dnd-chip" draggable="true" data-answer="voice">Transcribe a voice memo</div>
+          <div class="dnd-chip" draggable="true" data-answer="web">Search Google for docs</div>
+          <div class="dnd-chip" draggable="true" data-answer="file">Read package.json</div>
+        </div>
+        <div class="dnd-zones">
+          <div class="dnd-zone" data-correct="web">
+            <p class="dnd-zone-label">🌐 Web Tools</p>
+            <div class="dnd-zone-target">Drop here</div>
+          </div>
+          <div class="dnd-zone" data-correct="terminal">
+            <p class="dnd-zone-label">💻 Terminal Tools</p>
+            <div class="dnd-zone-target">Drop here</div>
+          </div>
+          <div class="dnd-zone" data-correct="file">
+            <p class="dnd-zone-label">📄 File Tools</p>
+            <div class="dnd-zone-target">Drop here</div>
+          </div>
+          <div class="dnd-zone" data-correct="voice">
+            <p class="dnd-zone-label">🎤 Voice Tools</p>
+            <div class="dnd-zone-target">Drop here</div>
+          </div>
+        </div>
+        <button class="quiz-check-btn" style="margin-top: var(--space-4)" onclick="checkDnD('dnd-module-5')">Check Matches</button>
+        <button class="quiz-reset-btn" onclick="resetDnD('dnd-module-5')">Reset</button>
+      </div>
+
+      <!-- Quiz -->
+      <h3 class="animate-in" style="margin: var(--space-12) 0 var(--space-6)">Check Your Understanding</h3>
+
+      <div class="quiz-container animate-in" id="quiz-module-5">
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! The allowlist is the right tool here. It is specific (only this pattern), permanent (survives sessions), and auditable (visible in config.yaml)."
+             data-explanation-wrong="Disabling all checks is a security antipattern. The allowlist lets you be specific: allow exactly this command, for exactly this use case.">
+          <h3 class="quiz-question">You are running Hermes in an automated workflow where it needs to delete temp files regularly. It keeps pausing to ask for approval. What is the most permanent fix?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Disable the dangerous command detection entirely</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Add the specific command pattern to the permanent allowlist in config.yaml</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Use a different tool instead</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! Toolsets are the right abstraction for permission control. One config setting restricts access to the entire category of tools."
+             data-explanation-wrong="Instructions in a prompt are suggestions, not hard constraints. Toolsets are enforced at the code level — the agent literally cannot call tools it does not have access to.">
+          <h3 class="quiz-question">You want Hermes to only browse the web — no terminal access, no file writes. How would you restrict this?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Tell Hermes in the system prompt not to use terminal tools</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Configure the toolset to only include the web toolset</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Delete the terminal tool files from the codebase</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Exactly! MCP is a connection layer, not a sync service. Data flows through Hermes when needed and stays in its context window — it is not persisted."
+             data-explanation-wrong="MCP tools are like API calls — they fetch data when called. Hermes does not cache or store external data unless you explicitly ask it to write something.">
+          <h3 class="quiz-question">You connected Gmail via MCP. Is your email data now stored permanently inside Hermes?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — Hermes indexes all your emails into a local database</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — MCP tools fetch data on demand. Hermes reads emails when asked, but does not store them persistently.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It depends on your privacy settings</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module-5')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module-5')">Try Again</button>
+      </div>
+
+      <!-- Glossary -->
+      <div class="callout animate-in" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-6); margin-top: var(--space-10)">
+        <div class="callout-icon">📖</div>
+        <div class="callout-content">
+          <strong class="callout-title">Module 5 Glossary</strong>
+          <p style="margin-top: var(--space-3); color: var(--color-text-secondary)">Hover any <span class="term" data-definition="Glossary terms are highlighted in this course. Hover over them to see a plain-English definition.">highlighted term</span> throughout the module to see its definition. Key terms in this module:</p>
+          <div class="badge-list" style="margin-top: var(--space-4)">
+            <div class="badge-item"><code class="badge-code">toolset</code><span class="badge-desc">A named group of related tools that can be enabled or disabled together</span></div>
+            <div class="badge-item"><code class="badge-code">MCP</code><span class="badge-desc">Model Context Protocol — a universal adapter for connecting Hermes to external services</span></div>
+            <div class="badge-item"><code class="badge-code">OAuth</code><span class="badge-desc">A secure login flow where you authorize access without sharing your password</span></div>
+            <div class="badge-item"><code class="badge-code">regex</code><span class="badge-desc">Regular expression — a pattern language for matching text, used to detect dangerous commands</span></div>
+            <div class="badge-item"><code class="badge-code">allowlist</code><span class="badge-desc">Pre-approved command patterns that run without asking — stored in config.yaml</span></div>
+            <div class="badge-item"><code class="badge-code">shell command</code><span class="badge-desc">An instruction that tells the OS to do something — like git status or npm install</span></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</section>

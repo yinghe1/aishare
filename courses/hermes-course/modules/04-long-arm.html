@@ -1,0 +1,570 @@
+<section class="module" id="module-4" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+
+    <!-- ═══════════════════════════════════════════════════════ HEADER -->
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">The Long Arm</h1>
+      <p class="module-subtitle">How Hermes reaches beyond your laptop — to your phone, the cloud, and a team of parallel agents</p>
+    </header>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 1: The Gateway — Always-On Ears -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Gateway — Always-On Ears</h2>
+
+      <div class="callout callout-accent animate-in" style="margin-bottom: var(--space-8)">
+        <div class="callout-icon">📡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Most AI tools only work when your laptop is open.</strong>
+          <p>Hermes runs on a $5 VPS, a cloud cluster, or a serverless platform — and you can talk to it from Telegram while it works. Here is how it reaches so far.</p>
+        </div>
+      </div>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        The
+        <span class="term" data-definition="A process that listens for incoming messages from platforms like Telegram or Discord and forwards them to Hermes. Like a hotel receptionist who takes calls and routes them to the right room.">Gateway</span>
+        is a separate process that runs alongside Hermes, listening for incoming messages 24/7.
+        When you send a message on Telegram, it arrives here first — then gets handed off to the AI.
+      </p>
+
+      <!-- Data Flow Animation -->
+      <div class="flow-animation animate-in" data-steps='[
+        {"highlight":"flow-actor-1","label":"You send a message on Telegram: Check the server status"},
+        {"highlight":"flow-actor-2","label":"Telegram receives the message and notifies Hermes via webhook","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Gateway receives the webhook and starts a new agent session","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"AIAgent spins up and begins processing your request","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-4","label":"AIAgent runs tools: uptime, disk usage, memory check"},
+        {"highlight":"flow-actor-3","label":"Response formatted and sent back through Gateway","packet":true,"from":"actor-4","to":"actor-3"},
+        {"highlight":"flow-actor-2","label":"Gateway delivers reply via Telegram API","packet":true,"from":"actor-3","to":"actor-2"},
+        {"highlight":"flow-actor-1","label":"You receive the server status report on your phone","packet":true,"from":"actor-2","to":"actor-1"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">📱</div>
+            <span>You</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">✈️</div>
+            <span>Telegram</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">🌐</div>
+            <span>Gateway</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">🤖</div>
+            <span>AIAgent</span>
+          </div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click &ldquo;Next Step&rdquo; to begin</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <h3 class="animate-in" style="margin-top: var(--space-10); margin-bottom: var(--space-6)">Supported Platforms</h3>
+      <p class="animate-in" style="margin-bottom: var(--space-6)">
+        The Gateway adapts to wherever you are. Use the
+        <span class="term" data-definition="A way for one service to instantly notify another when something happens. Like a doorbell — when someone rings (sends a message), Telegram immediately pings Hermes.">webhook</span>
+        to connect Hermes to any of these:
+      </p>
+
+      <div class="icon-rows animate-in stagger-children">
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-2)">📱</div>
+          <div><strong>Telegram</strong><p>Most popular — rich bot API, fast delivery, works great on mobile. The reference implementation for Hermes Gateway.</p></div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-3)">🎮</div>
+          <div><strong>Discord</strong><p>Server-based — great for teams. Multiple people can interact with the same Hermes instance through a shared channel.</p></div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-4)">💼</div>
+          <div><strong>Slack</strong><p>Enterprise-friendly — plugs into the workspace your company already uses. Ideal for internal tooling and automation.</p></div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-5)">💬</div>
+          <div><strong>WhatsApp</strong><p>Personal and universal — requires a Meta Business API account. Reaches users who live in WhatsApp.</p></div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-1)">🔒</div>
+          <div><strong>Signal</strong><p>Privacy-focused — end-to-end encrypted by default. Best when message content is sensitive.</p></div>
+        </div>
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-accent)">📧</div>
+          <div><strong>Email</strong><p>Universal fallback — no app install required. Useful for long-form responses and automated reports.</p></div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">The Gateway is a separate process.</strong>
+          <p>When Hermes runs in the cloud, the Gateway is what keeps it connected to the outside world.
+          It acts as a
+          <span class="term" data-definition="A background process that keeps running silently even when you are not looking at it. Like a security guard who works the night shift — present but invisible.">daemon</span>
+          — always listening, always ready to route your next message.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 2: Six Places to Run -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Six Places to Run</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Hermes is not tied to your machine. Each
+        <span class="term" data-definition="The environment where Hermes runs its terminal commands — your local machine, a Docker container, a remote server via SSH, or a cloud platform.">terminal backend</span>
+        is a different place where Hermes can execute commands and do real work.
+        Choose based on where your data is and how much isolation you need.
+      </p>
+
+      <div class="pattern-cards animate-in stagger-children">
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🏠</div>
+          <h4 class="pattern-title"><code>local</code></h4>
+          <p class="pattern-desc">Your own machine. Direct access to your files and environment. Default for most developers getting started.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">📦</div>
+          <h4 class="pattern-title"><code>docker</code></h4>
+          <p class="pattern-desc">Isolated
+          <span class="term" data-definition="A lightweight, isolated environment that packages code and its dependencies together. Like a clean room — what happens inside does not affect the outside.">container</span>
+          on your machine. Great for keeping experiments clean without touching your main setup.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🖥️</div>
+          <h4 class="pattern-title"><code>ssh</code></h4>
+          <p class="pattern-desc">Remote server over
+          <span class="term" data-definition="Secure Shell — an encrypted connection to a remote computer. Like a private tunnel between your laptop and a server anywhere in the world.">SSH</span>.
+          Run Hermes on a beefy cloud VM while controlling it from your laptop.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">☁️</div>
+          <h4 class="pattern-title"><code>daytona</code></h4>
+          <p class="pattern-desc">Managed dev environment — spins up on demand, costs nothing when idle. Truly untethered from your laptop. One of the two recommended cloud backends.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🔬</div>
+          <h4 class="pattern-title"><code>singularity</code></h4>
+          <p class="pattern-desc">HPC
+          <span class="term" data-definition="High-Performance Computing — university or research lab clusters with massive compute power, used for scientific simulations, model training, and large-scale data processing.">cluster</span>
+          support. For researchers who need Hermes to orchestrate jobs on institutional supercomputers.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">⚡</div>
+          <h4 class="pattern-title"><code>modal</code></h4>
+          <p class="pattern-desc">
+          <span class="term" data-definition="A cloud computing model where your code runs on demand and you only pay when it runs. The infrastructure hibernates when idle — no ongoing cost, no always-on server to maintain.">Serverless</span>
+          GPU — hibernates when idle, wakes in seconds. Costs nearly nothing between sessions. The second recommended cloud backend.</p>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Daytona and Modal are the untethered options.</strong>
+          <p>They run in the cloud and cost nearly nothing when idle. Pair either with the Gateway and you have a fully autonomous Hermes instance that works even while your laptop is off.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 3: The Cron Scheduler -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Cron Scheduler — Standing Orders</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        A
+        <span class="term" data-definition="A scheduling system that runs tasks at specific times. Named after the Greek god of time. A cron job is like a standing appointment in a calendar.">cron</span>
+        job is a task that fires on a schedule — every morning, every hour, once a week.
+        Hermes has a built-in cron scheduler that accepts natural language prompts instead of cryptic time codes.
+      </p>
+
+      <div class="step-cards animate-in stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>You give a standing order in chat</strong>
+            <p>&ldquo;Every morning at 8am, summarize my unread emails and send the digest to my Telegram.&rdquo; No time codes, no config files — just plain English.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Hermes registers the cron job</strong>
+            <p>The scheduler stores your prompt, the trigger time, and the target platform. It persists across restarts — the order stands until you cancel it.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Scheduler fires at 8am</strong>
+            <p>The scheduler wakes up and starts a fresh, isolated agent session — completely separate from any conversation you might be having at the time.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Agent runs the task and sends results</strong>
+            <p>The session executes your prompt, reads emails, writes the summary, and delivers it via the
+            <span class="term" data-definition="A process that listens for incoming messages from platforms like Telegram or Discord and forwards them to Hermes. Like a hotel receptionist who takes calls and routes them to the right room.">Gateway</span>
+            to your Telegram account.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-content">
+          <strong class="callout-title">Cron prompts are scanned for injection attacks before running.</strong>
+          <p>If someone tricks you into creating a malicious cron job — by embedding a hidden instruction in a document you process — the scanner catches it before the scheduled session fires.
+          This is prompt injection defense built into the scheduling layer.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-6); border-left-color: var(--color-accent-muted)">
+        <div class="callout-icon">🔵</div>
+        <div class="callout-content">
+          <strong class="callout-title">Each cron job gets its own isolated session.</strong>
+          <p>It runs independently — not inside your current conversation. Think of it as Hermes clocking in for a separate shift to handle the standing order, then clocking out when done.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 4: Delegation — The Army of One -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Delegation — The Army of One</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        When a task can be split into parallel tracks, Hermes spawns
+        <span class="term" data-definition="A child AI agent spawned by a parent agent to handle a specific sub-task. Has its own isolated context and toolset, works independently, and reports back when done.">subagents</span>.
+        Each child gets its own isolated session, its own tools, and a focused goal.
+        The parent waits for all children to finish, then synthesizes the results.
+      </p>
+
+      <!-- Group Chat Animation -->
+      <div class="chat-window animate-in" id="chat-module-4">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">You</span>
+              <p>Research the top 3 Python testing frameworks — compare performance, ecosystem, and ease of use.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="parent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">P</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">HermesParent</span>
+              <p>This is a research task I can parallelize. Spawning 3 subagents.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="child1" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">1</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Child 1</span>
+              <p>Starting research on <strong>pytest</strong>&hellip;</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="child2" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-4)">2</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-4)">Child 2</span>
+              <p>Starting research on <strong>unittest</strong>&hellip;</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="child3" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-5)">3</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-5)">Child 3</span>
+              <p>Starting research on <strong>hypothesis</strong>&hellip;</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="child1" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">1</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Child 1</span>
+              <p>pytest complete. 8,000+ plugins, 10ms avg test time, de facto standard.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="child2" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-4)">2</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-4)">Child 2</span>
+              <p>unittest complete. Built into Python stdlib, no install needed, verbose syntax.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="child3" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-5)">3</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-5)">Child 3</span>
+              <p>hypothesis complete. Property-based testing, excellent for edge cases, steeper learning curve.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="parent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">P</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">HermesParent</span>
+              <p>All 3 agents complete. Synthesizing comparison&hellip;</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="parent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">P</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">HermesParent</span>
+              <p>Here is the full comparison. pytest wins on ecosystem, hypothesis on thoroughness, unittest on zero-setup.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module-4-typing-avatar" style="background: var(--color-actor-2)">P</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <!-- Code ↔ English Translation: DELEGATE_BLOCKED_TOOLS -->
+      <h3 class="animate-in" style="margin-top: var(--space-10); margin-bottom: var(--space-4)">What Children Are Not Allowed to Do</h3>
+      <p class="animate-in" style="margin-bottom: var(--space-6)">
+        Subagents get a restricted toolset. Certain tools are always blocked — hardcoded, not configurable.
+        Here is the actual code from <code>delegate_tool.py</code>:
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-property">DELEGATE_BLOCKED_TOOLS</span> = <span class="code-function">frozenset</span>([</span>
+<span class="code-line">    <span class="code-string">&quot;delegate_task&quot;</span>,  <span class="code-comment"># no recursive delegation</span></span>
+<span class="code-line">    <span class="code-string">&quot;clarify&quot;</span>,        <span class="code-comment"># no user interaction</span></span>
+<span class="code-line">    <span class="code-string">&quot;memory&quot;</span>,         <span class="code-comment"># no writes to shared MEMORY.md</span></span>
+<span class="code-line">    <span class="code-string">&quot;send_message&quot;</span>,   <span class="code-comment"># no cross-platform side effects</span></span>
+<span class="code-line">    <span class="code-string">&quot;execute_code&quot;</span>,   <span class="code-comment"># reason step-by-step, not scripts</span></span>
+<span class="code-line">])</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-property">_DEFAULT_MAX_CONCURRENT</span> = <span class="code-number">3</span></span>
+<span class="code-line"><span class="code-property">MAX_DEPTH</span> = <span class="code-number">2</span>  <span class="code-comment"># parent(0) -&gt; child(1) -&gt; REJECTED(2)</span></span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">This is an immutable set — a permanent list of blocked tools that nobody can override, not even you.</p>
+            <p class="tl"><strong>delegate_task blocked:</strong> Children cannot spawn their own children. No recursive armies — the hierarchy stops at parent → child.</p>
+            <p class="tl"><strong>clarify blocked:</strong> Children cannot ask you questions. They work silently and independently. If stuck, they report failure to the parent.</p>
+            <p class="tl"><strong>memory blocked:</strong> Children cannot write to your shared MEMORY.md or USER.md. Only the parent agent can update shared memory — prevents
+            <span class="term" data-definition="A bug that occurs when multiple processes try to modify the same data at the same time, leading to unpredictable or corrupted results.">race conditions</span>.</p>
+            <p class="tl"><strong>send_message blocked:</strong> Children cannot send messages to Telegram or Discord. They cannot pretend to be you.</p>
+            <p class="tl"><strong>execute_code blocked:</strong> Children reason step-by-step rather than writing and running scripts. Keeps behavior predictable and auditable.</p>
+            <p class="tl"><strong>MAX_DEPTH = 2:</strong> The nesting limit. Parent is depth 0, child is depth 1, any grandchild attempt is immediately rejected at depth 2.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 5: Delegation Safety + Quiz -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Delegation Safety</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Parallel agents are powerful — and dangerous if they can step on each other.
+        Hermes enforces strict isolation rules so children stay focused and can&rsquo;t corrupt shared state.
+      </p>
+
+      <div class="icon-rows animate-in stagger-children">
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-error)">🚫</div>
+          <div>
+            <strong>No recursive delegation</strong>
+            <p>Children cannot spawn grandchildren. The delegation tree is a flat two-level structure: parent and children. No infinite armies, no runaway compute.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-3)">🔇</div>
+          <div>
+            <strong>No user interaction</strong>
+            <p>Children work silently. They cannot ask you questions or receive guidance mid-task. If a child is stuck, it reports failure — the parent then tells you what went wrong.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-4)">🔒</div>
+          <div>
+            <strong>No shared memory writes</strong>
+            <p>Children cannot write to MEMORY.md or USER.md. Multiple agents writing shared data simultaneously causes
+            <span class="term" data-definition="A bug that occurs when multiple processes try to modify the same data at the same time, leading to unpredictable or corrupted results.">race conditions</span>
+            — so it is simply blocked.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-2)">📵</div>
+          <div>
+            <strong>No message sending</strong>
+            <p>Children cannot send messages on your behalf through the
+            <span class="term" data-definition="A process that listens for incoming messages from platforms like Telegram or Discord and forwards them to Hermes. Like a hotel receptionist who takes calls and routes them to the right room.">Gateway</span>.
+            Only the parent agent can communicate externally — prevents impersonation and unexpected side effects.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">📐</div>
+        <div class="callout-content">
+          <strong class="callout-title">MAX_DEPTH = 2: parent &#x2192; child &#x2192; grandchild rejected.</strong>
+          <p>The depth counter is passed to each child. When a child tries to delegate, the depth check fires and the request is refused immediately — no matter what instructions it was given.</p>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <h3 class="animate-in" style="margin-top: var(--space-12); margin-bottom: var(--space-4); font-size: var(--text-xl)">Test Your Understanding</h3>
+
+      <div class="quiz-container animate-in" id="quiz-module-4">
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="All three pieces work together: Cron fires at 7am, the agent runs in the cloud (no laptop needed), and Gateway delivers the result to your phone."
+             data-explanation-wrong="Think about each requirement: 7am trigger = Cron. No laptop = cloud backend. Deliver to your phone = Gateway. You need all three.">
+          <h3 class="quiz-question">You want Hermes to send you a daily weather briefing at 7am even when your laptop is off. Which feature combination do you use?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Skills + Memory</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><span class="term" data-definition="A process that listens for incoming messages from platforms like Telegram or Discord and forwards them to Hermes. Like a hotel receptionist who takes calls and routes them to the right room.">Gateway</span> (to receive the message) + <span class="term" data-definition="A scheduling system that runs tasks at specific times. Named after the Greek god of time. A cron job is like a standing appointment in a calendar.">Cron</span> (to trigger at 7am) + a cloud <span class="term" data-definition="The environment where Hermes runs its terminal commands — your local machine, a Docker container, a remote server via SSH, or a cloud platform.">terminal backend</span> (to keep Hermes running)</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Delegation + TUI</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Children are isolated workers. They cannot ask questions or receive guidance mid-task. If a child is stuck, the parent will report the failure, and you can then guide the parent to retry differently."
+             data-explanation-wrong="Look at DELEGATE_BLOCKED_TOOLS: clarify is blocked for subagents. They work silently and report results only when done.">
+          <h3 class="quiz-question">A subagent you delegated to seems stuck in a loop. Can you send it a message to guide it? Why or why not?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — you can message subagents just like the parent agent</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — <span class="term" data-definition="A child AI agent spawned by a parent agent to handle a specific sub-task. Has its own isolated context and toolset, works independently, and reports back when done.">subagents</span> have <code>clarify</code> blocked, so they cannot interact with you. Only the parent agent can receive user messages.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes, but only via Telegram</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Shared memory is a dangerous resource when multiple agents run in parallel. Blocking writes from children prevents race conditions and data corruption."
+             data-explanation-wrong="Shared mutable state + parallelism = bugs. This is a deliberate safety design. Only the parent agent, running in sequence with the user, can modify shared memory.">
+          <h3 class="quiz-question">You ask Hermes to write a skill it learned to its own memory file during a delegation task. It refuses. Is this a bug?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — this is a known limitation that should be fixed</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — memory writes are blocked for subagents intentionally to prevent one child from corrupting shared state</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — all tools should be available to all agents</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module-4')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module-4')">Try Again</button>
+      </div>
+
+      <!-- Glossary -->
+      <h3 class="animate-in" style="margin-top: var(--space-12); margin-bottom: var(--space-4); font-size: var(--text-xl)">Glossary</h3>
+      <div class="pattern-cards animate-in stagger-children" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))">
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A process that listens for incoming messages from platforms like Telegram or Discord and forwards them to Hermes. Like a hotel receptionist who takes calls and routes them to the right room.">gateway</span></h4>
+          <p class="pattern-desc">The always-on listener that connects Hermes to messaging platforms like Telegram, Discord, and Slack.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A way for one service to instantly notify another when something happens. Like a doorbell — when someone rings (sends a message), Telegram immediately pings Hermes.">webhook</span></h4>
+          <p class="pattern-desc">An instant push notification from one service to another. Telegram uses webhooks to tell Hermes about new messages immediately.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A scheduling system that runs tasks at specific times. Named after the Greek god of time. A cron job is like a standing appointment in a calendar.">cron</span></h4>
+          <p class="pattern-desc">Standing orders that fire on a schedule. Hermes accepts natural language — no time code syntax required.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A background process that keeps running silently even when you are not looking at it. Like a security guard who works the night shift — present but invisible.">daemon</span></h4>
+          <p class="pattern-desc">A background process running silently at all times — the Gateway and scheduler are both daemons.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A child AI agent spawned by a parent agent to handle a specific sub-task. Has its own isolated context and toolset, works independently, and reports back when done.">subagent</span></h4>
+          <p class="pattern-desc">A child agent with an isolated context and restricted toolset. Reports back when done — never mid-task.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A cloud computing model where your code runs on demand and you only pay when it runs. The infrastructure hibernates when idle — no ongoing cost, no always-on server to maintain.">serverless</span></h4>
+          <p class="pattern-desc">Hibernates when idle, wakes when needed. You pay only for compute time actually used. Daytona and Modal are both serverless.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="The environment where Hermes runs its terminal commands — your local machine, a Docker container, a remote server via SSH, or a cloud platform.">terminal backend</span></h4>
+          <p class="pattern-desc">Where Hermes runs commands. Six options: local, docker, ssh, daytona, singularity, modal.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</section>

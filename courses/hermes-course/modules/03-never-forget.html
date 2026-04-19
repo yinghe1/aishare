@@ -1,0 +1,529 @@
+<section class="module" id="module-3" style="background: var(--color-bg)">
+  <div class="module-content">
+
+    <!-- ═══════════════════════════════════════════════════════ HEADER -->
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">Never Forget</h1>
+      <p class="module-subtitle">How Hermes builds a profile of you — and gets smarter every session</p>
+    </header>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 1: Three Kinds of Memory -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Three Kinds of Memory</h2>
+
+      <div class="callout callout-accent animate-in" style="margin-bottom: var(--space-8)">
+        <div class="callout-icon">🧠</div>
+        <div class="callout-content">
+          <strong class="callout-title">Most AI chatbots forget you the moment you close the tab.</strong>
+          <p>Hermes builds a profile of who you are, what you know, how you work — and gets better every single session.</p>
+        </div>
+      </div>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Before every conversation starts, Hermes reads three memory stores and loads them into the
+        <span class="term" data-definition="The background instructions the AI reads before every conversation — like a briefing document that shapes how it thinks and responds.">system prompt</span>.
+        By the time you type your first message, Hermes already knows you.
+      </p>
+
+      <div class="icon-rows animate-in stagger-children">
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-2)">🗒️</div>
+          <div>
+            <strong>MEMORY.md</strong>
+            <p>Hermes&rsquo; personal notebook. Environment facts, project conventions,
+            <span class="term" data-definition="Programs Hermes can call to take actions in the real world — run terminal commands, read or write files, search the web, take screenshots, and more.">tool</span> quirks,
+            things it noticed about your setup. Hermes writes to this file; you can read and edit it any time.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-1)">👤</div>
+          <div>
+            <strong>USER.md</strong>
+            <p>Your profile. Preferred coding language, communication style, expertise level, workflow habits.
+            Hermes updates this as it learns more about you — or you can edit it directly to tell Hermes exactly who you are.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-3)">📋</div>
+          <div>
+            <strong>Skills Library</strong>
+            <p>Reusable step-by-step procedures for complex tasks.
+            Each <span class="term" data-definition="A saved, step-by-step procedure stored as a plain text file. Hermes follows it like a recipe — written once after solving a hard problem, then loaded automatically in future sessions.">Skill</span>
+            is a plain text file Hermes (or you) can write and edit. Loaded on demand so they don&rsquo;t bloat memory.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">All three load before the conversation begins.</strong>
+          <p>Hermes doesn&rsquo;t need you to re-introduce yourself. It starts already knowing your preferences, your environment, and which procedures it has mastered.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 2: The Frozen Snapshot -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Frozen Snapshot</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Memory is read once at session start and &ldquo;frozen&rdquo; into the
+        <span class="term" data-definition="The background instructions the AI reads before every conversation — like a briefing document that shapes how it thinks and responds.">system prompt</span>.
+        Writes during a session update the files on disk immediately — but the AI doesn&rsquo;t see them until next session. Here&rsquo;s why that&rsquo;s actually clever.
+      </p>
+
+      <!-- Flow Animation: Session Start -->
+      <div class="flow-animation animate-in" data-steps='[
+        {"highlight":"flow-actor-1","label":"Session starts. Hermes wakes up and prepares to load memory."},
+        {"highlight":"flow-actor-2","label":"MEMORY.md is read from disk — environment facts, project conventions, tool quirks.","packet":true,"from":"actor-2","to":"actor-1"},
+        {"highlight":"flow-actor-3","label":"USER.md is read from disk — your profile, preferences, communication style.","packet":true,"from":"actor-3","to":"actor-1"},
+        {"highlight":"flow-actor-4","label":"Skills metadata is scanned — names and descriptions of all available skills.","packet":true,"from":"actor-4","to":"actor-1"},
+        {"highlight":"flow-actor-1","label":"All three are injected into the system prompt. The snapshot is now frozen."},
+        {"highlight":"flow-actor-5","label":"Conversation begins. The system prompt stays stable for the entire session.","packet":true,"from":"actor-1","to":"actor-5"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">🤖</div>
+            <span>AIAgent</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">🗒️</div>
+            <span>MEMORY.md</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">👤</div>
+            <span>USER.md</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">📋</div>
+            <span>Skills</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-5">
+            <div class="flow-actor-icon">💬</div>
+            <span>Conversation</span>
+          </div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click &ldquo;Next Step&rdquo; to begin</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why freeze it? Speed.</strong>
+          <p>Keeping the system prompt stable across the whole session lets the AI model use
+          <span class="term" data-definition="A speed trick where the AI model saves its work from processing the beginning of a prompt, then reuses it for future requests. Like a teacher who does not re-read the textbook before every class.">prefix caching</span>
+          — it processes the opening context once and reuses the result for every follow-up message.
+          Stability beats real-time updates.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-6); border-left-color: var(--color-accent-muted)">
+        <div class="callout-icon">🔒</div>
+        <div class="callout-content">
+          <strong class="callout-title">What about mid-session writes?</strong>
+          <p>When Hermes learns something important during your conversation, it writes to disk immediately — durable and safe.
+          But the current session continues from the frozen snapshot. The new knowledge takes effect <em>next session</em>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 3: Skills — Reusable Superpowers -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Skills — Reusable Superpowers</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Skills are plain text files with a specific format. They use
+        <span class="term" data-definition="A block of structured settings at the top of a file, written in YAML format. Like the header of a form — name, version, description — before the actual content.">frontmatter</span>
+        at the top (written in
+        <span class="term" data-definition="A human-friendly format for storing settings as key-value pairs. Looks like &apos;name: my-skill&apos; — reads like plain English but machines can parse it precisely.">YAML</span>)
+        followed by full instructions. The clever part: Hermes uses
+        <span class="term" data-definition="Showing only the most important information upfront, loading details on demand. Like how a recipe app shows the dish name and photo first, then full instructions only when you tap.">progressive disclosure</span>
+        to keep sessions lean.
+      </p>
+
+      <!-- Code ↔ English Translation: skills_tool.py docstring -->
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-comment">"""</span></span>
+<span class="code-line"><span class="code-comment">Skills Tool Module</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment">Inspired by Anthropic&apos;s Claude Skills system</span></span>
+<span class="code-line"><span class="code-comment">with progressive disclosure architecture:</span></span>
+<span class="code-line"><span class="code-comment">- Metadata (name &le;64 chars, desc &le;1024)</span></span>
+<span class="code-line"><span class="code-comment">  shown in skills_list</span></span>
+<span class="code-line"><span class="code-comment">- Full Instructions — loaded via</span></span>
+<span class="code-line"><span class="code-comment">  skill_view when needed</span></span>
+<span class="code-line"><span class="code-comment">- Linked Files (references, templates)</span></span>
+<span class="code-line"><span class="code-comment">  loaded on demand</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment">Directory Structure:</span></span>
+<span class="code-line"><span class="code-comment">    skills/</span></span>
+<span class="code-line"><span class="code-comment">    &#x251C;&#x2500;&#x2500; my-skill/</span></span>
+<span class="code-line"><span class="code-comment">    &#x2502;   &#x251C;&#x2500;&#x2500; SKILL.md     # required</span></span>
+<span class="code-line"><span class="code-comment">    &#x2502;   &#x251C;&#x2500;&#x2500; references/</span></span>
+<span class="code-line"><span class="code-comment">    &#x2502;   &#x2514;&#x2500;&#x2500; assets/</span></span>
+<span class="code-line"><span class="code-comment">"""</span></span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Skills are step-by-step procedure files — like recipe cards Hermes can follow.</p>
+            <p class="tl">The design is inspired by how Anthropic built skills for Claude, but extended for Hermes.</p>
+            <p class="tl"><strong>Tier 1 — Name + description only:</strong> tiny. This is what Hermes sees in its skills list at session start. Stays within a strict character budget to save
+            <span class="term" data-definition="The unit of text an AI model processes — roughly 3/4 of a word. Models have limits on how many tokens they can handle at once. Shorter prompts = faster, cheaper responses.">tokens</span>.</p>
+            <p class="tl"><strong>Tier 2 — Full instructions:</strong> loaded only when you invoke the skill with a slash command.</p>
+            <p class="tl"><strong>Tier 3 — Linked files:</strong> reference docs and templates, loaded on demand if the skill needs them.</p>
+            <p class="tl">Each skill lives in its own folder. The SKILL.md file is the required entry point — everything else is optional.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="animate-in" style="margin-top: var(--space-10); margin-bottom: var(--space-6)">Four Types of Skills</h3>
+
+      <div class="pattern-cards animate-in stagger-children">
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🏠</div>
+          <h4 class="pattern-title">Builtin Skills</h4>
+          <p class="pattern-desc">Pre-installed with Hermes — always available the moment you start. Core procedures like code review, research templates, and writing guides.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">📦</div>
+          <h4 class="pattern-title">Optional Skills</h4>
+          <p class="pattern-desc">Included in the Hermes repo but not active by default. Enable them when you need them — specialized workflows that not everyone uses.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🌐</div>
+          <h4 class="pattern-title">Hub Skills</h4>
+          <p class="pattern-desc">Community-built skills from GitHub or agentskills.io. Install with one command. Someone else already solved that hard problem — use their skill.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">✏️</div>
+          <h4 class="pattern-title">Custom Skills</h4>
+          <p class="pattern-desc">Write your own SKILL.md files. Plain markdown — no coding required. If you have a workflow you repeat, turn it into a skill and Hermes handles it perfectly every time.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 4: The Skills Hub -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Skills Hub in Action</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Skills aren&rsquo;t just loaded from disk — they can be installed from a community hub on demand.
+        Watch how Hermes finds, loads, and applies a skill it has never used in this session before.
+      </p>
+
+      <!-- Group Chat Animation -->
+      <div class="chat-window animate-in" id="chat-module-3">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">You</span>
+              <p>Help me set up Axolotl for LLM fine-tuning.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>Let me check my skills library for this&hellip;</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hub" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">S</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">SkillsHub</span>
+              <p>Found: <strong>axolotl-finetuning</strong>. Loading full instructions (2,847 tokens).</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>I have the complete procedure. Starting with dependency installation.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">You</span>
+              <p>How do you know all these steps? I didn&rsquo;t tell you.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>I learned this from a previous session and saved it as a skill. It loaded automatically when you mentioned Axolotl.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="user" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">U</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">You</span>
+              <p>Can I see what skills you have available?</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="hermes" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">H</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Hermes</span>
+              <p>Run <code>/skills</code> to browse. I have 40+ skills covering fine-tuning, deployment, research, DevOps, and more.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module-3-typing-avatar" style="background: var(--color-actor-2)">H</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <!-- Skill Metadata Badge List -->
+      <h3 class="animate-in" style="margin-top: var(--space-10); margin-bottom: var(--space-4)">Skill Metadata Fields</h3>
+      <p class="animate-in" style="margin-bottom: var(--space-6)">Every SKILL.md starts with a
+        <span class="term" data-definition="A block of structured settings at the top of a file, written in YAML format. Like the header of a form — name, version, description — before the actual content.">frontmatter</span>
+        block. These fields control how Hermes finds, identifies, and restricts each skill.
+      </p>
+
+      <div class="step-cards animate-in stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-2); color: white; font-family: var(--font-mono); font-size: var(--text-sm)">name</div>
+          <div class="step-body">
+            <strong>Max 64 characters</strong>
+            <p>What you type after the slash — like <code>/axolotl-finetuning</code>. Short, memorable, no spaces.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-3); color: white; font-family: var(--font-mono); font-size: var(--text-sm)">desc</div>
+          <div class="step-body">
+            <strong>Max 1,024 characters</strong>
+            <p>Shown in the skills list — this is the only part Hermes reads at session load. Keep it crisp.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-4); color: white; font-family: var(--font-mono); font-size: var(--text-sm)">ver</div>
+          <div class="step-body">
+            <strong>Optional version tag</strong>
+            <p>Like <code>1.0.0</code> — helps you track when you last updated a skill and compare with hub versions.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num" style="background: var(--color-actor-5); color: white; font-family: var(--font-mono); font-size: var(--text-sm)">plt</div>
+          <div class="step-body">
+            <strong>Optional platform filter</strong>
+            <p>Values: <code>macos</code>, <code>linux</code>, <code>windows</code>. Omit to load everywhere. A macOS-only skill won&rsquo;t appear on your Linux server.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 5: The Learning Loop + Quiz -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Learning Loop</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        Hermes doesn&rsquo;t just follow instructions — it writes new ones. After a complex task,
+        it can save what it learned as a
+        <span class="term" data-definition="A saved, step-by-step procedure stored as a plain text file. Hermes follows it like a recipe — written once after solving a hard problem, then loaded automatically in future sessions.">Skill</span>
+        so the next session starts smarter. This is how Hermes compounds knowledge over time.
+      </p>
+
+      <div class="step-cards animate-in stagger-children">
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>You complete a complex task together</strong>
+            <p>You ask Hermes to help set up a GPU training cluster. It figures it out, step by step, with you.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Hermes offers to save the procedure</strong>
+            <p>At the end, it says: &ldquo;Should I save this as a skill so we skip the trial-and-error next time?&rdquo; You say yes.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Skill saved to <code>~/.hermes/skills/</code></strong>
+            <p>The procedure is written as a SKILL.md file in your personal skills folder. Plain text — fully readable and editable by you.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Next session: skill loads automatically</strong>
+            <p>At startup, Hermes scans the skills folder and adds the name and description to the
+            <span class="term" data-definition="The background instructions the AI reads before every conversation — like a briefing document that shapes how it thinks and responds.">system prompt</span>.
+            It knows the skill exists.</p>
+          </div>
+        </div>
+        <div class="step-card animate-in">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Hermes handles this task efficiently from now on</strong>
+            <p>Next time you mention GPU training, Hermes invokes the skill and follows the exact procedure that worked before — no guessing required.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <h3 class="animate-in" style="margin-top: var(--space-12); margin-bottom: var(--space-4); font-size: var(--text-xl)">Test Your Understanding</h3>
+
+      <div class="quiz-container animate-in" id="quiz-module-3">
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Mid-session changes hit disk but do not affect the current session. The memory saves when Hermes writes to disk — which it does periodically or when you ask."
+             data-explanation-wrong="Memory saves happen asynchronously. The current session runs from a frozen snapshot. To ensure something is remembered, explicitly ask Hermes to save it.">
+          <h3 class="quiz-question">You tell Hermes your preferred coding language mid-conversation. Will it remember this next session automatically? What should you do to be sure?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — Hermes automatically remembers everything you say</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Not automatically for mid-session facts. Ask Hermes to save it to memory, or it may save it during its next memory-nudge cycle.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — Hermes never saves personal preferences</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Skills are plain markdown files. If Hermes is following the wrong procedure, the SKILL.md is where you look and edit."
+             data-explanation-wrong="Skills are just markdown files in ~/.hermes/skills/. They are human-readable and editable — that is a feature, not a limitation.">
+          <h3 class="quiz-question">You installed a skill from GitHub. Hermes uses it but gets some steps wrong. Where would you look first?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The Hermes source code</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The SKILL.md file inside <code>~/.hermes/skills/skill-name/</code> — that is the instruction file Hermes reads</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model provider settings</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Prefix caching is a major speed optimization. By keeping the system prompt stable, the model can reuse previous computations. Stability beats real-time updates."
+             data-explanation-wrong="This is an intentional design decision for performance. The prefix cache saves significant compute — but it means memory only takes effect next session.">
+          <h3 class="quiz-question">Why does Hermes use a frozen memory snapshot instead of live-updating memory mid-session?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It is a bug that will be fixed in a future version</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Live updates would invalidate the <span class="term" data-definition="A speed trick where the AI model saves its work from processing the beginning of a prompt, then reuses it for future requests. Like a teacher who does not re-read the textbook before every class.">prefix cache</span>, making every response slower and more expensive</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The AI model cannot process updated files mid-conversation</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module-3')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module-3')">Try Again</button>
+      </div>
+
+      <!-- Glossary -->
+      <h3 class="animate-in" style="margin-top: var(--space-12); margin-bottom: var(--space-4); font-size: var(--text-xl)">Glossary</h3>
+      <div class="pattern-cards animate-in stagger-children" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))">
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="The background instructions the AI reads before every conversation — like a briefing document that shapes how it thinks and responds.">system prompt</span></h4>
+          <p class="pattern-desc">The background instructions the AI reads before every conversation — like a briefing document.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A speed trick where the AI model saves its work from processing the beginning of a prompt, then reuses it for future requests. Like a teacher who does not re-read the textbook before every class.">prefix cache</span></h4>
+          <p class="pattern-desc">Reusing the AI model&rsquo;s work from the stable beginning of each prompt — major speed gain.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="Showing only the most important information upfront, loading details on demand. Like how a recipe app shows the dish name and photo first, then full instructions only when you tap.">progressive disclosure</span></h4>
+          <p class="pattern-desc">Show name + description now. Load full instructions only when invoked. Keeps memory lean.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="The unit of text an AI model processes — roughly 3/4 of a word. Models have limits on how many tokens they can handle at once. Shorter prompts = faster, cheaper responses.">token</span></h4>
+          <p class="pattern-desc">The unit of text an AI model processes — roughly 3/4 of a word. Token budgets shape every design decision.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A block of structured settings at the top of a file, written in YAML format. Like the header of a form — name, version, description — before the actual content.">frontmatter</span></h4>
+          <p class="pattern-desc">Structured settings at the top of SKILL.md — name, version, description, platform restrictions.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="A human-friendly format for storing settings as key-value pairs. Looks like name: my-skill — reads like plain English but machines can parse it precisely.">YAML</span></h4>
+          <p class="pattern-desc">The format used in skill frontmatter. Reads like plain English, parsed precisely by machines.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent)">
+          <h4 class="pattern-title"><span class="term" data-definition="Full-Text Search version 5 — a fast search engine built into SQLite. Hermes uses it to search through past conversation sessions by keyword.">FTS5</span></h4>
+          <p class="pattern-desc">The search engine built into SQLite that Hermes uses to search past conversation sessions by keyword.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</section>

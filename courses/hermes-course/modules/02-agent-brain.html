@@ -1,0 +1,477 @@
+<section class="module" id="module-2" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+
+    <!-- ═══════════════════════════════════════════════════════ HEADER -->
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">The Agent Brain</h1>
+      <p class="module-subtitle">How the think → act → repeat loop powers every Hermes response</p>
+    </header>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 1: The Loop, Demystified -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Loop, Demystified</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        When you ask Hermes to find the five fastest Python frameworks, it doesn&rsquo;t just answer from memory. It browses, reads, compares — and the whole loop runs dozens of times in seconds. Here is the engine behind that.
+      </p>
+
+      <p class="animate-in" style="margin-bottom: var(--space-6)">
+        Think of it like a chess grandmaster&rsquo;s thinking process: look at the board, pick the best move, make it, look again — repeat until the game is won. Each round is called an <span class="term" data-definition="One trip around the think-act loop. Each time the AI decides to use a tool, reads the result, and decides what to do next = one iteration. A single Hermes response may involve dozens of iterations.">iteration</span>.
+      </p>
+
+      <!-- Data Flow Animation -->
+      <div class="flow-animation animate-in" data-steps='[
+        {"highlight":"flow-actor-1","label":"You type: Find the five fastest Python frameworks"},
+        {"highlight":"flow-actor-2","label":"AIAgent reads your message and prepares context","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Message sent to the AI model for processing","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-3","label":"Model decides: call web_search tool"},
+        {"highlight":"flow-actor-4","label":"Tool call dispatched to Tool Runner","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-4","label":"web_search runs and returns results as text"},
+        {"highlight":"flow-actor-2","label":"Results flow back to AIAgent","packet":true,"from":"actor-4","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"AIAgent sends results to model for next decision","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-1","label":"Model synthesizes final answer and sends to you","packet":true,"from":"actor-3","to":"actor-1"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">🧑</div>
+            <span>You</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">🤖</div>
+            <span>AIAgent</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">🧠</div>
+            <span>Model API</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">🔧</div>
+            <span>Tool Runner</span>
+          </div>
+        </div>
+        <div class="flow-packet"></div>
+        <div class="flow-step-label">Click &ldquo;Next Step&rdquo; to begin</div>
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">👁️</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight</strong>
+          <p>The AI never &ldquo;sees&rdquo; the code run — it only sees text outputs. Every <span class="term" data-definition="When the AI decides to use one of Hermes tools — like web_search or read_file. The tool runs, returns text, and the AI continues reasoning from that text.">tool call</span> result comes back as plain text. The intelligence is entirely in deciding what to do with that text next.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 2: The Group Chat -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Inside the Group Chat</h2>
+
+      <p class="animate-in" style="margin-bottom: var(--space-6)">
+        Under the hood, Hermes runs like a <strong>group chat</strong> between three actors: the <span class="term" data-definition="The core reasoning component of Hermes. It reads every message, decides what actions to take, coordinates tools, and produces the final response.">AIAgent</span>, the <span class="term" data-definition="The Model API is the connection to the AI model (like GPT-4o or Claude). The AIAgent sends messages to it; the model replies with reasoning and decisions about which tools to call next.">Model API</span>, and the <span class="term" data-definition="The component that actually executes tool calls — running shell commands, reading files, searching the web. It returns results as plain text back to the AIAgent.">Tool Runner</span>. Watch a real task unfold:
+      </p>
+
+      <div class="chat-window" id="chat-module-2">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-sender="aiagent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">A</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">AIAgent</span>
+              <p>New task from user: Find the five fastest Python frameworks</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="modelapi" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">M</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">ModelAPI</span>
+              <p>I will search the web. Calling: <code>web_search("fastest Python web frameworks 2026")</code></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="aiagent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">A</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">AIAgent</span>
+              <p>Dispatching <code>web_search</code>...</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="toolrunner" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">T</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">ToolRunner</span>
+              <p>Search complete. Found: FastAPI, Sanic, Starlette, Falcon, Litestar — with benchmark data</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="aiagent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">A</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">AIAgent</span>
+              <p>Results returned. Sending back to model for next decision.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="modelapi" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">M</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">ModelAPI</span>
+              <p>Good. Now I need docs for each. Calling <code>web_search</code> 5 more times in <span class="term" data-definition="Running multiple tasks at the same time — like a chef who has soup simmering while chopping vegetables. Parallel execution is much faster than waiting for each task to finish before starting the next.">parallel</span>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="aiagent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">A</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">AIAgent</span>
+              <p>Running 5 searches in parallel...</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="toolrunner" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">T</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">ToolRunner</span>
+              <p>All 5 complete. Framework docs retrieved and ready.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="modelapi" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">M</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">ModelAPI</span>
+              <p>I have enough data to answer. Synthesizing final response now...</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-sender="aiagent" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">A</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">AIAgent</span>
+              <p>Final answer ready. Sending to user. Total iterations: 7.</p>
+            </div>
+          </div>
+
+        </div>
+        <div class="chat-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module-2-typing-avatar" style="background: var(--color-actor-1)">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-6)">
+        <div class="callout-icon">🔄</div>
+        <div class="callout-content">
+          <strong class="callout-title">Every Response Is a Conversation</strong>
+          <p>What looks like a single answer to you is actually a multi-round negotiation between the AIAgent and the Model API — with tool results flowing back and forth until the model decides it has enough information to reply.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 3: Parallel Tool Calls -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Parallel Tool Calls</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-6)">
+        Hermes can call multiple <span class="term" data-definition="Programs Hermes can call to take actions in the real world: run terminal commands, read or write files, search the web, take screenshots, and more.">tools</span> at the same time — like searching the web and reading a local file simultaneously. But not every tool is safe to parallelize.
+      </p>
+
+      <div class="icon-rows animate-in stagger-children">
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-success)">🔍</div>
+          <div>
+            <strong>Web Search — parallel-safe</strong>
+            <p>Pure read operation: fetches data from the internet, changes nothing. Multiple searches can run at the same time without interfering with each other.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-success)">📄</div>
+          <div>
+            <strong>File Read — parallel-safe</strong>
+            <p>Reading a file has no <span class="term" data-definition="A side effect is when a function changes something outside itself — like writing to a file, sending a network request, or modifying a database. Functions without side effects are safe to run in parallel.">side effects</span>. Ten file reads can run at once; none will affect the others.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-error)">💻</div>
+          <div>
+            <strong>Terminal — sequential only</strong>
+            <p>Shell commands can conflict — two commands modifying the same file simultaneously could corrupt it. Terminal commands always run one at a time to prevent collisions.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-4)">🙋</div>
+          <div>
+            <strong>Clarify — runs alone</strong>
+            <p>When Hermes needs to ask you a question, it must wait for your answer before doing anything else. This tool always runs by itself, never in parallel.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Code ↔ English Translation: Parallel Safe Tools -->
+      <h3 class="animate-in" style="margin: var(--space-10) 0 var(--space-4)">The Safe List — Code ↔ Plain English</h3>
+      <p class="animate-in" style="margin-bottom: var(--space-4)">
+        Hermes maintains a hardcoded list of tools that are safe to run simultaneously. Here is that list:
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-property">_PARALLEL_SAFE_TOOLS</span> <span class="code-operator">=</span> <span class="code-function">frozenset</span>({</span>
+<span class="code-line">    <span class="code-string">"ha_get_state"</span>,</span>
+<span class="code-line">    <span class="code-string">"ha_list_entities"</span>,</span>
+<span class="code-line">    <span class="code-string">"ha_list_services"</span>,</span>
+<span class="code-line">    <span class="code-string">"read_file"</span>,</span>
+<span class="code-line">    <span class="code-string">"search_files"</span>,</span>
+<span class="code-line">    <span class="code-string">"session_search"</span>,</span>
+<span class="code-line">    <span class="code-string">"skill_view"</span>,</span>
+<span class="code-line">    <span class="code-string">"skills_list"</span>,</span>
+<span class="code-line">    <span class="code-string">"vision_analyze"</span>,</span>
+<span class="code-line">    <span class="code-string">"web_extract"</span>,</span>
+<span class="code-line">    <span class="code-string">"web_search"</span>,</span>
+<span class="code-line">})</span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><code>_PARALLEL_SAFE_TOOLS</code> is a <strong>frozenset</strong> — an immutable (unchangeable) collection of tool names. Frozen means the code cannot accidentally modify this list at runtime. It is a safety guarantee baked into the language.</p>
+            <p class="tl"><code>ha_get_state</code>, <code>ha_list_entities</code>, <code>ha_list_services</code> — Home Assistant integration tools. They read the current state of your smart home devices (lights, thermostats, etc.) without changing anything. Read-only = parallel-safe.</p>
+            <p class="tl"><code>read_file</code>, <code>search_files</code> — read a specific file, or search for files matching a pattern. No writes, no deletions — safe to do many at once.</p>
+            <p class="tl"><code>session_search</code> — searches the current conversation history for previous messages or context. Pure lookup, no changes.</p>
+            <p class="tl"><code>skill_view</code>, <code>skills_list</code> — look at Hermes&rsquo; saved Skills library. Reading a recipe does not change it.</p>
+            <p class="tl"><code>vision_analyze</code> — sends an image to the AI model for analysis. The image is not modified; only a description comes back.</p>
+            <p class="tl"><code>web_extract</code>, <code>web_search</code> — fetch web pages or run searches. The internet is not changed by you reading it. Both are safe to run simultaneously.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-6)">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why Parallelism Matters</strong>
+          <p>Parallelism is why Hermes can often complete complex research tasks in a fraction of the time a human would take. Six web searches at once instead of six in a row — that is a 6x speedup on the bottleneck.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 4: The Iteration Budget -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Iteration Budget</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-6)">
+        Each <span class="term" data-definition="The core reasoning component of Hermes. It reads every message, decides what actions to take, coordinates tools, and produces the final response.">agent</span> gets an energy allowance — a maximum number of <span class="term" data-definition="One trip around the think-act loop. Each time the AI decides to use a tool, reads the result, and decides what to do next = one iteration.">iterations</span> before it must stop. This prevents runaway agents from looping forever. Parent agents get 90 by default; <span class="term" data-definition="A smaller AI agent that a parent agent spins up to handle a specific sub-task in parallel. Like hiring a temporary assistant to handle one piece of a bigger project.">subagents</span> get 50.
+      </p>
+
+      <!-- Code ↔ English Translation: IterationBudget -->
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-keyword">class</span> <span class="code-function">IterationBudget</span>:</span>
+<span class="code-line">    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-property">self</span>, max_total: <span class="code-function">int</span>):</span>
+<span class="code-line">        <span class="code-property">self</span>.max_total <span class="code-operator">=</span> max_total</span>
+<span class="code-line">        <span class="code-property">self</span>._used <span class="code-operator">=</span> <span class="code-number">0</span></span>
+<span class="code-line">        <span class="code-property">self</span>._lock <span class="code-operator">=</span> threading.<span class="code-function">Lock</span>()</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">def</span> <span class="code-function">consume</span>(<span class="code-property">self</span>) <span class="code-operator">-&gt;</span> <span class="code-function">bool</span>:</span>
+<span class="code-line">        <span class="code-string">"""Try to consume one iteration. Returns True if allowed."""</span></span>
+<span class="code-line">        <span class="code-keyword">with</span> <span class="code-property">self</span>._lock:</span>
+<span class="code-line">            <span class="code-keyword">if</span> <span class="code-property">self</span>._used <span class="code-operator">&gt;=</span> <span class="code-property">self</span>.max_total:</span>
+<span class="code-line">                <span class="code-keyword">return</span> <span class="code-keyword">False</span></span>
+<span class="code-line">            <span class="code-property">self</span>._used <span class="code-operator">+=</span> <span class="code-number">1</span></span>
+<span class="code-line">            <span class="code-keyword">return</span> <span class="code-keyword">True</span></span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><code>class IterationBudget</code> — a blueprint for a &ldquo;fuel gauge&rdquo; object. Every agent gets one of these when it starts; it tracks how many iterations have been used and stops the agent when the tank is empty.</p>
+            <p class="tl"><code>max_total</code> — the maximum number of loop iterations this agent is allowed. Set to 90 for parent agents, 50 for subagents.</p>
+            <p class="tl"><code>_used = 0</code> — a counter that starts at zero and goes up by one every time the agent takes a turn. The underscore prefix signals this is internal — other code should not touch it directly.</p>
+            <p class="tl"><code>_lock = threading.Lock()</code> — a <span class="term" data-definition="A lock is a mechanism that ensures only one piece of code can modify a variable at a time. Like a bathroom door lock — once locked, others must wait. This prevents two parallel tool calls from both incrementing the counter simultaneously and causing incorrect counts.">lock</span> that makes the counter <span class="term" data-definition="Code that works correctly even when multiple things are running at the same time. Like a bank ATM that never gives out the same $20 twice even when two people withdraw simultaneously.">thread-safe</span>. Because Hermes runs multiple tools in parallel, two threads might try to update the counter at the same instant. The lock prevents a collision.</p>
+            <p class="tl"><code>consume()</code> — called once per loop iteration. It checks: have we hit the limit? If yes, return False (stop). If no, increment the counter and return True (keep going). The <code>with self._lock</code> block ensures only one thread can do this check-and-increment at a time — no double-spending iterations.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="animate-in" style="margin: var(--space-8) 0 var(--space-4)">When the Budget Runs Out — What To Do</h3>
+      <div class="step-cards animate-in stagger-children">
+
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Tell Hermes to continue</strong>
+            <p>Just say &ldquo;continue from where you left off.&rdquo; Hermes starts a new session with fresh budget but carries forward the <span class="term" data-definition="The AI model&rsquo;s short-term memory — everything it can see at once: the conversation history, tool results, file contents. Once full, older content must be summarized or dropped.">context window</span> summary of what was done.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Break the task into smaller pieces</strong>
+            <p>Instead of &ldquo;build me a full app,&rdquo; try &ldquo;set up the project structure,&rdquo; then &ldquo;write the database models,&rdquo; then &ldquo;add the API routes.&rdquo; Each piece fits comfortably inside one budget.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Increase the budget in config</strong>
+            <p>For long-running automation tasks, you can raise the maximum iteration count in Hermes&rsquo; configuration file. This is a power-user option — use it only when you understand why the task needs so many loops.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 5: When Things Go Wrong + Quiz -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">When Things Go Wrong</h2>
+
+      <p class="animate-in" style="margin-bottom: var(--space-6)">
+        Knowing the loop architecture helps you debug Hermes when it gets stuck. Here are the most common failure patterns and how to recognize them:
+      </p>
+
+      <div class="icon-rows animate-in stagger-children">
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-error)">🔁</div>
+          <div>
+            <strong>The Loop Cycle</strong>
+            <p>Hermes keeps trying the same approach and getting the same error. The fix: interrupt it and give more specific guidance — you are the circuit breaker. The agent sees the same inputs, so it makes the same decisions. Change the inputs.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-4)">📏</div>
+          <div>
+            <strong>Context Window Full</strong>
+            <p>After very long sessions, the <span class="term" data-definition="The AI model&rsquo;s short-term memory — everything it can see at once: the conversation history, tool results, file contents. Once full, older content must be summarized or dropped.">context window</span> fills up and Hermes starts to &ldquo;forget&rdquo; earlier parts of the conversation. Start a new session and give it a concise summary of where you are.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-3)">🔌</div>
+          <div>
+            <strong>Provider Issues</strong>
+            <p>If the <span class="term" data-definition="The company or service running the AI model — OpenAI, Anthropic, a local server, etc. Hermes can switch providers without changing the rest of the code.">provider</span> is down or rate-limiting you, Hermes will report tool call failures. Use <code>hermes model</code> to switch to a different <span class="term" data-definition="The company or service running the AI model — OpenAI, Anthropic, a local server, etc. Hermes can switch providers without changing the rest of the code.">model provider</span> instantly.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-2)">🔀</div>
+          <div>
+            <strong>API Format Mismatch</strong>
+            <p>Different AI providers send and receive tool call data in slightly different formats. Hermes handles this via its <code>api_mode</code> setting — a translation layer called <code>runtime_provider</code> converts between known formats automatically.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8); margin-bottom: var(--space-8)">
+        <div class="callout-icon">🛠️</div>
+        <div class="callout-content">
+          <strong class="callout-title">You Are Part of the Loop</strong>
+          <p>The agent loop is not just an internal machine — you are a participant. When Hermes gets stuck, your intervention (new context, a different approach, breaking a task smaller) is itself a form of input to the loop that changes its trajectory.</p>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <h3 class="animate-in" style="margin-bottom: var(--space-4)">Check Your Understanding</h3>
+      <div class="quiz-container animate-in" id="quiz-module-2">
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="When an agent loops, the fix is to break the cycle by injecting new information or a different approach. You are the circuit breaker."
+             data-explanation-wrong="The loop concept is key: if the agent keeps seeing the same result, it will keep making the same decision. You need to change the inputs, not wait it out.">
+          <h3 class="quiz-question">Hermes has been trying to fix a bug for 30 minutes and keeps making the same mistake. What is most likely happening, and what should you do?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Hermes ran out of tools — it needs new capabilities installed</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The iteration loop is cycling without converging — interrupt and give Hermes more specific guidance about what to try differently</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model provider is down — switch models and try again</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="The _PARALLEL_SAFE_TOOLS list defines which tools are safe to parallelize — read-only tools with no side effects can run simultaneously. Hermes handles the parallelism automatically."
+             data-explanation-wrong="Look at _PARALLEL_SAFE_TOOLS: both web_search and read_file are in there. Hermes decides automatically — you do not need to ask.">
+          <h3 class="quiz-question">You want Hermes to search the web AND read a local config file at the same time. Is this possible?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — tools always run one at a time for safety</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — both are in _PARALLEL_SAFE_TOOLS, so Hermes can dispatch them simultaneously and automatically</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Only if you explicitly ask Hermes to run them in parallel</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="The api_mode system handles known format variations (like codex_responses vs chat_completions), but a truly new format would need a new adapter written by a developer."
+             data-explanation-wrong="The runtime_provider layer is a translation layer — it handles known variations, but it is not magic. New API formats require new code to be written.">
+          <h3 class="quiz-question">The model API Hermes is using changes how it formats tool calls. None of the other Hermes code changes. Will Hermes still work?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No — Hermes is tightly coupled to one specific API format and will break immediately</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>It depends — the runtime_provider layer translates known formats, but a completely new format might require a new api_mode setting</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes — Hermes auto-detects and adapts to any format automatically</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module-2')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module-2')">Try Again</button>
+      </div>
+
+    </section>
+
+  </div>
+</section>

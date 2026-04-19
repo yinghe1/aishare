@@ -1,0 +1,374 @@
+<section class="module" id="module-1" style="background: var(--color-bg)">
+  <div class="module-content">
+
+    <!-- ═══════════════════════════════════════════════════════ HEADER -->
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">Meet Hermes</h1>
+      <p class="module-subtitle">Your brilliant assistant who never sleeps, never forgets, and lives wherever you need it</p>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════ SCREEN 1: What Is Hermes? -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">What Is Hermes?</h2>
+
+      <div class="callout callout-accent animate-in" style="margin-bottom: var(--space-8)">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-content">
+          <strong class="callout-title">You typed a message and hit send.</strong>
+          <p>In the next few seconds, Hermes picked up your meaning, spun up a terminal, browsed the web, wrote some code, and replied — all without you writing a single line. Here's exactly what happened.</p>
+        </div>
+      </div>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 60ch; margin-bottom: var(--space-8)">
+        Hermes is an <span class="term" data-definition="An AI that does not just answer questions — it takes actions in the real world. It can run programs, browse websites, read and write files, and even create copies of itself to work on tasks in parallel.">AI agent</span>: an artificial intelligence that can <em>act</em> in the world, not just talk about it. Think of it as a brilliant personal assistant who never forgets, never sleeps, and lives wherever you need them — your laptop, your cloud server, your Telegram app.
+      </p>
+
+      <div class="icon-rows animate-in stagger-children">
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-1)">🤖</div>
+          <div>
+            <strong>AI Agent</strong>
+            <p>Not just a chatbot — Hermes takes <em>real actions</em>: runs commands, reads files, browses the web, writes code, and delegates work to copies of itself called <span class="term" data-definition="A smaller AI agent that a parent agent spins up to handle a specific sub-task in parallel. Like hiring a temporary assistant to handle one piece of a bigger project.">subagents</span>.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-2)">💻</div>
+          <div>
+            <strong>Terminal Interface</strong>
+            <p>You chat with Hermes inside a real <span class="term" data-definition="A text-based window where you type commands directly into your computer. Also called a command line, shell, or console. Think of it as talking to your computer in its native language.">terminal</span> using a <span class="term" data-definition="Text User Interface — a program that runs inside a terminal window and has an interactive layout (boxes, panels, scrollable areas) built from text characters instead of graphical windows.">TUI</span> — a keyboard-driven chat interface that feels like messaging, but runs on raw compute power.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-3)">🧠</div>
+          <div>
+            <strong>Self-Improving</strong>
+            <p>After complex tasks, Hermes writes what it learned as a reusable <span class="term" data-definition="A saved, step-by-step procedure Hermes can follow in future sessions. Like a recipe card — Hermes writes it once after solving a hard problem, then uses it automatically next time.">Skill</span>. Each session starts smarter than the last.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-4)">🌍</div>
+          <div>
+            <strong>Runs Anywhere</strong>
+            <p>Your laptop, a VPS, a Docker container, or a serverless cloud function — Hermes has six <span class="term" data-definition="The computing environment where Hermes actually runs your code and commands. Options include your local machine, a remote server, Docker (isolated containers), and cloud platforms like Daytona or Modal.">execution backends</span>, so it goes where the work is.</p>
+          </div>
+        </div>
+
+        <div class="icon-row animate-in">
+          <div class="icon-circle" style="background: var(--color-actor-5)">📱</div>
+          <div>
+            <strong>Multi-Platform</strong>
+            <p>Not just the terminal — Hermes can receive messages from <span class="term" data-definition="A messaging platform (like Telegram, Discord, or Slack) that Hermes connects to via its Gateway, so you can chat with it just like a contact in your messaging app.">Telegram, Discord, Slack, and more</span> via its built-in <span class="term" data-definition="A running service that listens for incoming messages from platforms like Telegram or Discord and forwards them to Hermes. Like a telephone operator who routes calls.">Gateway</span>.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 2: Your First Session, Traced -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">Your First Session, Traced</h2>
+
+      <p class="animate-in" style="font-size: var(--text-lg); max-width: 64ch; margin-bottom: var(--space-8)">
+        You open a terminal and type <code>hermes</code>. You ask: <em>"Set up a Python project, install Flask, write a hello world app."</em> Here's what happens — step by step — in the next few seconds.
+      </p>
+
+      <div class="step-cards animate-in stagger-children">
+
+        <div class="step-card animate-in">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>TUI shows your message</strong>
+            <p>The <span class="term" data-definition="Text User Interface — the interactive terminal chat panel you type into. It captures your keystrokes, displays the conversation, and shows Hermes's responses in real time.">TUI</span> captures your message and displays it in the conversation panel.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>AIAgent reads your request</strong>
+            <p>The <span class="term" data-definition="The core reasoning component of Hermes. It reads every message, decides what actions to take, coordinates tools, and produces the final response.">AIAgent</span> receives your message along with its full context — past conversation, available tools, and any active skills.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>AIAgent checks its Skills library</strong>
+            <p>Before doing anything new, Hermes checks its <span class="term" data-definition="A saved, step-by-step procedure Hermes can follow in future sessions. Like a recipe card — Hermes writes it once after solving a hard problem, then uses it automatically next time.">Skills</span> library — maybe it has done this exact setup before and can reuse a known-good procedure.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>AIAgent calls terminal tools to create files</strong>
+            <p>Hermes runs real shell commands: <code>mkdir</code>, <code>pip install flask</code>, writes <code>app.py</code> — all through its <span class="term" data-definition="Programs Hermes can call to take actions in the real world: run terminal commands, read or write files, search the web, take screenshots, and more.">toolset</span>.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>AIAgent browses docs if needed</strong>
+            <p>If Flask's API has changed or Hermes is unsure of a detail, it fires a web search and reads the official documentation in real time — not from outdated training data.</p>
+          </div>
+        </div>
+
+        <div class="step-card animate-in">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <strong>AIAgent returns the result</strong>
+            <p>Once everything is done, Hermes sends a summary back to your TUI — what it created, what commands ran, and what to do next.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">🔁</div>
+        <div class="callout-content">
+          <strong class="callout-title">The Core Loop</strong>
+          <p>Ask → Think → Act → Repeat. This loop runs dozens of times per response. Every tool call, every web search, every file write is one trip around the loop.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 3: Cast of Characters -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Cast of Characters</h2>
+      <p class="animate-in" style="margin-bottom: var(--space-6)">Six actors work together every time you use Hermes. Click any component below to learn what it does.</p>
+
+      <div class="arch-diagram animate-in">
+        <div class="arch-zone" style="display:flex;flex-wrap:wrap;gap:12px;padding:28px;border:2px dashed var(--color-border);border-radius:16px;margin-bottom:16px;background:var(--color-surface-warm)">
+          <h4 class="arch-zone-label" style="width:100%;margin:0 0 8px 0;color:var(--color-text-secondary);font-size:var(--text-sm);text-transform:uppercase;letter-spacing:0.08em">Hermes System</h4>
+
+          <div class="arch-component" data-desc="You — the human giving instructions, reviewing outputs, and deciding what to build next. Hermes works for you.">
+            <div class="arch-icon">🧑</div>
+            <span>User</span>
+          </div>
+
+          <div class="arch-component" data-desc="The TUI (Text User Interface) — the terminal chat panel you type into. It shows the conversation, streams responses as they arrive, and lets you interrupt or redirect Hermes at any time.">
+            <div class="arch-icon">💻</div>
+            <span>TUI</span>
+          </div>
+
+          <div class="arch-component" data-desc="The AIAgent — the brain of Hermes. It receives your message, sends it to an AI model for reasoning, decides which tools to call, coordinates parallel work, and assembles the final response.">
+            <div class="arch-icon">🤖</div>
+            <span>AIAgent</span>
+          </div>
+
+          <div class="arch-component" data-desc="Tools — the hands of Hermes. Each tool is a specific capability: run a shell command, read a file, search the web, take a screenshot, call an API. The AIAgent orchestrates them; the tools do the actual work.">
+            <div class="arch-icon">🔧</div>
+            <span>Tools</span>
+          </div>
+
+          <div class="arch-component" data-desc="Skills — the memory of Hermes. After a complex task, Hermes can save the procedure it used as a Skill. The next session, it loads that Skill automatically and starts smarter. Skills are plain text files you can read and edit.">
+            <div class="arch-icon">📋</div>
+            <span>Skills</span>
+          </div>
+
+          <div class="arch-component" data-desc="The Gateway — the ears that listen beyond the terminal. It connects Hermes to messaging platforms (Telegram, Discord, Slack) so you can chat with it from your phone or team workspace, even when you are not at your computer.">
+            <div class="arch-icon">📡</div>
+            <span>Gateway</span>
+          </div>
+
+        </div>
+        <div class="arch-description">Click any component above to learn what it does</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 4: What Makes It Different -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">What Makes It Different</h2>
+      <p class="animate-in" style="margin-bottom: var(--space-8)">Most AI tools pick one model, one machine, one session. Hermes breaks all three constraints.</p>
+
+      <div class="pattern-cards animate-in stagger-children">
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🔄</div>
+          <h4 class="pattern-title">Closed Learning Loop</h4>
+          <p class="pattern-desc">After complex tasks, Hermes writes what it learned as a <span class="term" data-definition="A saved, step-by-step procedure Hermes can follow in future sessions. Like a recipe card — Hermes writes it once after solving a hard problem, then uses it automatically next time.">Skill</span>. The next session starts smarter — knowledge compounds across every conversation.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🌍</div>
+          <h4 class="pattern-title">Run Anywhere</h4>
+          <p class="pattern-desc">Local machine, <span class="term" data-definition="Docker is software that packages a program and everything it needs into a portable, isolated box called a container. The program runs the same way on any machine.">Docker</span>, SSH, Daytona cloud, or <span class="term" data-definition="Serverless computing lets you run code without managing a server. You pay only for the milliseconds your code actually runs. Modal is a popular serverless platform for AI workloads.">Modal serverless</span> — six execution backends so Hermes goes where the work is.</p>
+        </div>
+
+        <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-accent-light)">🔀</div>
+          <h4 class="pattern-title">Model-Agnostic</h4>
+          <p class="pattern-desc">Works with <span class="term" data-definition="The company or service that runs the AI model Hermes uses to think — OpenAI, Anthropic, Google, a local server, or 200+ options via OpenRouter. Hermes can switch between them with one command.">model providers</span> like OpenAI, Claude, local models, and 200+ options via <span class="term" data-definition="OpenRouter is a service that gives you access to 200+ AI models through a single connection. Instead of signing up for every AI provider separately, you use one OpenRouter account.">OpenRouter</span>. Switch with one command — nothing else changes.</p>
+        </div>
+
+      </div>
+
+      <div class="callout callout-accent animate-in" style="margin-top: var(--space-8)">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight</strong>
+          <p>Most AI tools are tethered to one model, one machine, one session. Hermes breaks all three of those constraints simultaneously.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ SCREEN 5: Product Tour + Translation + Quiz -->
+    <section class="screen animate-in">
+      <h2 class="screen-heading">The Product Tour</h2>
+      <p class="animate-in" style="margin-bottom: var(--space-6)">Every Hermes capability is a <span class="term" data-definition="A subcommand is an additional word you type after the main command to trigger a specific feature. For example, in hermes gateway, the word gateway is the subcommand.">subcommand</span> in your <span class="term" data-definition="CLI stands for Command-Line Interface — a program you control by typing text commands rather than clicking buttons. You run it in a terminal window.">CLI</span>. Here's the full menu:</p>
+
+      <div class="badge-list animate-in">
+        <div class="badge-item">
+          <code class="badge-code">hermes</code>
+          <span class="badge-desc">Open the interactive TUI chat — your main workspace with Hermes</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">hermes gateway</code>
+          <span class="badge-desc">Start the <span class="term" data-definition="The Gateway is a running service that connects Hermes to messaging platforms like Telegram, Discord, and Slack — so you can chat with Hermes from your phone or team workspace.">Gateway</span> — receive messages from Telegram, Discord, Slack, and more</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">hermes cron</code>
+          <span class="badge-desc">Manage <span class="term" data-definition="Cron is a scheduler that runs commands automatically at set times — like an alarm clock for your computer. hermes cron lets you schedule Hermes tasks to run on a fixed schedule.">scheduled tasks</span> — run Hermes on a timer, even while you sleep</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">hermes model</code>
+          <span class="badge-desc">Switch which <span class="term" data-definition="The AI model is the neural network that does the actual thinking — GPT-4o, Claude 3.5, Llama 3, etc. Hermes uses it for reasoning, and you can swap models freely.">AI model</span> Hermes uses for reasoning — no other changes needed</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">hermes tools</code>
+          <span class="badge-desc">Configure which <span class="term" data-definition="Tools are the individual capabilities Hermes can use — like a swiss army knife. Each tool does one thing: run a command, search the web, read a file, etc. You can enable or disable individual tools.">tools</span> are enabled — allow or restrict what Hermes can do</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">hermes skills</code>
+          <span class="badge-desc">Browse and manage the <span class="term" data-definition="The Skills library is a collection of saved procedures Hermes has learned. Each Skill is a text file describing how to handle a specific type of task.">Skills library</span> — see what Hermes has learned across past sessions</span>
+        </div>
+      </div>
+
+      <!-- Code ↔ English Translation -->
+      <h3 class="animate-in" style="margin: var(--space-10) 0 var(--space-4)">The CLI Manifest — Code ↔ Plain English</h3>
+      <p class="animate-in" style="margin-bottom: var(--space-4)">This is the <code>__init__.py</code> file — the front page of the Hermes <span class="term" data-definition="CLI stands for Command-Line Interface — a text-based program you control by typing commands. This file is the entry point that defines what version of Hermes you have and what it can do.">CLI</span> package. Here's what each line means:</p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>
+<span class="code-line"><span class="code-string">"""</span></span>
+<span class="code-line"><span class="code-string">Hermes CLI - Unified command-line interface for Hermes Agent.</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-string">Provides subcommands for:</span></span>
+<span class="code-line"><span class="code-string">- hermes chat          - Interactive chat</span></span>
+<span class="code-line"><span class="code-string">- hermes gateway       - Run gateway in foreground</span></span>
+<span class="code-line"><span class="code-string">- hermes gateway start - Start gateway service</span></span>
+<span class="code-line"><span class="code-string">- hermes gateway stop  - Stop gateway service</span></span>
+<span class="code-line"><span class="code-string">- hermes setup         - Interactive setup wizard</span></span>
+<span class="code-line"><span class="code-string">- hermes status        - Show status of all components</span></span>
+<span class="code-line"><span class="code-string">- hermes cron          - Manage cron jobs</span></span>
+<span class="code-line"><span class="code-string">"""</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-property">__version__</span> <span class="code-operator">=</span> <span class="code-string">"0.10.0"</span></span>
+<span class="code-line"><span class="code-property">__release_date__</span> <span class="code-operator">=</span> <span class="code-string">"2026.4.16"</span></span>
+          </code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">The triple-quoted block at the top is a <strong>docstring</strong> — a human-readable description of what this file (or program) does. Python ignores it at runtime; it exists purely to help developers (and Hermes!) understand the code.</p>
+            <p class="tl"><code>hermes chat</code> — opens the interactive TUI; this is the same as just running <code>hermes</code> with no extra words.</p>
+            <p class="tl"><code>hermes gateway</code> — starts the bridge that lets Hermes receive messages from Telegram, Discord, or Slack. Running it "in foreground" means you can see its logs directly in your terminal.</p>
+            <p class="tl"><code>hermes gateway start/stop</code> — runs the Gateway as a background service, like a web server that keeps going even after you close your terminal.</p>
+            <p class="tl"><code>hermes setup</code> — a guided wizard that asks you questions and configures Hermes for your environment. Perfect for first-time setup.</p>
+            <p class="tl"><code>hermes status</code> — a health check: shows you whether each part of Hermes (Gateway, scheduler, model connection) is running correctly.</p>
+            <p class="tl"><code>hermes cron</code> — manage scheduled tasks: tell Hermes to run a specific prompt every morning, every hour, or on any schedule you define.</p>
+            <p class="tl"><code>__version__</code> and <code>__release_date__</code> — machine-readable labels for the current version. Other parts of the code read these to show you version info or check for updates.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <h3 class="animate-in" style="margin: var(--space-10) 0 var(--space-4)">Check Your Understanding</h3>
+      <div class="quiz-container animate-in" id="quiz-module-1">
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="The Gateway keeps Hermes running continuously, and Cron lets it act on a schedule — no laptop needed."
+             data-explanation-wrong="Think about what &quot;even when your computer is off&quot; implies — you need Hermes running somewhere else, on a schedule.">
+          <h3 class="quiz-question">You want Hermes to send you a morning briefing every day — even when your computer is off. Which capability would you use?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The Skills system — Hermes remembers what to do</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The Gateway + Cron scheduler — run Hermes in the cloud with a scheduled task</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The TUI — leave it open overnight</span>
+            </button>
+            <button class="quiz-option" data-value="option-d" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The memory system — it sends automatically</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Hermes is an agent — it actively browses and acts, not just recalls from memory."
+             data-explanation-wrong="Hermes is an AI agent, not just a chatbot. It uses tools to take real actions in the world — including live web searches.">
+          <h3 class="quiz-question">You ask Hermes to research 3 different Python frameworks. What is the most likely thing it does under the hood?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Generates answers from its training data, like a regular AI chatbot</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Browses the web using its tools, reads current documentation, and synthesizes a response</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Asks you to do the research first, then formats your findings</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="This is the closed learning loop — Hermes compounds its knowledge across sessions."
+             data-explanation-wrong="A Skill in Hermes is a saved procedure — like a recipe for a task it can follow in future sessions. Not just saving code to a file.">
+          <h3 class="quiz-question">After a complex debugging session, Hermes offers to "create a skill from what it learned." What does accepting do?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Saves the code it wrote to a file in your project</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Saves the debugging procedure as a reusable skill so future sessions start knowing this approach</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Submits the solution to GitHub as a pull request</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module-1')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module-1')">Try Again</button>
+      </div>
+
+    </section>
+
+  </div>
+</section>
