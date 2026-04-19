@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Share</title>
+  <title>AI Share by Ying He</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -169,6 +169,16 @@
       white-space: nowrap;
     }
 
+    .card-src {
+      font-size: 12px;
+      color: var(--secondary);
+      flex-shrink: 0;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .card-src:hover { color: var(--blue); text-decoration: underline; }
+
     .card-read-time {
       font-size: 12px;
       color: var(--blue);
@@ -278,14 +288,14 @@
       <ellipse cx="5.1" cy="4.95" rx="0.65" ry="0.28" fill="rgba(255,255,255,0.38)" transform="rotate(12 5.1 4.95)"/>
       </g>
     </svg>
-    AI Share
+    AI Share by Ying He
   </span>
 </header>
 
 <nav class="tabs-bar">
   <button class="tab-btn active" onclick="switchTab('share', this)">Share</button>
   <button class="tab-btn" onclick="switchTab('courses', this)">Courses</button>
-  <button class="tab-btn" onclick="switchTab('code', this)">Code</button>
+  <button class="tab-btn" onclick="switchTab('engineering', this)">Engineering</button>
 </nav>
 
 <!-- ═══════════ SHARE TAB ═══════════ -->
@@ -338,56 +348,69 @@
 
     <div class="article-list">
 
-      <a class="article-card" href="https://yinghe1.github.io/aishare/courses/obsidian-skills-course/" target="_blank" rel="noopener">
+<div class="article-card" onclick="window.open('https://yinghe1.github.io/aishare/courses/obsidian-skills-course/','_blank')" style="cursor:pointer;">
         <span class="card-date">04/19/2026</span>
         <span class="card-title">Obsidian Skills — Teach Your AI to Think Like You</span>
         <span class="card-tag">5 modules</span>
+        <a class="card-src" href="https://github.com/kepano/obsidian-skills" target="_blank" rel="noopener" onclick="event.stopPropagation()">src ↗</a>
         <span class="card-read-time">~35 min</span>
         <span class="card-arrow">›</span>
-      </a>
+      </div>
 
-      <a class="article-card" href="https://yinghe1.github.io/aishare/courses/hermes-course/" target="_blank" rel="noopener">
+      <div class="article-card" onclick="window.open('https://yinghe1.github.io/aishare/courses/hermes-course/','_blank')" style="cursor:pointer;">
         <span class="card-date">04/18/2026</span>
         <span class="card-title">Hermes Agent: How It Works</span>
         <span class="card-tag">6 modules</span>
+        <a class="card-src" href="https://github.com/nousresearch/hermes-agent" target="_blank" rel="noopener" onclick="event.stopPropagation()">src ↗</a>
         <span class="card-read-time">~45 min</span>
         <span class="card-arrow">›</span>
-      </a>
+      </div>
 
-      <a class="article-card" href="https://yinghe1.github.io/aishare/courses/oh-my-opencode-course/" target="_blank" rel="noopener">
+      <div class="article-card" onclick="window.open('https://yinghe1.github.io/aishare/courses/oh-my-opencode-course/','_blank')" style="cursor:pointer;">
         <span class="card-date">04/05/2026</span>
         <span class="card-title">Inside Oh My OpenCode</span>
         <span class="card-tag">6 modules</span>
+        <a class="card-src" href="https://github.com/opensoft/oh-my-opencode" target="_blank" rel="noopener" onclick="event.stopPropagation()">src ↗</a>
         <span class="card-read-time">~45 min</span>
+        <span class="card-arrow">›</span>
+      </div>
+
+</div>
+  </div>
+</div>
+
+<!-- ═══════════ ENGINEERING TAB ═══════════ -->
+<div id="tab-engineering" class="tab-panel">
+  <div class="container">
+    <h2 class="panel-title">Engineering</h2>
+    <p class="panel-subtitle">Engineering blogs and resources from AI labs.</p>
+
+    <div class="article-list">
+
+      <a class="article-card" href="https://www.anthropic.com/engineering" target="_blank" rel="noopener">
+        <span class="card-title">Claude</span>
+        <span class="card-arrow">›</span>
+      </a>
+
+      <a class="article-card" href="https://openai.com/news/engineering/?display=list" target="_blank" rel="noopener">
+        <span class="card-title">OpenAI</span>
+        <span class="card-arrow">›</span>
+      </a>
+
+      <a class="article-card" href="https://simonwillison.net" target="_blank" rel="noopener">
+        <span class="card-title">Simon Willison</span>
         <span class="card-arrow">›</span>
       </a>
 
     </div>
   </div>
 </div>
-
-<!-- ═══════════ CODE TAB ═══════════ -->
-<div id="tab-code" class="tab-panel">
-  <div class="container">
-    <h2 class="panel-title">Code</h2>
-    <p class="panel-subtitle">Playbooks and practical guides for engineering with AI.</p>
-
-    <div class="article-list">
-
-      <a class="article-card" href="https://yinghe1.github.io/aishare/share/code/legacy_java_claude_testing_playbook.html" target="_blank" rel="noopener">
-        <span class="card-date">04/18/2026</span>
-        <span class="card-title">Legacy Java Testing Playbook with Claude</span>
-        <span class="card-read-time">6 min read</span>
-        <span class="card-arrow">›</span>
-      </a>
-
-    </div>
   </div>
 </div>
 
 <footer class="site-footer">
   <div class="container">
-    yinghe1 · 2026
+    <a href="https://github.com/yinghe1" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Ying He</a> · 2026
   </div>
 </footer>
 
