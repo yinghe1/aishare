@@ -1,0 +1,280 @@
+<section class="module" id="module-3" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">Notes as a Database</h1>
+      <p class="module-subtitle">The obsidian-bases skill — teaching AI to turn your vault into queryable, live-updating views.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- Screen 1: The Big Idea -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What if your notes could answer questions?</h2>
+        <p>Imagine asking: <em>"Show me all my books tagged #reading, sorted by status, with how many pages each has."</em> Without Bases, you'd scroll through folders manually. With Bases, you get a live table that updates the moment you add a new book note.</p>
+        <p><span class="term" data-definition="Obsidian Bases is a feature that reads the properties (frontmatter) of your notes and displays them as structured views — tables, card grids, or lists — that filter and sort dynamically based on rules you define.">Obsidian Bases</span> turns your vault into something like a personal spreadsheet — but the rows are your notes, and the data is already in your frontmatter. The <code>obsidian-bases</code> skill teaches AI to build these views for you.</p>
+
+        <div class="icon-rows stagger-children animate-in">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">📝</div>
+            <div>
+              <strong>Your notes have properties</strong>
+              <p>Frontmatter like status, tags, date, author — all stored in every note you create with the markdown skill.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🔍</div>
+            <div>
+              <strong>A .base file writes the query</strong>
+              <p>Like a saved search — "give me all notes tagged #book where status != done, sorted by date."</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">📊</div>
+            <div>
+              <strong>Obsidian renders it live</strong>
+              <p>Open the .base file and see a table, card grid, or list — updated automatically as notes change.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 2: The .base file structure -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Anatomy of a .base file</h2>
+        <p>A <span class="term" data-definition="A .base file is a special Obsidian file (with the .base extension instead of .md) that contains YAML instructions defining which notes to show and how to display them. YAML is a text format that uses indentation and colons to define structured data.">base file</span> is written in <span class="term" data-definition="YAML (Yet Another Markup Language) is a human-readable format for structured data. In base files, it uses indentation and colons to define rules — like 'show notes where status equals done.'">YAML</span> — think of it as a form you fill out: "filter by these rules, display these columns, group by this property."</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-property">filters</span>:</span>
+<span class="code-line">  <span class="code-property">or</span>:</span>
+<span class="code-line">    - <span class="code-function">file.hasTag</span>(<span class="code-string">"book"</span>)</span>
+<span class="code-line">    - <span class="code-function">file.hasTag</span>(<span class="code-string">"article"</span>)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-property">formulas</span>:</span>
+<span class="code-line">  <span class="code-property">status_icon</span>: <span class="code-string">'if(status == "done", "✅", "📚")'</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-property">views</span>:</span>
+<span class="code-line">  - <span class="code-property">type</span>: <span class="code-string">table</span></span>
+<span class="code-line">    <span class="code-property">name</span>: <span class="code-string">"Reading List"</span></span>
+<span class="code-line">    <span class="code-property">order</span>:</span>
+<span class="code-line">      - <span class="code-string">file.name</span></span>
+<span class="code-line">      - <span class="code-string">author</span></span>
+<span class="code-line">      - <span class="code-string">formula.status_icon</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Start of filter rules — which notes to include</p>
+              <p class="tl">"Or" means include a note if ANY of these conditions are true</p>
+              <p class="tl">Include notes tagged #book</p>
+              <p class="tl">OR include notes tagged #article</p>
+              <p class="tl">Formulas section — computed columns you can invent</p>
+              <p class="tl">If the note's status is "done", show ✅, otherwise show 📚</p>
+              <p class="tl">Views section — how to display the results</p>
+              <p class="tl">Display as a table (other options: cards, list, map)</p>
+              <p class="tl">The table's name, shown as a tab in Obsidian</p>
+              <p class="tl">Which columns to show, left to right</p>
+              <p class="tl">Column 1: the note's filename</p>
+              <p class="tl">Column 2: the author property from frontmatter</p>
+              <p class="tl">Column 3: the computed status icon formula</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 3: Filters -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Filters — the smart search that remembers itself</h2>
+        <p>Filters are rules that decide which notes appear. Unlike a one-off search you type and forget, a filter in a base file is permanent — saved, reusable, and always up to date.</p>
+
+        <div class="badge-list animate-in">
+          <div class="badge-item">
+            <code class="badge-code">file.hasTag("book")</code>
+            <span class="badge-desc">Include notes with the #book tag</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">status == "done"</code>
+            <span class="badge-desc">Only notes where the status property equals "done"</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">status != "done"</code>
+            <span class="badge-desc">Exclude done notes — show everything in progress</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">priority > 3</code>
+            <span class="badge-desc">Only high-priority items (where priority is a number)</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">file.inFolder("Books")</code>
+            <span class="badge-desc">Only notes inside the Books folder</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">file.mtime > today() - "7d"</code>
+            <span class="badge-desc">Notes modified in the last 7 days</span>
+          </div>
+        </div>
+
+        <p>Filters can be combined with <code>and:</code> (all must be true), <code>or:</code> (any can be true), and <code>not:</code> (exclude matches). Think of them like a smart shopping cart: AND adds conditions, OR broadens the search, NOT removes things you do not want.</p>
+      </section>
+
+      <!-- Screen 4: Formulas -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Formulas — computed columns you invent</h2>
+        <p>Formulas let you calculate values that do not exist yet in your frontmatter. Think of it like adding a new column to a spreadsheet that computes its value from other columns.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-property">formulas</span>:</span>
+<span class="code-line">  <span class="code-property">days_until_due</span>:</span>
+<span class="code-line">    <span class="code-string">'if(due, (date(due) - today()).days, "")'</span></span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-property">priority_label</span>:</span>
+<span class="code-line">    <span class="code-string">'if(priority == 1, "🔴 High",</span></span>
+<span class="code-line">     <span class="code-string">if(priority == 2, "🟡 Med", "🟢 Low"))'</span></span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-property">days_old</span>:</span>
+<span class="code-line">    <span class="code-string">'(now() - file.ctime).days'</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define custom computed columns here</p>
+              <p class="tl">Column named "days_until_due"</p>
+              <p class="tl">If the note has a due property, calculate days remaining; otherwise show blank</p>
+              <p class="tl">Column named "priority_label"</p>
+              <p class="tl">If priority is 1, show 🔴 High; if 2, show 🟡 Med; otherwise 🟢 Low</p>
+              <p class="tl">Column named "days_old"</p>
+              <p class="tl">Subtract the file creation time from now, convert to days</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning animate-in">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Common gotcha: date subtraction returns a Duration, not a number</strong>
+            <p>When you subtract two dates in a formula, you get a Duration object — not a plain number. Always add <code>.days</code> to get the number: <code>(date(due) - today()).days</code> not just <code>(date(due) - today())</code>. This is the #1 formula error the skill prevents.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 5: Real Example — Task Tracker flow -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A complete example: Task Tracker</h2>
+        <p>Here is how the AI builds a task tracker base when you ask it to. Watch the data flow from your notes to the view.</p>
+
+        <div class="flow-animation animate-in" data-steps='[
+          {"highlight":"flow-actor-1","label":"Your task notes each have properties: status, priority, due date in frontmatter"},
+          {"highlight":"flow-actor-2","label":"You ask AI: &quot;Create a task tracker base that shows active tasks grouped by status&quot;","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-2","label":"obsidian-bases skill activates — AI writes filters (exclude done), formulas (days_until_due), views (table grouped by status)"},
+          {"highlight":"flow-actor-3","label":"AI writes the .base file with correct YAML syntax","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-3","label":"Obsidian reads the .base file and renders a live table — updates automatically as task notes change"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">📝</div>
+              <span>Task Notes</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🤖</div>
+              <span>AI + Skill</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-3">
+              <div class="flow-actor-icon">📊</div>
+              <span>.base View</span>
+            </div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click "Next Step" to begin</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div style="background: var(--color-bg-code); border-radius: var(--radius-md); padding: var(--space-6); margin-top: var(--space-6);">
+          <p style="font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); margin-bottom: var(--space-4);">WHAT THE AI GENERATES</p>
+          <pre style="color: #CDD6F4; font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.8;"><code><span class="code-property">filters</span>:
+  <span class="code-property">and</span>:
+    - <span class="code-function">file.hasTag</span>(<span class="code-string">"task"</span>)
+    - <span class="code-string">'status != "done"'</span>
+
+<span class="code-property">formulas</span>:
+  <span class="code-property">days_until_due</span>: <span class="code-string">'if(due, (date(due) - today()).days, "")'</span>
+  <span class="code-property">priority_label</span>: <span class="code-string">'if(priority == 1, "🔴 High", "🟢 Low")'</span>
+
+<span class="code-property">views</span>:
+  - <span class="code-property">type</span>: <span class="code-string">table</span>
+    <span class="code-property">name</span>: <span class="code-string">"Active Tasks"</span>
+    <span class="code-property">groupBy</span>:
+      <span class="code-property">property</span>: <span class="code-string">status</span>
+    <span class="code-property">order</span>:
+      - <span class="code-string">file.name</span>
+      - <span class="code-string">formula.priority_label</span>
+      - <span class="code-string">due</span>
+      - <span class="code-string">formula.days_until_due</span></code></pre>
+        </div>
+      </section>
+
+      <!-- Screen 6: Quiz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Test your bases intuition</h2>
+
+        <div class="quiz-container animate-in" id="quiz-module3">
+
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="The formulas section is where you define computed columns. You would write something like: reading_time: 'if(pages, (pages * 2).toString() + &quot; min&quot;, &quot;&quot;)' — then reference it as formula.reading_time in your views order."
+               data-explanation-wrong="Filters select which notes appear but do not compute new values. To create a calculated column like reading time, you need the formulas section — that is where you define expressions that compute values from existing properties.">
+            <h3 class="quiz-question">You want to add a "reading time" column that estimates minutes based on a pages property. Where in the .base file does this go?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>In the <code>filters:</code> section — I can filter by calculated values</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>In the <code>formulas:</code> section — that is where computed columns are defined</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>In the <code>views:</code> order — I can add expressions directly there</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Date subtraction in Bases returns a Duration type, not a number. You must access .days to get a usable integer. The skill's SKILL.md explicitly flags this as the #1 formula error."
+               data-explanation-wrong="This is a very common bug. Subtracting two dates returns a Duration object, not a plain number. You need to add .days at the end: (date(due) - today()).days — only then do you get a number you can display or compare.">
+            <h3 class="quiz-question">You write the formula <code>(date(due) - today())</code> to show how many days until a deadline, but it shows an error. What is wrong?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The formula needs single quotes around it</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>You should use <code>now()</code> instead of <code>today()</code></span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Date subtraction returns a Duration object — you need <code>.days</code> at the end to get a number</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

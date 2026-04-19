@@ -1,0 +1,265 @@
+<section class="module" id="module-4" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">Visual Canvases</h1>
+      <p class="module-subtitle">The json-canvas skill — teaching AI to build infinite visual boards where ideas connect in 2D space.</p>
+    </header>
+
+    <div class="module-body">
+
+      <!-- Screen 1: Words in a line vs. 2D space -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Some ideas do not fit in a line</h2>
+        <p>Notes are linear — one paragraph after another, top to bottom. But some thinking is inherently spatial: project relationships, research maps, system diagrams, concept connections. For those, you need <span class="term" data-definition="An Obsidian Canvas is an infinite 2D board where you can place notes, images, web pages, and text boxes anywhere in space, connected by drawn lines. It is stored as a .canvas file containing JSON.">Obsidian Canvas</span>.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin: var(--space-8) 0; align-items: start;">
+          <div>
+            <p style="font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); margin-bottom: var(--space-3);">NOTES (linear)</p>
+            <div style="background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-5); box-shadow: var(--shadow-sm); border-left: 3px solid var(--color-border);">
+              <div style="height: 8px; background: var(--color-border); border-radius: 4px; margin-bottom: var(--space-2);"></div>
+              <div style="height: 8px; background: var(--color-border); border-radius: 4px; width: 80%; margin-bottom: var(--space-2);"></div>
+              <div style="height: 8px; background: var(--color-border); border-radius: 4px; margin-bottom: var(--space-2);"></div>
+              <div style="height: 8px; background: var(--color-border); border-radius: 4px; width: 60%;"></div>
+            </div>
+          </div>
+          <div>
+            <p style="font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); margin-bottom: var(--space-3);">CANVAS (spatial)</p>
+            <div style="background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-5); box-shadow: var(--shadow-sm); position: relative; height: 120px; overflow: hidden;">
+              <div style="position: absolute; left: 10px; top: 15px; width: 80px; height: 50px; background: var(--color-accent-light); border: 1px solid var(--color-accent-muted); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--color-accent);">Idea A</div>
+              <div style="position: absolute; right: 20px; top: 10px; width: 80px; height: 50px; background: var(--color-info-light); border: 1px solid var(--color-info); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--color-info);">Idea B</div>
+              <div style="position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); width: 80px; height: 50px; background: var(--color-success-light); border: 1px solid var(--color-success); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--color-success);">Idea C</div>
+              <svg style="position: absolute; inset: 0; width: 100%; height: 100%;" viewBox="0 0 280 120">
+                <line x1="90" y1="40" x2="180" y2="35" stroke="#9E9790" stroke-width="1.5" stroke-dasharray="4"/>
+                <line x1="90" y1="50" x2="140" y2="85" stroke="#9E9790" stroke-width="1.5" stroke-dasharray="4"/>
+                <line x1="200" y1="55" x2="155" y2="85" stroke="#9E9790" stroke-width="1.5" stroke-dasharray="4"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <p>A canvas is stored as a <span class="term" data-definition="JSON (JavaScript Object Notation) is a text format for structured data that uses curly braces {}, square brackets [], and key: value pairs. Obsidian stores canvas data as JSON because it needs to record exact positions, sizes, and connections for every item on the board.">JSON</span> file with the <code>.canvas</code> extension. The <code>json-canvas</code> skill teaches AI to generate valid JSON that Obsidian can render as a visual board — without you needing to write a single line of JSON yourself.</p>
+      </section>
+
+      <!-- Screen 2: The JSON structure -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What a canvas file actually contains</h2>
+        <p>Think of a canvas file like a stage direction script for a play. It says: "Place Actor A at position X, facing Y. Draw a line from Actor A to Actor B." Obsidian reads the script and renders the stage.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line">{</span>
+<span class="code-line">  <span class="code-property">"nodes"</span>: [</span>
+<span class="code-line">    {</span>
+<span class="code-line">      <span class="code-property">"id"</span>: <span class="code-string">"6f0ad84f44ce9c17"</span>,</span>
+<span class="code-line">      <span class="code-property">"type"</span>: <span class="code-string">"text"</span>,</span>
+<span class="code-line">      <span class="code-property">"x"</span>: <span class="code-number">0</span>, <span class="code-property">"y"</span>: <span class="code-number">0</span>,</span>
+<span class="code-line">      <span class="code-property">"width"</span>: <span class="code-number">400</span>, <span class="code-property">"height"</span>: <span class="code-number">200</span>,</span>
+<span class="code-line">      <span class="code-property">"text"</span>: <span class="code-string">"# Hello World"</span></span>
+<span class="code-line">    }</span>
+<span class="code-line">  ],</span>
+<span class="code-line">  <span class="code-property">"edges"</span>: [</span>
+<span class="code-line">    {</span>
+<span class="code-line">      <span class="code-property">"id"</span>: <span class="code-string">"0123456789abcdef"</span>,</span>
+<span class="code-line">      <span class="code-property">"fromNode"</span>: <span class="code-string">"6f0ad84f44ce9c17"</span>,</span>
+<span class="code-line">      <span class="code-property">"toNode"</span>: <span class="code-string">"a1b2c3d4e5f67890"</span>,</span>
+<span class="code-line">      <span class="code-property">"label"</span>: <span class="code-string">"leads to"</span></span>
+<span class="code-line">    }</span>
+<span class="code-line">  ]</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">The entire canvas is one JSON object with two lists</p>
+              <p class="tl">"nodes" is the list of things on the board</p>
+              <p class="tl">Each node is its own object with properties</p>
+              <p class="tl">A unique 16-character ID — no two nodes can share this</p>
+              <p class="tl">"text" means it holds markdown text (other types: file, link, group)</p>
+              <p class="tl">Position on the infinite canvas — x goes right, y goes down</p>
+              <p class="tl">How big the box is in pixels</p>
+              <p class="tl">The markdown content displayed inside the box</p>
+              <p class="tl">"edges" is the list of connecting lines between nodes</p>
+              <p class="tl">Each edge also gets a unique ID</p>
+              <p class="tl">fromNode: the ID of the node where the arrow starts</p>
+              <p class="tl">toNode: the ID of the node where the arrow points</p>
+              <p class="tl">Optional text label that appears on the connecting line</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 3: Node types -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Four types of canvas card</h2>
+        <p>Every item on a canvas is a node. The <code>type</code> property controls what the node displays.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top-color: var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-accent-light)">📝</div>
+            <h4 class="pattern-title">text</h4>
+            <p class="pattern-desc">A plain text or markdown card. Write headers, lists, callouts — anything markdown supports. Most common type.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top-color: var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-info-light)">📄</div>
+            <h4 class="pattern-title">file</h4>
+            <p class="pattern-desc">Displays an existing note from your vault as a preview card. Clicking opens the note. Can show a specific heading with subpath.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top-color: var(--color-actor-3)">
+            <div class="pattern-icon" style="background: rgba(212,168,67,0.15)">🌐</div>
+            <h4 class="pattern-title">link</h4>
+            <p class="pattern-desc">Embeds an external URL — shows a web page preview card on the canvas. Great for research boards.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top-color: var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-success-light)">📦</div>
+            <h4 class="pattern-title">group</h4>
+            <p class="pattern-desc">A container that visually groups other nodes. Like drawing a box around related cards. Has a label and optional background.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info animate-in">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Every ID must be unique — and the skill enforces this</strong>
+            <p>The biggest canvas bug is two nodes with the same ID. The skill instructs AI to generate fresh 16-character hex IDs for every node and edge, and to verify that fromNode/toNode references actually exist in the nodes list before writing the file.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 4: Chat showing canvas creation -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">AI building a project overview canvas</h2>
+        <p>Watch how the <code>json-canvas</code> skill guides AI to build a visual project map from a natural language request.</p>
+
+        <div class="chat-window" id="chat-module4">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="user" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">Y</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">You</span>
+                <p>Create a canvas that shows my project structure: a "Core App" node in the center, with three connected nodes for Frontend, Backend, and Database. Add a group around Frontend and Backend called "Product Layer".</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="skill" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">S</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">json-canvas skill</span>
+                <p>Canvas creation request detected. Plan: 1 group node, 4 content nodes, 3 edges. Generating unique IDs for each. Calculating positions to avoid overlap (100px spacing rule). Writing JSON...</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="ai" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">AI</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Claude</span>
+                <p>Here's your project-overview.canvas:</p>
+                <pre style="background: var(--color-bg-code); color: #CDD6F4; padding: var(--space-3); border-radius: var(--radius-sm); font-size: var(--text-xs); line-height: 1.6; margin-top: var(--space-2);"><code>{"nodes": [
+  {"id":"aa01","type":"group","x":-60,"y":-60,
+   "width":520,"height":300,"label":"Product Layer"},
+  {"id":"aa02","type":"text","x":0,"y":0,
+   "width":200,"height":100,"text":"# Frontend"},
+  {"id":"aa03","type":"text","x":260,"y":0,
+   "width":200,"height":100,"text":"# Backend"},
+  {"id":"aa04","type":"text","x":130,"y":380,
+   "width":200,"height":100,"text":"# Core App"},
+  {"id":"aa05","type":"text","x":130,"y":560,
+   "width":200,"height":100,"text":"# Database"}
+], "edges": [
+  {"id":"ee01","fromNode":"aa04","toNode":"aa02"},
+  {"id":"ee02","fromNode":"aa04","toNode":"aa03"},
+  {"id":"ee03","fromNode":"aa04","toNode":"aa05","label":"stores"}
+]}</code></pre>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="user" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">Y</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">You</span>
+                <p>Color the Database node red and the Core App node green.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="ai" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">AI</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Claude</span>
+                <p>Add <code>"color": "1"</code> to the Database node (red preset) and <code>"color": "4"</code> to Core App (green preset). Canvas color presets: 1=red, 2=orange, 3=yellow, 4=green, 5=cyan, 6=purple. Or use any hex color like <code>"#FF0000"</code>.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-typing" style="display:none">
+            <div class="chat-avatar" id="chat-module4-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 5: Quiz -->
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Canvas knowledge check</h2>
+
+        <div class="quiz-container animate-in" id="quiz-module4">
+
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="A file node (type: file) displays an existing vault note as a preview card on the canvas. The file property holds the path to the note. This is different from a text node, which holds its own content directly."
+               data-explanation-wrong="A text node holds its own markdown content directly — it does not reference a vault file. To display an existing note, you need type: file with the file property pointing to the note's path.">
+            <h3 class="quiz-question">You want to place your existing "Q1 Goals.md" note onto a canvas so it shows a live preview. Which node type and property do you use?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>type: "text"</code> with <code>text: "[[Q1 Goals]]"</code></span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>type: "file"</code> with <code>file: "Q1 Goals.md"</code></span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>type: "link"</code> with <code>url: "Q1 Goals.md"</code></span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Duplicate IDs are the most common canvas bug. Obsidian uses IDs to wire up edges — if two nodes share an ID, edges point to the wrong place or break entirely. The skill always generates fresh unique IDs to prevent this."
+               data-explanation-wrong="Missing labels and wrong positions affect appearance but will not break the canvas. Duplicate IDs are the critical bug — edges use IDs to define their start and end points, so duplicates cause connections to fail or point to the wrong node.">
+            <h3 class="quiz-question">Your canvas renders but the arrows point to the wrong nodes. What is the most likely cause?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Two nodes have the same ID — edges use IDs to find their targets</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The edge labels are missing</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The node positions are too close together</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

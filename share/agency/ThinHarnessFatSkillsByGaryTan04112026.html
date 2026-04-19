@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thin Harness Fat Skills — Gary Tan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #0071e3;
+      --blue-light: #e8f2fd;
+      --ink: #1d1d1f;
+      --secondary: #6e6e73;
+      --surface: #fbfbfd;
+      --border: #d2d2d7;
+      --white: #ffffff;
+      --thoughts-bg: #f5f5f7;
+      --max-w: 740px;
+    }
+
+    html { font-size: 17px; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      z-index: 100;
+    }
+
+    .site-name { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+    .site-date { font-size: 13px; color: var(--secondary); }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    article { padding: 72px 0 80px; }
+
+    .article-header {
+      margin-bottom: 44px;
+      padding-left: 16px;
+      border-left: 3px solid var(--blue);
+    }
+
+    .article-header h1 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      line-height: 1.12;
+      margin-bottom: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--secondary);
+    }
+
+    .article-meta .author { font-weight: 500; color: var(--ink); }
+    .article-meta .separator { color: var(--border); }
+    .article-meta .read-time {
+      background: var(--blue-light);
+      color: var(--blue);
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .article-body { margin-bottom: 44px; }
+
+    .article-body p { margin-bottom: 20px; }
+
+    .article-body h3 {
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 36px 0 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    .article-body ol {
+      list-style: none;
+      counter-reset: article-counter;
+      margin-bottom: 28px;
+    }
+
+    .article-body ol li {
+      counter-increment: article-counter;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: flex-start;
+    }
+
+    .article-body ol li::before {
+      content: counter(article-counter);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .li-title { font-weight: 600; color: var(--ink); }
+    .li-body { color: var(--ink); margin-top: 6px; }
+
+    .pullquote {
+      border-left: 2px solid var(--blue);
+      padding: 6px 0 6px 20px;
+      margin: 24px 0;
+      font-size: 17px;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .code-quote {
+      font-style: normal;
+      font-family: "SF Mono", "Menlo", monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      background: #f5f5f7;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 24px 0;
+      color: var(--ink);
+    }
+
+    figure.infographic { margin: 40px 0; text-align: center; }
+    figure.infographic svg { max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border); }
+    figure.infographic figcaption { margin-top: 10px; font-size: 13px; color: var(--secondary); }
+
+    .thoughts-section {
+      background: var(--thoughts-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 36px;
+    }
+
+    .thoughts-section h2 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .thoughts-section h2::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--blue);
+      border-radius: 50%;
+    }
+
+    .thoughts-section ul { list-style: none; }
+
+    .thoughts-section ul li {
+      padding-left: 18px;
+      position: relative;
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .thoughts-section ul li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--secondary);
+      font-size: 14px;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--secondary);
+    }
+
+    @media (max-width: 600px) {
+      html { font-size: 15px; }
+      .container { padding: 0 16px; }
+      article { padding: 48px 0 56px; }
+      .thoughts-section { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="site-name">AI Insights</span>
+  <span class="site-date">04/11/2026</span>
+</header>
+
+<article>
+  <div class="container">
+
+    <div class="article-header">
+      <h1>Thin Harness Fat Skills</h1>
+      <div class="article-meta">
+        <span class="author">Gary Tan</span>
+        <span class="separator">·</span>
+        <span class="date">04/11/2026</span>
+        <span class="separator">·</span>
+        <span class="read-time">6 min read</span>
+      </div>
+    </div>
+
+    <div class="article-body">
+
+      <p>Steve Yegge says people using AI coding agents are "10x to 100x as productive as engineers using Cursor and chat today, and roughly 1000x as productive as Googlers were back in 2005."</p>
+
+      <p>That's a real number. I've seen it. I've lived it. But when people hear it, they reach for the wrong explanation. Better models. Smarter Claude. More parameters. The 2x people and the 100x people are using the same models. The difference isn't intelligence. It's architecture — and it fits on an index card.</p>
+
+      <h3>The harness is the product</h3>
+
+      <p>On March 31, 2026, Anthropic accidentally shipped the entire source code for Claude Code to the npm registry. 512,000 lines. I read it. It confirmed everything I'd been teaching at YC: the secret isn't the model. It's the thing wrapping the model.</p>
+
+      <p>Live repo context. Prompt caching. Purpose-built tools. Context bloat minimization. Structured session memory. Parallel sub-agents. None of that makes the model smarter. All of it gives the model the right context, at the right time, without drowning it in noise.</p>
+
+      <p>That wrapper is called the harness. And the question every AI builder should be asking is: what goes in the harness, and what stays out? The answer has a specific shape. I call it thin harness, fat skills.</p>
+
+      <h3>Five definitions</h3>
+
+      <p>The bottleneck is never the model's intelligence. Models already know how to reason, synthesize, and write code. They fail because they don't understand your data — your schema, your conventions, the particular shape of your problem. Five definitions fix this.</p>
+
+      <!-- SVG: Three-layer architecture -->
+      <figure class="infographic">
+        <svg viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">
+          <rect width="800" height="460" fill="#ffffff" rx="12"/>
+          <text x="400" y="36" text-anchor="middle" font-size="15" font-weight="600" fill="#1d1d1f" letter-spacing="-0.3">The Three-Layer Architecture</text>
+
+          <!-- Fat Skills -->
+          <rect x="60" y="58" width="680" height="112" rx="12" fill="#e8f2fd" stroke="#0071e3" stroke-width="1.5"/>
+          <circle cx="104" cy="114" r="22" fill="#0071e3"/>
+          <text x="104" y="121" text-anchor="middle" font-size="17" fill="white">📄</text>
+          <text x="144" y="90" font-size="13" font-weight="700" fill="#0071e3" letter-spacing="-0.2">FAT SKILLS  —  90% of the value lives here</text>
+          <text x="144" y="112" font-size="12" fill="#1d1d1f">Markdown procedures that encode judgment, process, and domain knowledge</text>
+          <text x="144" y="132" font-size="12" fill="#6e6e73">Upgrades automatically with every new model drop</text>
+          <rect x="480" y="72" width="96" height="26" rx="13" fill="#0071e3"/>
+          <text x="528" y="89" text-anchor="middle" font-size="11" fill="white" font-weight="500">/investigate</text>
+          <rect x="584" y="72" width="72" height="26" rx="13" fill="#0071e3" opacity="0.7"/>
+          <text x="620" y="89" text-anchor="middle" font-size="11" fill="white" font-weight="500">/enrich</text>
+          <rect x="662" y="72" width="68" height="26" rx="13" fill="#0071e3" opacity="0.45"/>
+          <text x="696" y="89" text-anchor="middle" font-size="11" fill="white" font-weight="500">/improve</text>
+
+          <!-- Arrow 1 -->
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4z" fill="#d2d2d7"/></marker>
+          </defs>
+          <line x1="400" y1="170" x2="400" y2="196" stroke="#d2d2d7" stroke-width="2" marker-end="url(#arr)"/>
+
+          <!-- Thin Harness -->
+          <rect x="180" y="196" width="440" height="90" rx="12" fill="#f5f5f7" stroke="#d2d2d7" stroke-width="1.5"/>
+          <circle cx="226" cy="241" r="20" fill="#6e6e73"/>
+          <text x="226" y="248" text-anchor="middle" font-size="17" fill="white">⚙️</text>
+          <text x="258" y="224" font-size="13" font-weight="700" fill="#1d1d1f" letter-spacing="-0.2">THIN HARNESS  —  ~200 lines of code</text>
+          <text x="258" y="244" font-size="12" fill="#6e6e73">Runs model in loop · Reads/writes files · Manages context</text>
+          <text x="258" y="264" font-size="12" fill="#6e6e73">Enforces safety · JSON in, text out · Read-only by default</text>
+
+          <!-- Arrow 2 -->
+          <line x1="400" y1="286" x2="400" y2="312" stroke="#d2d2d7" stroke-width="2" marker-end="url(#arr)"/>
+
+          <!-- Deterministic Foundation -->
+          <rect x="60" y="312" width="680" height="110" rx="12" fill="#fff3e0" stroke="#f0a500" stroke-width="1.5"/>
+          <circle cx="104" cy="367" r="22" fill="#f0a500"/>
+          <text x="104" y="374" text-anchor="middle" font-size="17" fill="white">🔒</text>
+          <text x="144" y="344" font-size="13" font-weight="700" fill="#b36b00" letter-spacing="-0.2">DETERMINISTIC FOUNDATION  —  Same input → same output</text>
+          <text x="144" y="364" font-size="12" fill="#1d1d1f">SQL queries · Compiled code · Arithmetic · API calls</text>
+          <text x="144" y="384" font-size="12" fill="#6e6e73">QueryDB · ReadDoc · Search · Timeline</text>
+          <rect x="480" y="326" width="80" height="24" rx="12" fill="#f0a500" opacity="0.8"/>
+          <text x="520" y="342" text-anchor="middle" font-size="11" fill="white" font-weight="500">QueryDB</text>
+          <rect x="566" y="326" width="76" height="24" rx="12" fill="#f0a500" opacity="0.6"/>
+          <text x="604" y="342" text-anchor="middle" font-size="11" fill="white" font-weight="500">ReadDoc</text>
+          <rect x="648" y="326" width="76" height="24" rx="12" fill="#f0a500" opacity="0.4"/>
+          <text x="686" y="342" text-anchor="middle" font-size="11" fill="white" font-weight="500">Timeline</text>
+
+          <text x="400" y="446" text-anchor="middle" font-size="12" fill="#6e6e73" font-style="italic">Push intelligence up · Push execution down · Keep the harness thin</text>
+        </svg>
+        <figcaption>The three-layer architecture: fat skills on top, thin harness in the middle, deterministic foundation below.</figcaption>
+      </figure>
+
+      <ol>
+        <li>
+          <div>
+            <div class="li-title">Skill files</div>
+            <div class="li-body">A skill file is a reusable markdown document that teaches the model how to do something. Not what to do — the user supplies that. The skill supplies the process.<br><br>
+            Here's the key insight most people miss: a skill file works like a method call. It takes parameters. You invoke it with different arguments. The same procedure produces radically different capabilities depending on what you pass in.<br><br>
+            Consider a skill called /investigate. It has seven steps: scope the dataset, build a timeline, diarize every document, synthesize, argue both sides, cite sources. It takes three parameters: TARGET, QUESTION, and DATASET. Point it at a safety scientist and 2.1 million discovery emails, and you get a medical research analyst determining whether a whistleblower was silenced. Point it at a shell company and FEC filings, and you get a forensic investigator tracing coordinated campaign donations.<br><br>
+            Same skill. Same seven steps. Same markdown file. The skill describes a process of judgment. The invocation supplies the world.<br><br>
+            This is not prompt engineering. This is software design, using markdown as the programming language and human judgment as the runtime. Markdown is, in fact, a more perfect encapsulation of capability than rigid source code, because it describes process, judgment, and context in the language the model already thinks in.</div>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="li-title">The harness</div>
+            <div class="li-body">The harness is the program that runs the LLM. It does four things: runs the model in a loop, reads and writes your files, manages context, and enforces safety. That's it. That's the "thin."<br><br>
+            The anti-pattern is a fat harness with thin skills. You've seen it: 40+ tool definitions eating half the context window. God-tools with 2-to-5-second MCP round-trips. REST API wrappers that turn every endpoint into a separate tool. Three times the tokens, three times the latency, three times the failure rate.<br><br>
+            What you want instead is purpose-built tooling that's fast and narrow. A Playwright CLI that does each browser operation in 100 milliseconds, not a Chrome MCP that takes 15 seconds for screenshot-find-click-wait-read. That's 75x faster. Software doesn't have to be precious anymore. Build exactly what you need, and nothing else.</div>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="li-title">Resolvers</div>
+            <div class="li-body">A resolver is a routing table for context. When task type X appears, load document Y first.<br><br>
+            Skills tell the model how. Resolvers tell it what to load and when. A developer changes a prompt. Without the resolver, they ship it. With the resolver, the model reads docs/EVALS.md first — which says: run the eval suite, compare scores, if accuracy drops more than 2%, revert and investigate. The developer didn't know the eval suite existed. The resolver loaded the right context at the right moment.<br><br>
+            Claude Code has a built-in resolver. Every skill has a description field, and the model matches user intent to skill descriptions automatically. You never have to remember that /ship exists. The description is the resolver.<br><br>
+            A confession: my CLAUDE.md was 20,000 lines. Every quirk, every pattern, every lesson I'd ever encountered. Completely ridiculous. The model's attention degraded. Claude Code literally told me to cut it back. The fix was about 200 lines — just pointers to documents. The resolver loads the right one when it matters. Twenty thousand lines of knowledge, accessible on demand, without polluting the context window.</div>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="li-title">Latent vs. deterministic</div>
+            <div class="li-body">Every step in your system is one or the other, and confusing them is the most common mistake in agent design.<br><br>
+            Latent space is where intelligence lives. The model reads, interprets, decides. Judgment. Synthesis. Pattern recognition.<br><br>
+            Deterministic is where trust lives. Same input, same output. Every time. SQL queries. Compiled code. Arithmetic.<br><br>
+            An LLM can seat 8 people at a dinner table, accounting for personalities and social dynamics. Ask it to seat 800 and it will hallucinate a seating chart that looks plausible but is completely wrong. That's a deterministic problem — combinatorial optimization — forced into latent space. The worst systems put the wrong work on the wrong side of this line. The best systems are ruthless about it.</div>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="li-title">Diarization</div>
+            <div class="li-body">Diarization is the step that makes AI useful for real knowledge work. The model reads everything about a subject and writes a structured profile — a single page of judgment distilled from dozens or hundreds of documents.<br><br>
+            No SQL query produces this. No RAG pipeline produces this. The model has to actually read, hold contradictions in mind, notice what changed and when, and synthesize structured intelligence. It's the difference between a database lookup and an analyst's brief.</div>
+          </div>
+        </li>
+      </ol>
+
+      <!-- SVG: Latent vs Deterministic -->
+      <figure class="infographic">
+        <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">
+          <rect width="800" height="300" fill="#ffffff" rx="12"/>
+          <text x="400" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#1d1d1f" letter-spacing="-0.3">Latent Space vs. Deterministic Execution</text>
+
+          <rect x="40" y="54" width="330" height="218" rx="14" fill="#e8f2fd" stroke="#0071e3" stroke-width="1.5"/>
+          <text x="205" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#0071e3">LATENT SPACE</text>
+          <text x="205" y="108" text-anchor="middle" font-size="12" fill="#1d1d1f">Where intelligence lives</text>
+          <text x="76" y="140" font-size="12" fill="#1d1d1f">· Read &amp; interpret documents</text>
+          <text x="76" y="162" font-size="12" fill="#1d1d1f">· Synthesize contradictions</text>
+          <text x="76" y="184" font-size="12" fill="#1d1d1f">· Pattern recognition &amp; judgment</text>
+          <text x="76" y="206" font-size="12" fill="#1d1d1f">· Seating 8 people socially ✓</text>
+          <text x="76" y="228" font-size="12" fill="#c0392b">· Seating 800 people ✗</text>
+          <text x="76" y="252" font-size="11" fill="#6e6e73" font-style="italic">Variable input → variable output</text>
+
+          <rect x="430" y="54" width="330" height="218" rx="14" fill="#fff3e0" stroke="#f0a500" stroke-width="1.5"/>
+          <text x="595" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#b36b00">DETERMINISTIC</text>
+          <text x="595" y="108" text-anchor="middle" font-size="12" fill="#1d1d1f">Where trust lives</text>
+          <text x="466" y="140" font-size="12" fill="#1d1d1f">· SQL queries → exact results</text>
+          <text x="466" y="162" font-size="12" fill="#1d1d1f">· Compiled code execution</text>
+          <text x="466" y="184" font-size="12" fill="#1d1d1f">· Combinatorial optimization</text>
+          <text x="466" y="206" font-size="12" fill="#1d1d1f">· Seating 800 people ✓</text>
+          <text x="466" y="228" font-size="12" fill="#6e6e73">· Arithmetic &amp; math</text>
+          <text x="466" y="252" font-size="11" fill="#6e6e73" font-style="italic">Same input → same output. Always.</text>
+
+          <circle cx="400" cy="163" r="24" fill="#1d1d1f"/>
+          <text x="400" y="169" text-anchor="middle" font-size="13" font-weight="700" fill="white">VS</text>
+        </svg>
+        <figcaption>Confusing these two is the most common mistake in agent design. Be ruthless about which work goes where.</figcaption>
+      </figure>
+
+      <h3>The architecture</h3>
+
+      <p>These five concepts compose into a simple three-layer architecture.</p>
+      <p>Fat skills sit on top: markdown procedures that encode judgment, process, and domain knowledge. This is where 90% of the value lives.</p>
+      <p>A thin CLI harness sits in the middle: about 200 lines of code. JSON in, text out. Read-only by default.</p>
+      <p>Your application sits on the bottom: QueryDB, ReadDoc, Search, Timeline — the deterministic foundation.</p>
+      <p>The principle is directional. Push intelligence up into skills. Push execution down into deterministic tooling. Keep the harness thin. When you do this, every improvement to the model automatically improves every skill, while the deterministic layer stays perfectly reliable.</p>
+
+      <h3>The system that learns</h3>
+
+      <p>Let me show you all five definitions working together. Not in theory — in an actual system we're building at YC.</p>
+      <p>Chase Center. July 2026. Six thousand founders at Startup School. Each one has a structured application, questionnaire answers, transcripts from 1:1 advisor chats, and public signals: posts on X, GitHub commits, Claude Code transcripts showing how fast they ship.</p>
+      <p>The traditional approach: a program team of 15 reads applications, makes gut calls, updates a spreadsheet. It works at 200 founders. It breaks at 6,000. No human can hold that many profiles in working memory and notice that the three best candidates for the infrastructure-for-AI-agents cohort are a dev tools founder in Lagos, a compliance founder in Singapore, and a CLI-tooling founder in Brooklyn — all of whom described the same pain point in different words during their 1:1 chats.</p>
+      <p>The model can. Here's how.</p>
+      <p>Enrichment. A skill called /enrich-founder pulls all sources, runs enrichments, diarizes, and highlights the gap between what founders say and what they're actually building. The deterministic layer handles SQL lookups, GitHub stats, browser tests on demo URLs, social signal pulls, CrustData queries. A cron runs nightly. Six thousand profiles, always fresh.</p>
+      <p>The diarization output catches things no keyword search would find:</p>
+
+      <div class="pullquote">
+        FOUNDER: Maria Santos<br>
+        COMPANY: Contrail (contrail.dev)<br>
+        SAYS: "Datadog for AI agents"<br>
+        ACTUALLY BUILDING: 80% of commits are in billing module.<br>
+        &nbsp;&nbsp;She's building a FinOps tool disguised as observability.
+      </div>
+
+      <p>That gap — "says" versus "actually building" — requires reading the GitHub commit history, the application, and the advisor transcript, and holding all three in mind at once. No embedding similarity search finds this. No keyword filter finds it. The model has to read the full profile and make a judgment. (This is the perfect decision to put in latent space!)</p>
+      <p>Matching. This is where skill-as-method-call shines. Three invocations of the same matching skill, three completely different strategies:</p>
+      <p>/match-breakout takes 1,200 founders, clusters by sector affinity, 30 per room. Embedding plus deterministic assignment. /match-lunch takes 600, does serendipity matching across sectors, 8 per table, no repeats — the LLM invents the themes, then a deterministic algorithm assigns seats. /match-live handles whoever is in the building right now, nearest-neighbor embedding, 200ms, 1:1 pairs, excluding people who've already met.</p>
+      <p>And the model makes judgment calls a clustering algorithm never could: "Santos and Oram are both AI infra, but they're not competitors — Santos is cost attribution, Oram is orchestration. Put them in the same group." Or: "Kim applied as 'developer tools' but his 1:1 transcript reveals he's building compliance automation for SOC2. Move him to FinTech/RegTech."</p>
+      <p>No embedding captures the Kim reclassification. The model has to read the entire profile.</p>
+      <p>The learning loop. After the event, an /improve skill reads NPS surveys, diarizes the mediocre responses — not the bad ones, the "OK" ones, where the system almost worked but didn't — and extracts patterns. Then it proposes new rules and writes them back into the matching skills:</p>
+
+      <div class="code-quote">
+        When attendee says "AI infrastructure"<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;but startup is 80%+ billing code:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;→ Classify as FinTech, not AI Infra.<br><br>
+        When two attendees in same group<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;already know each other:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;→ Penalize proximity.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prioritize novel introductions.
+      </div>
+
+      <p>These rules get written back into the skill file. The next run uses them automatically. The skill rewrites itself.</p>
+      <p>July event: 12% "OK" ratings. Next event: 4%. The skill file learned what "OK" actually meant, and the system got better without anyone rewriting code.</p>
+      <p>The same pattern transfers everywhere: retrieve, read, diarize, count, synthesize. Then: survey, investigate, diarize, rewrite the skill.</p>
+      <p>If you want to know what the most valuable loops are in 2026, it's those. We can apply them to every discipline and walk of life of knowledge work in existence.</p>
+
+      <h3>Skills are permanent upgrades</h3>
+
+      <p>I tweeted an instruction I gave to my OpenClaw recently that resonated more than I expected:</p>
+
+      <div class="pullquote">
+        You are not allowed to do one-off work. If I ask you to do something and it's the kind of thing that will need to happen again, you must: do it manually the first time on 3 to 10 items. Show me the output. If I approve, codify it into a skill file. If it should run automatically, put it on a cron.The test: if I have to ask you for something twice, you failed.
+      </div>
+
+      <p>A thousand likes and twenty-five hundred bookmarks. People thought it was a prompt engineering trick. It's not. It's the architecture I've been describing. Every skill you write is a permanent upgrade to your system. It never degrades. It never forgets. It runs at 3 AM while you sleep. And when the next model drops, every skill instantly gets better — the judgment in the latent steps improves while the deterministic steps stay perfectly reliable.</p>
+      <p>That's how you get Yegge's 100x. Not a smarter model. Fat skills, thin harness, and the discipline to codify everything.</p>
+      <p>The system compounds. Build it once. It runs forever.</p>
+
+    </div>
+
+    <div class="thoughts-section">
+      <h2>Thoughts</h2>
+      <ul>
+        <li>Can use autoresearch for agentic loop for anything, confidience/loss can be measured by natural language if used properly, not only hard number like &lt;0.9</li>
+        <li>Serious consideration for latent space vs tools when designing</li>
+        <li>Validation/Feedback (number/natural language feedback) to self-evolve</li>
+      </ul>
+    </div>
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">April 2026</div>
+</footer>
+
+</body>
+</html>
