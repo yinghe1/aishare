@@ -1,6 +1,6 @@
 # AIShare
 
-- Use this repo to share AI learning FREE
+- Use this repo to share AI learning FREE [main page](https://yinghe1.github.io/aishare/)
 
 - share folder has notes in markdown, start with [InitShare04052026.md](https://github.com/yinghe1/aishare/blob/main/share/InitialShare04052026.md)
 
