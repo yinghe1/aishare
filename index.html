@@ -223,7 +223,41 @@
       .tab-btn { padding: 12px 14px; font-size: 14px; }
       .card-date { display: none; }
     }
+    .search-input {
+      width: 100%;
+      padding: 9px 14px;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      outline: none;
+      font-family: inherit;
+      color: var(--ink);
+      background: var(--white);
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .no-results { padding: 20px; color: var(--secondary); font-size: 15px; }
+
+    .load-more-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--blue);
+      background: var(--blue-light);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .12s;
+    }
+    .load-more-btn:hover { background: #d0e8fb; }
+    .load-more-btn:disabled { opacity: 0.6; cursor: default; }
   </style>
+  <script src="data/meta.js"></script>
+  <script src="data/pages/shares-1.js"></script>
+  <script src="data/pages/courses-1.js"></script>
 </head>
 <body>
 
@@ -304,39 +338,10 @@
     <h2 class="panel-title">Share</h2>
     <p class="panel-subtitle">Articles, essays, and explainers on AI and software.</p>
 
-    <div class="article-list">
-
-      <a class="article-card" href="https://yinghe1.github.io/aishare/share/agency/ClaudeDesignByRyanMather04182026.html" target="_blank" rel="noopener">
-        <span class="card-date">04/18/2026</span>
-        <span class="card-title">Claude Design</span>
-        <span class="card-tag">Ryan Mather</span>
-        <span class="card-read-time">2 min read</span>
-        <span class="card-arrow">›</span>
-      </a>
-
-      <a class="article-card" href="https://yinghe1.github.io/aishare/share/agency/ThinHarnessFatSkillsByGaryTan04112026.html" target="_blank" rel="noopener">
-        <span class="card-date">04/11/2026</span>
-        <span class="card-title">Thin Harness Fat Skills</span>
-        <span class="card-tag">Garry Tan</span>
-        <span class="card-read-time">6 min read</span>
-        <span class="card-arrow">›</span>
-      </a>
-
-      <a class="article-card" href="https://yinghe1.github.io/aishare/share/agency/agent_loop_explainer.html" target="_blank" rel="noopener">
-        <span class="card-date">04/06/2026</span>
-        <span class="card-title">Why System Like OpenClaw Is an Agent Loop</span>
-        <span class="card-read-time">3 min read</span>
-        <span class="card-arrow">›</span>
-      </a>
-
-      <a class="article-card" href="https://yinghe1.github.io/aishare/share/04052026/slides04052026.html" target="_blank" rel="noopener">
-        <span class="card-date">04/05/2026</span>
-        <span class="card-title">Personalize Your FREE AI Learning</span>
-        <span class="card-read-time">8 min read</span>
-        <span class="card-arrow">›</span>
-      </a>
-
-    </div>
+    <input id="search-share" class="search-input" type="search"
+           placeholder="Search by title or author…" oninput="renderCards()">
+    <div id="share-list" class="article-list"></div>
+    <button id="load-more-btn" class="load-more-btn" onclick="loadMoreShares()" style="display:none">Load more</button>
   </div>
 </div>
 
@@ -346,28 +351,7 @@
     <h2 class="panel-title">Courses</h2>
     <p class="panel-subtitle">Interactive single-page courses generated from real codebases.</p>
 
-    <div class="article-list">
-
-
-<div class="article-card" onclick="window.open('https://yinghe1.github.io/aishare/courses/hermes-course/','_blank')" style="cursor:pointer;">
-        <span class="card-date">04/18/2026</span>
-        <span class="card-title">Hermes Agent: How It Works</span>
-        <span class="card-tag">6 modules</span>
-        <a class="card-src" href="https://github.com/nousresearch/hermes-agent" target="_blank" rel="noopener" onclick="event.stopPropagation()">src ↗</a>
-        <span class="card-read-time">~45 min</span>
-        <span class="card-arrow">›</span>
-      </div>
-
-      <div class="article-card" onclick="window.open('https://yinghe1.github.io/aishare/courses/oh-my-opencode-course/','_blank')" style="cursor:pointer;">
-        <span class="card-date">04/05/2026</span>
-        <span class="card-title">Inside Oh My OpenCode</span>
-        <span class="card-tag">6 modules</span>
-        <a class="card-src" href="https://github.com/opensoft/oh-my-opencode" target="_blank" rel="noopener" onclick="event.stopPropagation()">src ↗</a>
-        <span class="card-read-time">~45 min</span>
-        <span class="card-arrow">›</span>
-      </div>
-
-</div>
+    <div id="courses-list" class="article-list"></div>
   </div>
 </div>
 
@@ -412,12 +396,103 @@
 </footer>
 
 <script>
+  let _loadedSharePages = 1;
+  let _searchIndexLoaded = false;
+  let _loadingIndex = false;
+
+  function _shareCard(s) {
+    return `<a class="article-card" href="${s.url}" target="_blank" rel="noopener">
+      <span class="card-date">${s.date || ''}</span>
+      <span class="card-title">${s.title}</span>
+      ${s.author ? `<span class="card-tag">${s.author}</span>` : ''}
+      ${s.read_time ? `<span class="card-read-time">${s.read_time}</span>` : ''}
+      <span class="card-arrow">›</span>
+    </a>`;
+  }
+
+  function _courseCard(c) {
+    return `<div class="article-card" onclick="window.open('${c.url}','_blank')" style="cursor:pointer;">
+      <span class="card-date">${c.date || ''}</span>
+      <span class="card-title">${c.title}</span>
+      ${c.tag ? `<span class="card-tag">${c.tag}</span>` : ''}
+      ${c.src_url ? `<a class="card-src" href="${c.src_url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">src ↗</a>` : ''}
+      ${c.read_time ? `<span class="card-read-time">${c.read_time}</span>` : ''}
+      <span class="card-arrow">›</span>
+    </div>`;
+  }
+
+  function _renderBrowse() {
+    const items = [].concat(...(window.SHARE_PAGES || []));
+    const meta = window.SITE_META || {};
+    document.getElementById('share-list').innerHTML = items.length
+      ? items.map(_shareCard).join('')
+      : '<p class="no-results">No shares yet.</p>';
+    const btn = document.getElementById('load-more-btn');
+    const totalPages = meta.shares_pages || 1;
+    if (_loadedSharePages < totalPages) {
+      btn.textContent = `Load more (${items.length} of ${meta.shares_total})`;
+      btn.style.display = '';
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+
+  function _renderSearch(q) {
+    const idx = window.SEARCH_INDEX || { shares: [] };
+    const results = idx.shares.filter(s =>
+      (s.title || '').toLowerCase().includes(q) ||
+      (s.author || '').toLowerCase().includes(q) ||
+      (s.tag || '').toLowerCase().includes(q)
+    );
+    document.getElementById('share-list').innerHTML = results.length
+      ? results.map(_shareCard).join('')
+      : '<p class="no-results">No results.</p>';
+    document.getElementById('load-more-btn').style.display = 'none';
+  }
+
+  function _ensureSearchIndex(cb) {
+    if (_searchIndexLoaded) { cb(); return; }
+    if (_loadingIndex) { setTimeout(() => _ensureSearchIndex(cb), 50); return; }
+    _loadingIndex = true;
+    document.getElementById('share-list').innerHTML = '<p class="no-results">Loading…</p>';
+    const s = document.createElement('script');
+    s.src = 'data/search-index.js';
+    s.onload = () => { _searchIndexLoaded = true; _loadingIndex = false; cb(); };
+    document.head.appendChild(s);
+  }
+
+  function renderCards() {
+    const q = (document.getElementById('search-share')?.value || '').trim().toLowerCase();
+    if (q) {
+      _ensureSearchIndex(() => _renderSearch(q));
+    } else {
+      _renderBrowse();
+    }
+    const courseItems = [].concat(...(window.COURSE_PAGES || []));
+    document.getElementById('courses-list').innerHTML = courseItems.map(_courseCard).join('');
+  }
+
+  function loadMoreShares() {
+    const meta = window.SITE_META || {};
+    if (_loadedSharePages >= (meta.shares_pages || 1)) return;
+    _loadedSharePages++;
+    const btn = document.getElementById('load-more-btn');
+    btn.textContent = 'Loading…';
+    btn.disabled = true;
+    const s = document.createElement('script');
+    s.src = `data/pages/shares-${_loadedSharePages}.js`;
+    s.onload = () => { btn.disabled = false; _renderBrowse(); };
+    document.head.appendChild(s);
+  }
+
   function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     btn.classList.add('active');
   }
+
+  renderCards();
 </script>
 
 </body>
