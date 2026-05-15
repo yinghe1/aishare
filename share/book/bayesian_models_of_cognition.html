@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bayesian Models of Cognition: Reverse Engineering the Mind — Concept, Must Know, Samples, and Prompts</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #0071e3;
+      --blue-light: #e8f2fd;
+      --ink: #1d1d1f;
+      --secondary: #6e6e73;
+      --surface: #fbfbfd;
+      --border: #d2d2d7;
+      --white: #ffffff;
+      --thoughts-bg: #f5f5f7;
+      --max-w: 740px;
+    }
+
+    html { font-size: 17px; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      z-index: 100;
+    }
+
+    .site-name { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+    .site-date { font-size: 13px; color: var(--secondary); }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    article { padding: 72px 0 80px; }
+
+    .article-header {
+      margin-bottom: 44px;
+      padding-left: 16px;
+      border-left: 3px solid var(--blue);
+    }
+
+    .article-eyebrow {
+      color: var(--blue);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .article-header h1 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      line-height: 1.12;
+      margin-bottom: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    }
+
+    .article-subtitle {
+      color: var(--secondary);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .article-body { margin-bottom: 44px; }
+
+    .article-body p { margin-bottom: 20px; }
+
+    .article-body h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin: 48px 0 18px;
+      line-height: 1.2;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    .article-body h3 {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 32px 0 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    .article-body ul, .article-body ol {
+      margin: 0 0 20px 20px;
+    }
+
+    .article-body li { margin-bottom: 8px; }
+
+    .article-body a {
+      color: var(--blue);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0, 113, 227, 0.25);
+    }
+
+    .article-body a:hover { border-bottom-color: var(--blue); }
+
+    .article-body strong { font-weight: 600; }
+
+    blockquote {
+      border-left: 2px solid var(--blue);
+      padding: 6px 0 6px 20px;
+      margin: 24px 0;
+      font-size: 17px;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    blockquote p { margin-bottom: 8px; }
+    blockquote p:last-child { margin-bottom: 0; }
+
+    .formula {
+      margin: 26px 0;
+      padding: 22px;
+      text-align: center;
+      font-size: 22px;
+      background: #f5f5f7;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+    }
+
+    pre {
+      font-family: "SF Mono", "Menlo", monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      background: #f5f5f7;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 24px 0;
+      color: var(--ink);
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    code {
+      font-family: "SF Mono", "Menlo", monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 20px 0 28px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+
+    th {
+      background: #f5f5f7;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--secondary);
+    }
+
+    @media (max-width: 600px) {
+      html { font-size: 15px; }
+      .container { padding: 0 16px; }
+      article { padding: 48px 0 56px; }
+      table { font-size: 13px; }
+      th, td { padding: 10px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="../../index.html" style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--secondary);text-decoration:none;" onmouseover="this.style.color='var(--blue)'" onmouseout="this.style.color='var(--secondary)'">
+    <svg width="14" height="14" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 7L8 1l7 6v7.5h-4.5V10h-5v4.5H1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    Home
+  </a>
+  <span class="site-name">AI Insights</span>
+  <span class="site-date">&nbsp;</span>
+</header>
+
+<article>
+  <div class="container">
+
+    <div class="article-header">
+      <div class="article-eyebrow">Book Concept Brief</div>
+      <h1>Bayesian Models of Cognition: Reverse Engineering the Mind</h1>
+      <p class="article-subtitle">Concept, must-know ideas, examples, and reusable prompts.</p>
+    </div>
+
+    <div class="article-body">
+
+      <h2>Core idea</h2>
+
+<p><strong>“Bayesian Models of Cognition: Reverse Engineering the Mind”</strong> argues that one powerful way to understand human intelligence is to treat the mind as an <strong>inference engine</strong>: it receives incomplete, noisy evidence from the world, combines it with prior knowledge, and updates beliefs to choose actions.</p>
+
+<p>The book is by <strong>Thomas L. Griffiths, Nick Chater, and Joshua Tenenbaum</strong> and is presented by MIT Press as a comprehensive textbook on Bayesian cognitive science, connecting cognitive science and AI through mathematical/computational models of intelligence. (<a href="https://mitpress.mit.edu/9780262381048/bayesian-models-of-cognition/?utm_source=chatgpt.com">mitpress.mit.edu</a>)</p>
+
+<p>At the simplest level:</p>
+
+<div class="formula">P(h∣d)=P(d∣h)P(h)/P(d)</div>
+
+<p>Meaning:</p>
+
+<p><strong>posterior belief = likelihood of evidence × prior belief / normalization</strong></p>
+
+<p>In cognition terms:</p>
+
+<blockquote>
+<p>The mind does not just “see reality.”<br />
+It infers the hidden causes behind sensory data.</p>
+</blockquote>
+
+<h2>1. The book’s big thesis</h2>
+
+<p>Human cognition often looks magical because people can infer a lot from very little:</p>
+
+<p>A child sees one strange animal and can guess what category it belongs to.<br />
+A person hears half a sentence and predicts the rest.<br />
+You see someone reaching toward a cup and infer their goal.<br />
+You see a few stock-market signals and infer a likely regime.</p>
+
+<p>The Bayesian view says this works because the mind uses:</p>
+
+<p><strong>prior knowledge + observed evidence + structured hypotheses</strong></p>
+
+<p>to infer what is probably true.</p>
+
+<p>The book frames this as <strong>reverse engineering the mind</strong>: instead of only asking what neurons do, ask what computational problem the mind is solving and what rational solution would look like. MIT Press describes the book as offering a “unifying theoretical perspective” on how the mind works and covering Bayesian inference, graphical models, generative models, approximate inference, hierarchical models, nonparametric models, theory of mind, intuitive physics, language, probabilistic programs, and resource-rational analysis. (<a href="https://mitpress.mit.edu/9780262381048/bayesian-models-of-cognition/?utm_source=chatgpt.com">mitpress.mit.edu</a>)</p>
+
+<h2>2. Must-know concepts</h2>
+
+<h3>1. Cognition as probabilistic inference</h3>
+
+<p>The mind usually does not have complete information. So it estimates.</p>
+
+<p>Example:</p>
+
+<p>You hear:</p>
+
+<blockquote>
+<p>“The trophy would not fit in the suitcase because it was too…”</p>
+</blockquote>
+
+<p>Your mind predicts “big” or “small” depending on which object “it” refers to. You are not doing formal logic only. You are inferring the most probable hidden meaning.</p>
+
+<p>Bayesian cognition says many mental tasks are like this:</p>
+
+<table>
+<thead><tr><th>Mental task</th><th>Hidden thing inferred</th></tr></thead>
+<tbody>
+<tr><td>Perception</td><td>What object caused this image?</td></tr>
+<tr><td>Language</td><td>What meaning caused this sentence?</td></tr>
+<tr><td>Social reasoning</td><td>What goal caused this action?</td></tr>
+<tr><td>Learning</td><td>What rule generated these examples?</td></tr>
+<tr><td>Decision-making</td><td>What action maximizes expected value?</td></tr>
+</tbody>
+</table>
+
+<h3>2. Generative models</h3>
+
+<p>A <strong>generative model</strong> asks:</p>
+
+<blockquote>
+<p>What hidden process could have generated the data I observe?</p>
+</blockquote>
+
+<p>This is central.</p>
+
+<p>For example, when you see three dots moving together, your mind may infer “one object moving behind an obstacle,” not just “three pixels changed position.”</p>
+
+<p>In AI terms, this is close to asking:</p>
+
+<blockquote>
+<p>What latent cause explains the visible surface?</p>
+</blockquote>
+
+<p>For your own thinking style, this connects strongly to your recurring interest in <strong>latent structure</strong>, <strong>attractor basins</strong>, and <strong>reverse-engineering hidden order</strong>.</p>
+
+<h3>3. Priors</h3>
+
+<p>A <strong>prior</strong> is what the system believes before seeing current evidence.</p>
+
+<p>Example:</p>
+
+<p>If you hear hoofbeats in New Jersey, you think “horse,” not “zebra,” because your prior says horses are more likely.</p>
+
+<p>Priors can come from evolution, lifetime experience, culture, domain expertise, or learned statistical regularities.</p>
+
+<p>A senior engineer has priors like:</p>
+
+<blockquote>
+<p>“This production incident is probably caused by a recent deployment.”<br />
+“This ambiguous requirement probably hides a stakeholder conflict.”<br />
+“This flaky integration test is probably timing-related.”</p>
+</blockquote>
+
+<p>Those are not random guesses. They are compressed experience.</p>
+
+<h3>4. Likelihood</h3>
+
+<p>The <strong>likelihood</strong> asks:</p>
+
+<blockquote>
+<p>If hypothesis H were true, how likely would I observe this data?</p>
+</blockquote>
+
+<p>Example:</p>
+
+<p>Hypothesis A: the user is angry.<br />
+Hypothesis B: the user is confused.<br />
+Evidence: short message, many question marks, no insults.</p>
+
+<p>A Bayesian reasoner compares:</p>
+
+<blockquote>
+<p>How likely is this communication pattern if the user is angry?<br />
+How likely is it if the user is confused?</p>
+</blockquote>
+
+<p>Then it updates.</p>
+
+<h3>5. Posterior belief</h3>
+
+<p>The <strong>posterior</strong> is the updated belief after evidence.</p>
+
+<p>This is important because Bayesian cognition is not “choose one explanation immediately.” It is:</p>
+
+<blockquote>
+<p>Maintain uncertainty, then update as evidence arrives.</p>
+</blockquote>
+
+<p>That is why it is powerful for cognition, investing, architecture, debugging, and social reasoning.</p>
+
+<h3>6. Hierarchical Bayesian models</h3>
+
+<p>The mind often learns at multiple levels.</p>
+
+<p>Example: learning a new colleague.</p>
+
+<p>Low-level observations:</p>
+
+<blockquote>
+<p>They reply slowly.<br />
+They ask detailed questions.<br />
+They avoid vague commitments.</p>
+</blockquote>
+
+<p>Higher-level inference:</p>
+
+<blockquote>
+<p>Maybe they are cautious.<br />
+Maybe they are overloaded.<br />
+Maybe their org has political risk.</p>
+</blockquote>
+
+<p>Even higher-level inference:</p>
+
+<blockquote>
+<p>In this company, people avoid explicit disagreement.</p>
+</blockquote>
+
+<p>A hierarchical Bayesian model lets evidence at one level update beliefs at another level.</p>
+
+<p>This is one of the book’s major advanced topics: learning inductive bias through hierarchical Bayesian models.</p>
+
+<h3>7. Inductive bias</h3>
+
+<p><strong>Inductive bias</strong> means the assumptions that make learning possible.</p>
+
+<p>Without inductive bias, one example tells you almost nothing.</p>
+
+<p>Example:</p>
+
+<p>A child hears “blicket” applied to one object. They can generalize because they assume words usually refer to object categories, not arbitrary moments in time.</p>
+
+<p>In business/AI:</p>
+
+<p>A model with the right inductive bias learns faster.<br />
+A person with the right mental model sees the pattern faster.<br />
+An organization with the wrong inductive bias keeps misreading the market.</p>
+
+<h3>8. Approximate inference</h3>
+
+<p>The mind cannot compute perfect Bayesian inference all the time. Exact inference is often too expensive.</p>
+
+<p>So the book also covers <strong>approximate probabilistic inference</strong> and <strong>sampling as a bridge across levels of analysis</strong>.</p>
+
+<p>This matters because humans are not perfectly rational. They are often <strong>resource-rational</strong>:</p>
+
+<blockquote>
+<p>not perfectly optimal, but good enough under limited time, memory, attention, and compute.</p>
+</blockquote>
+
+<p>This connects Bayesian cognition to real human behavior, not just ideal math.</p>
+
+<h3>9. Theory of mind as inverse planning</h3>
+
+<p>Theory of mind means inferring other people’s beliefs, goals, and intentions.</p>
+
+<p>Bayesian version:</p>
+
+<blockquote>
+<p>I observe your action.<br />
+I infer what goal would make that action rational.<br />
+Then I infer what belief you must have had to choose that action.</p>
+</blockquote>
+
+<p>Example:</p>
+
+<p>Someone suddenly cancels a meeting.</p>
+
+<p>Possible hidden causes:</p>
+
+<table>
+<thead><tr><th>Hypothesis</th><th>Prior</th><th>Evidence fit</th></tr></thead>
+<tbody>
+<tr><td>They are busy</td><td>High</td><td>Medium</td></tr>
+<tr><td>They dislike the topic</td><td>Medium</td><td>Medium</td></tr>
+<tr><td>There is political risk</td><td>Low/medium</td><td>High if wording is careful</td></tr>
+<tr><td>They forgot</td><td>Medium</td><td>Low if message is formal</td></tr>
+</tbody>
+</table>
+
+<p>This is reverse-engineering intention from behavior.</p>
+
+<p>The book explicitly includes theory of mind and inverse planning as an advanced application area.</p>
+
+<h3>10. Probabilistic programs as language of thought</h3>
+
+<p>A very modern idea in the book is that cognition can be modeled using <strong>probabilistic programs</strong>.</p>
+
+<p>Instead of saying the mind stores static rules, the idea is:</p>
+
+<blockquote>
+<p>The mind may generate possible explanations using structured programs, then evaluate which program best explains the data.</p>
+</blockquote>
+
+<p>This is powerful because human cognition is compositional.</p>
+
+<p>You can infer:</p>
+
+<blockquote>
+<p>“The person moved the cup because they wanted water, but they avoided the left side because they believed the surface was hot.”</p>
+</blockquote>
+
+<p>That is a structured causal program, not just a flat probability table.</p>
+
+<p>The book includes probabilistic programs and Bayesian inference over programs as key advanced topics.</p>
+
+<h2>3. Simple examples</h2>
+
+<h3>Example 1: Medical diagnosis</h3>
+
+<p>Symptoms:</p>
+
+<blockquote>
+<p>fever, cough, fatigue</p>
+</blockquote>
+
+<p>Hypotheses:</p>
+
+<table>
+<thead><tr><th>Hypothesis</th><th>Prior</th><th>Likelihood of symptoms</th><th>Posterior</th></tr></thead>
+<tbody>
+<tr><td>Common cold</td><td>High</td><td>Medium</td><td>High</td></tr>
+<tr><td>Flu</td><td>Medium</td><td>High</td><td>High</td></tr>
+<tr><td>Rare disease</td><td>Very low</td><td>High</td><td>Still maybe low</td></tr>
+</tbody>
+</table>
+
+<p>Bayesian lesson:</p>
+
+<blockquote>
+<p>Strong evidence can raise a rare hypothesis, but low priors matter.</p>
+</blockquote>
+
+<p>This is why doctors do not jump to rare diagnoses from common symptoms unless the evidence is distinctive.</p>
+
+<h3>Example 2: Debugging production issue</h3>
+
+<p>Evidence:</p>
+
+<blockquote>
+<p>Error spike began at 2:05 PM. Deployment happened at 2:00 PM. Database CPU normal. Error only affects one endpoint.</p>
+</blockquote>
+
+<p>Hypotheses:</p>
+
+<table>
+<thead><tr><th>Hypothesis</th><th>Reasoning</th></tr></thead>
+<tbody>
+<tr><td>Recent deployment bug</td><td>High prior + strong timing evidence</td></tr>
+<tr><td>Database outage</td><td>Lower because DB metrics normal</td></tr>
+<tr><td>Network issue</td><td>Possible but endpoint-specific evidence weak</td></tr>
+<tr><td>Bad input pattern</td><td>Possible if traffic changed</td></tr>
+</tbody>
+</table>
+
+<p>Bayesian cognition in engineering:</p>
+
+<blockquote>
+<p>Good debugging is posterior updating, not linear checklist execution.</p>
+</blockquote>
+
+<h3>Example 3: Social inference</h3>
+
+<p>Message:</p>
+
+<blockquote>
+<p>“Let’s revisit this after leadership alignment.”</p>
+</blockquote>
+
+<p>Possible meanings:</p>
+
+<table>
+<thead><tr><th>Hidden cause</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Genuine scheduling delay</td><td>Neutral</td></tr>
+<tr><td>Political concern</td><td>More likely in corporate context</td></tr>
+<tr><td>Soft rejection</td><td>Possible</td></tr>
+<tr><td>Need for executive sponsor</td><td>Possible</td></tr>
+</tbody>
+</table>
+
+<p>A Bayesian thinker does not say, “This definitely means rejection.”<br />
+They say:</p>
+
+<blockquote>
+<p>“Given corporate language, this raises probability of political friction or delayed sponsorship.”</p>
+</blockquote>
+
+<p>That is more precise.</p>
+
+<h3>Example 4: Child learning a word</h3>
+
+<p>Child hears:</p>
+
+<blockquote>
+<p>“Look, a dax!”</p>
+</blockquote>
+
+<p>The adult points to a strange object.</p>
+
+<p>The child may infer “dax” means the object type, not the color, location, shadow, or moment.</p>
+
+<p>Why?</p>
+
+<p>Because the child has priors about how words work.</p>
+
+<p>This is why Bayesian models are useful for explaining how humans get “so much from so little,” a key framing in the book description. (<a href="https://mitpress.mit.edu/9780262381048/bayesian-models-of-cognition/?utm_source=chatgpt.com">mitpress.mit.edu</a>)</p>
+
+<h3>Example 5: Market interpretation</h3>
+
+<p>Evidence:</p>
+
+<blockquote>
+<p>Gold rises, credit spreads widen, private credit stress appears, Fed language turns cautious.</p>
+</blockquote>
+
+<p>Hypotheses:</p>
+
+<table>
+<thead><tr><th>Hypothesis</th><th>Bayesian interpretation</th></tr></thead>
+<tbody>
+<tr><td>Inflation hedge regime</td><td>Possible</td></tr>
+<tr><td>Liquidity stress regime</td><td>Higher if credit stress confirms</td></tr>
+<tr><td>Geopolitical fear</td><td>Higher if oil and defense names move</td></tr>
+<tr><td>Random noise</td><td>Lower if multiple independent signals align</td></tr>
+</tbody>
+</table>
+
+<p>This is exactly where Bayesian cognition helps: it prevents a single-factor narrative.</p>
+
+<h2>4. Why this book matters for AI</h2>
+
+<p>The book is important because it reconnects cognitive science and AI. MIT Press explicitly describes it as bringing the fields of cognitive science and artificial intelligence back together through a mathematical and computational foundation for human intelligence. (<a href="https://mitpressbookstore.mit.edu/book/9780262049412?utm_source=chatgpt.com">mitpressbookstore.mit.edu</a>)</p>
+
+<p>For AI, the key lessons are:</p>
+
+<h3>1. Intelligence is not just pattern matching</h3>
+
+<p>Pattern matching sees correlations.</p>
+
+<p>Bayesian cognition asks:</p>
+
+<blockquote>
+<p>What hidden causal structure produced this pattern?</p>
+</blockquote>
+
+<p>That is closer to reasoning.</p>
+
+<h3>2. Priors are necessary, not a flaw</h3>
+
+<p>People often say, “Don’t be biased.”</p>
+
+<p>But Bayesian theory says:</p>
+
+<blockquote>
+<p>Without priors, learning is impossible.</p>
+</blockquote>
+
+<p>The issue is not whether you have priors.<br />
+The issue is whether your priors are explicit, calibrated, updateable, and domain-appropriate.</p>
+
+<h3>3. Uncertainty should be represented</h3>
+
+<p>A good cognitive system should not only output an answer. It should output:</p>
+
+<blockquote>
+<p>probability, confidence, competing hypotheses, evidence sensitivity, and update path.</p>
+</blockquote>
+
+<p>This is highly relevant to LLM design.</p>
+
+<p>A better LLM workflow would say:</p>
+
+<blockquote>
+<p>“Here are the top hypotheses. Here is what evidence would change my mind.”</p>
+</blockquote>
+
+<p>That is Bayesian behavior.</p>
+
+<h3>4. Human irrationality may be resource-rational</h3>
+
+<p>Humans are not perfect Bayesians. But many “biases” may come from limited compute.</p>
+
+<p>Example:</p>
+
+<p>A person uses a shortcut because full inference is too expensive.</p>
+
+<p>This is similar to an LLM using a heuristic because exhaustive search is impossible.</p>
+
+<h2>5. The deepest idea</h2>
+
+<p>The deepest idea is this:</p>
+
+<blockquote>
+<p>The mind may be understood not as a rule engine, nor as a blank neural net, but as a system that builds structured probabilistic models of hidden causes.</p>
+</blockquote>
+
+<p>So perception, language, social reasoning, physics intuition, and learning may all share one abstract pattern:</p>
+
+<pre><code>Observe incomplete data
+↓
+Generate possible hidden causes
+↓
+Weight them by prior plausibility
+↓
+Score them against evidence
+↓
+Update beliefs
+↓
+Act under uncertainty</code></pre>
+
+<p>This is very close to your own recurring “latent structure” thinking:</p>
+
+<pre><code>surface signal → hidden generative process → posterior belief → action</code></pre>
+
+<h2>6. Practical mental model</h2>
+
+<p>Use this formula in daily reasoning:</p>
+
+<pre><code>Belief after evidence
+= prior belief
+× evidence fit
+÷ alternative explanations</code></pre>
+
+<p>A non-technical version:</p>
+
+<pre><code>What did I believe before?
+What did I observe?
+How likely would I observe this if my hypothesis were true?
+What other hypotheses could also explain it?
+What should I believe now?</code></pre>
+
+<p>The most important part is the fourth question:</p>
+
+<blockquote>
+<p>What else could explain this?</p>
+</blockquote>
+
+<p>That is what prevents narrative lock-in.</p>
+
+<h2>7. Reusable prompts</h2>
+
+<h3>Prompt 1: Bayesian reasoning prompt</h3>
+
+<pre><code>Analyze the situation using Bayesian cognition.
+
+Situation:
+[describe situation]
+
+Do the following:
+1. Identify the hidden state I am trying to infer.
+2. List 5-7 plausible hypotheses.
+3. Assign rough priors: high / medium / low.
+4. Evaluate how strongly the evidence supports each hypothesis.
+5. Produce posterior ranking.
+6. Explain what new evidence would most change the ranking.
+7. Warn me where I may be overfitting to a narrative.</code></pre>
+
+<h3>Prompt 2: Bayesian debugging prompt</h3>
+
+<pre><code>Act as a Bayesian production-debugging partner.
+
+Incident:
+[paste logs, symptoms, timeline]
+
+Please:
+1. Identify the most likely root-cause hypotheses.
+2. Separate prior probability from evidence strength.
+3. Show which evidence increases or decreases each hypothesis.
+4. Recommend the next 3 diagnostic checks with highest information gain.
+5. Explain what result from each check would update the diagnosis.
+6. Avoid jumping to the most recent deployment unless evidence supports it.</code></pre>
+
+<h3>Prompt 3: Bayesian social inference prompt</h3>
+
+<pre><code>Analyze this communication using Bayesian theory of mind.
+
+Message or behavior:
+[paste message]
+
+Context:
+[relationship, power dynamics, timing, prior history]
+
+Please infer:
+1. Possible hidden goals behind the message.
+2. Possible beliefs the person may hold.
+3. Possible constraints they may be operating under.
+4. Prior likelihood of each interpretation.
+5. Evidence that supports or weakens each interpretation.
+6. Best response strategy under uncertainty.
+7. A tactful message I can send that preserves optionality.</code></pre>
+
+<h3>Prompt 4: Bayesian product strategy prompt</h3>
+
+<pre><code>Use a Bayesian model to analyze this product decision.
+
+Decision:
+[describe decision]
+
+Evidence:
+[user data, market data, stakeholder input]
+
+Please:
+1. Define the hidden market/user need we are trying to infer.
+2. List competing hypotheses.
+3. Estimate prior plausibility of each.
+4. Evaluate evidence strength and reliability.
+5. Identify where evidence is confounded or biased.
+6. Recommend the highest-information experiment.
+7. Explain how the result should update the roadmap.</code></pre>
+
+<h3>Prompt 5: Bayesian learning prompt</h3>
+
+<pre><code>Help me learn this topic using Bayesian cognition.
+
+Topic:
+[topic]
+
+Please:
+1. Identify the core hidden structure behind the topic.
+2. Explain what priors a beginner usually brings.
+3. Show which priors are useful and which are misleading.
+4. Give examples that update my mental model.
+5. Build a hierarchy from simple concepts to advanced concepts.
+6. Give me 5 test questions that reveal whether my posterior understanding improved.</code></pre>
+
+<h3>Prompt 6: Anti-narrative Bayesian prompt</h3>
+
+<pre><code>I may be forming a narrative too quickly.
+
+Claim I currently believe:
+[claim]
+
+Evidence:
+[evidence]
+
+Please:
+1. Identify my implicit prior.
+2. List alternative explanations.
+3. Explain which evidence is actually diagnostic versus merely consistent.
+4. Show what I am underweighting.
+5. Show what I am overweighting.
+6. Give a posterior belief range, not a single answer.
+7. Tell me what evidence would falsify or weaken my current belief.</code></pre>
+
+<h2>8. One-page summary</h2>
+
+<pre><code>Bayesian cognition = mind as inference engine.
+
+The mind:
+- receives noisy evidence
+- uses prior knowledge
+- generates hidden-cause hypotheses
+- updates beliefs
+- acts under uncertainty
+
+Core tools:
+- Prior: belief before evidence
+- Likelihood: how well evidence fits a hypothesis
+- Posterior: updated belief
+- Generative model: hidden process that could produce the data
+- Hierarchical model: learning across levels
+- Approximate inference: good-enough reasoning under limited resources
+- Theory of mind: inferring goals and beliefs from actions
+- Probabilistic program: structured hypothesis that explains observations
+
+Most useful practical question:
+“What hidden process most likely generated what I am observing?”</code></pre>
+
+<p>The book’s real power is that it gives a mathematical language for something humans do constantly: <strong>infer invisible structure from partial evidence</strong>.</p>
+
+    </div>
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container"></div>
+</footer>
+
+</body>
+</html>
