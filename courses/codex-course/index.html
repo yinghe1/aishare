@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside Codex CLI</title>
+
+  <!-- Google Fonts: Bricolage Grotesque · DM Sans · JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-accent:       #D94F30;
+      --color-accent-hover: #C4432A;
+      --color-accent-light: #FDEEE9;
+      --color-accent-muted: #E8836C;
+    }
+  </style>
+
+  <script src="main.js" defer></script>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="nav-inner">
+      <span class="nav-title">Inside Codex CLI</span>
+      <div class="nav-dots" id="nav-dots" role="tablist">
+        <button class="nav-dot" data-target="module-1" data-tooltip="What Codex Is" role="tab" aria-label="Module 1: What Codex Is"></button>
+        <button class="nav-dot" data-target="module-2" data-tooltip="Meet the Actors" role="tab" aria-label="Module 2: Meet the Actors"></button>
+        <button class="nav-dot" data-target="module-3" data-tooltip="The Turn Loop" role="tab" aria-label="Module 3: The Turn Loop"></button>
+        <button class="nav-dot" data-target="module-4" data-tooltip="Tools & Approvals" role="tab" aria-label="Module 4: Tools & Approvals"></button>
+        <button class="nav-dot" data-target="module-5" data-tooltip="The Sandbox" role="tab" aria-label="Module 5: The Sandbox"></button>
+        <button class="nav-dot" data-target="module-6" data-tooltip="Memory & Sessions" role="tab" aria-label="Module 6: Memory & Sessions"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- modules/*.html content is assembled here by build.sh -->
+<section class="module" id="module-1">
+  <div class="module-content">
+
+    <!-- ───────────────── MODULE HEADER ───────────────── -->
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">The Prompt's Journey</h1>
+      <p class="module-subtitle">You type <code>codex</code>. Something starts up. But which something? Same binary, six different destinations &mdash; let's walk through the terminal.</p>
+    </header>
+
+    <!-- ───────────────── SCREEN 1: WHAT IS CODEX ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">First, what even is Codex?</h2>
+
+      <div class="animate-in">
+        <p>Codex is an <span class="term" data-definition="An AI coding agent is a program that reads your code, talks to a language model on your behalf, and can actually edit files and run shell commands &mdash; not just chat about them.">AI coding agent</span> that runs on your own laptop. It reads your files, edits them, and runs shell commands &mdash; all under permissions you control. The whole thing is one <span class="term" data-definition="A binary is a compiled program file &mdash; the kind you can double-click or type the name of to run. Think of it as a single sealed envelope containing all the machine instructions.">binary</span> called <code>codex</code>.</p>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x2708;&#xFE0F;</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor for this module: an airport terminal</strong>
+          <p>The <code>codex</code> binary is one building. Each <span class="term" data-definition="A subcommand is the word you type AFTER the main command to switch into a different mode &mdash; like 'git push' versus 'git pull'. Same git, different gates.">subcommand</span> (<code>exec</code>, <code>mcp-server</code>, <code>sandbox</code>, &hellip;) is a different gate that leads to a completely different journey. Same building. Totally different flights.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 2: THE HOOK ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">Same word, two very different worlds</h2>
+
+      <div class="animate-in">
+        <p>Type <code>codex</code> on its own and you get a chat box. Type <code>codex exec "fix the bug"</code> and there's no chat at all &mdash; just answers piped straight to your terminal. How does the same program know which one you wanted?</p>
+      </div>
+
+      <div class="icon-rows animate-in stagger-children">
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-1)">&#x1F4AC;</div>
+          <div>
+            <strong>You type: <code>codex</code></strong>
+            <p>A full-screen chat opens up. You talk to it. It talks back. This is the <span class="term" data-definition="TUI stands for terminal user interface &mdash; an app that draws a clickable-ish UI right inside your terminal window, no browser needed.">TUI</span> mode.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-2)">&#x26A1;</div>
+          <div>
+            <strong>You type: <code>codex exec "fix the bug"</code></strong>
+            <p>No UI. Codex thinks, acts, prints the result, and exits. This is <span class="term" data-definition="Headless means no visible interface &mdash; the program just takes input, does its job, and prints output, like a script. Perfect for automation.">headless</span> mode &mdash; perfect for scripts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1F4A1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Codex is a polymorphic binary</strong>
+          <p>One executable that becomes whichever sub-program you ask for. The very first thing it does &mdash; before anything model-related &mdash; is decide <em>which version of itself to be</em>. Engineers call this <span class="term" data-definition="Polymorphic means 'taking many forms'. Same name on the outside, different behavior on the inside, depending on how you call it.">polymorphic</span> behavior.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 3: THE SIX GATES ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">The six gates of the terminal</h2>
+
+      <div class="animate-in">
+        <p>Most vibe coders only ever discover gate #6 &mdash; the chat. The other five are where the real power lives. Here's each one and where it takes you.</p>
+      </div>
+
+      <div class="pattern-cards animate-in stagger-children">
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">&#x26A1;</div>
+          <h4 class="pattern-title"><code>codex exec</code></h4>
+          <p class="pattern-desc">Run Codex once, headless. Give it a prompt, get a result, exit. The gate for shell scripts and CI pipelines.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">&#x1F50C;</div>
+          <h4 class="pattern-title"><code>codex mcp-server</code></h4>
+          <p class="pattern-desc">Become a server that <em>other</em> AI tools (Claude Code, Cursor) can call as a tool. <span class="term" data-definition="MCP stands for Model Context Protocol &mdash; a standard for one AI tool to call another, like a universal adapter between agents.">MCP</span> = AI talking to AI.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">&#x1F510;</div>
+          <h4 class="pattern-title"><code>codex sandbox</code></h4>
+          <p class="pattern-desc">Test any shell command inside the sandbox jail &mdash; no AI involved. Pure permissions playground.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: var(--color-actor-4)">&#x1F4DD;</div>
+          <h4 class="pattern-title"><code>codex apply</code></h4>
+          <p class="pattern-desc">Take the diff Codex last suggested and run <code>git apply</code> on it. The "okay, do it for real" gate.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-actor-5)">&#x1F4DA;</div>
+          <h4 class="pattern-title"><code>codex resume</code></h4>
+          <p class="pattern-desc">Reopen a past conversation thread. Codex remembers where you left off so you can keep going.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-accent)">
+          <div class="pattern-icon" style="background: var(--color-accent)">&#x1F4AC;</div>
+          <h4 class="pattern-title"><code>codex</code> (default)</h4>
+          <p class="pattern-desc">No subcommand &mdash; you land in the full chat interface. This is the gate almost everyone uses.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 4: THE CODE THAT DECIDES ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">The receptionist that routes you</h2>
+
+      <div class="animate-in">
+        <p>So how does the binary actually decide? It uses a little Rust library called <span class="term" data-definition="clap is a Rust library that parses command-line arguments &mdash; like a receptionist who reads your form, checks the boxes, and tells the rest of the program what you asked for.">clap</span> to read what you typed and match it against a list of <span class="term" data-definition="An enum (short for enumeration) is a type that can be exactly one of a fixed list of variants &mdash; like a multiple-choice question with one answer selected.">enum</span> variants. Each variant is a gate.</p>
+      </div>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &middot; codex-rs/cli/src/main.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">#[derive(Debug, clap::Subcommand)]</span></span>
+<span class="code-line"><span class="code-keyword">enum</span> <span class="code-function">Subcommand</span> {</span>
+<span class="code-line">    <span class="code-keyword">#[clap(visible_alias = "e")]</span></span>
+<span class="code-line">    <span class="code-function">Exec</span>(ExecCli),               <span class="code-comment">// non-interactive one-shot</span></span>
+<span class="code-line">    <span class="code-function">Mcp</span>(McpCli),                 <span class="code-comment">// MCP server management</span></span>
+<span class="code-line">    <span class="code-function">McpServer</span>(McpServerCommand), <span class="code-comment">// become an MCP server</span></span>
+<span class="code-line">    <span class="code-function">Sandbox</span>(HostSandboxArgs),    <span class="code-comment">// sandboxed exec wrapper</span></span>
+<span class="code-line">    <span class="code-function">Apply</span>(ApplyCommand),         <span class="code-comment">// git apply last diff</span></span>
+<span class="code-line">    <span class="code-function">Resume</span>(ResumeCommand),       <span class="code-comment">// reopen past thread</span></span>
+<span class="code-line">    <span class="code-comment">// ... plus AppServer, Cloud, Debug, Plugin, Doctor, etc.</span></span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">"Hey clap, this enum is a list of subcommands &mdash; please match the user's input against it."</p>
+            <p class="tl">Define the list of possible gates the user might walk through.</p>
+            <p class="tl">Let the user type just <code>e</code> as a shortcut for <code>exec</code> &mdash; the receptionist accepts both forms.</p>
+            <p class="tl">Gate 1: headless one-shot. You ask, it answers, it leaves.</p>
+            <p class="tl">Gate 2: manage which external MCP servers Codex itself talks to.</p>
+            <p class="tl">Gate 3: <em>become</em> an MCP server so other agents can call Codex.</p>
+            <p class="tl">Gate 4: run a plain shell command inside the sandbox &mdash; no AI involved.</p>
+            <p class="tl">Gate 5: take the most recent suggested diff and apply it to your git repo.</p>
+            <p class="tl">Gate 6: pick up an old thread where you left off.</p>
+            <p class="tl">Trailing comment: there are more gates we'll explore later (cloud, debug, doctor&hellip;).</p>
+            <p class="tl">Close the enum &mdash; that's the full menu of gates.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="animate-in">
+        <p>What you see in the docs is just the public face of this same enum &mdash; the friendly side of the receptionist's clipboard:</p>
+      </div>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &middot; codex-rs/README.md</span>
+<pre><code><span class="code-line">codex exec PROMPT            <span class="code-comment"># run Codex non-interactively in the terminal</span></span>
+<span class="code-line">codex mcp-server             <span class="code-comment"># let *other* agents call Codex as an MCP tool</span></span>
+<span class="code-line">codex sandbox [COMMAND]...   <span class="code-comment"># test a command inside the sandbox, no AI</span></span>
+<span class="code-line">codex --sandbox read-only    <span class="code-comment"># run with read-only filesystem</span></span>
+<span class="code-line">codex --sandbox workspace-write</span>
+<span class="code-line">codex --sandbox danger-full-access</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">"<code>exec</code> + a prompt" = the headless gate. Great for scripts.</p>
+            <p class="tl">"<code>mcp-server</code>" = flip the chairs around. Other AI tools now call <em>you</em>.</p>
+            <p class="tl">"<code>sandbox</code> + a command" = test what the jail will and won't allow.</p>
+            <p class="tl">A <span class="term" data-definition="A flag is an option you add to a command (usually starting with -- or -) that changes its behavior. Like adding '--json' to ask for structured output instead of plain text.">flag</span>, not a subcommand: tell the chat gate to make everything read-only.</p>
+            <p class="tl">Same idea, but Codex can write files inside your project folder.</p>
+            <p class="tl">"Trust me, I know what I'm doing" mode &mdash; the safety net is off.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 5: THE JOURNEY OF YOUR KEYSTROKE ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">What actually happens when you hit Enter</h2>
+
+      <div class="animate-in">
+        <p>Trace one keystroke from your fingertips all the way to whichever gate you end up at. Five steps, in order:</p>
+      </div>
+
+      <div class="step-cards animate-in stagger-children">
+
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>You type the command and press Enter</strong>
+            <p>Your shell hands the binary its <span class="term" data-definition="argv is the array of arguments your program was launched with. arg0 is the very first one &mdash; the program's own name as it was invoked. Programs can read their own name to behave differently.">argv</span> &mdash; the list of words you typed, starting with the program's own name (<code>arg0</code>).</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Codex peeks at its own name first</strong>
+            <p>Before parsing anything, it checks <code>arg0</code>. If it was invoked as <code>codex-linux-sandbox</code>, it reroutes itself into the sandbox entrypoint &mdash; the famous "<span class="term" data-definition="The arg0 trick is when a program changes behavior based on what name it was called by. Symlink the same binary under a different name and it acts like a different program &mdash; one file, many personalities.">arg0 dispatch</span>" trick. Same binary, different personality.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>clap parses the rest of your words</strong>
+            <p>The receptionist library reads "<code>exec</code>" or "<code>mcp-server</code>" or sees nothing at all, and matches it against the <code>Subcommand</code> enum from the last screen.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>The matching gate is selected</strong>
+            <p>Now Codex knows which version of itself to become &mdash; headless runner, MCP server, sandbox tester, diff applier, thread resumer, or the chat TUI.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>That gate's <code>run()</code> boots its own world</strong>
+            <p>Each subcommand has its own startup routine. TUI builds a chat interface. <code>exec</code> opens a pipe. <code>mcp-server</code> starts listening on a socket. The model is loaded only <em>after</em> the gate decides it actually needs one.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x1F50D;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why this matters for you</strong>
+          <p>Most users never get past step&nbsp;3 because they never type a subcommand. Knowing the gates means you can drop Codex into scripts (<code>exec</code>), wire it into other agents (<code>mcp-server</code>), or test sandbox rules without burning model tokens (<code>sandbox</code>). Same superpower, different doorway.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 6: QUIZ ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">Pick the right gate</h2>
+
+      <div class="animate-in">
+        <p>Three scenarios. For each one, which subcommand would you reach for? No memorizing &mdash; just think about which gate fits the journey.</p>
+      </div>
+
+      <div class="quiz-container animate-in" id="quiz-module1">
+
+        <div class="quiz-question-block"
+             data-correct="exec"
+             data-explanation-right="Exactly. codex exec is the headless one-shot gate &mdash; perfect inside a shell script. It takes a prompt, runs once, prints the result, and exits. No chat box to babysit."
+             data-explanation-wrong="Not quite. The default codex command opens an interactive chat TUI, which freezes your script waiting for keystrokes. You want the headless one-shot gate that takes a prompt as an argument and exits when done.">
+          <h3 class="quiz-question">You want to run Codex inside a shell script that fixes a build error and then exits. Which gate?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="default-codex" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Just <code>codex</code> (the default chat)</span>
+            </button>
+            <button class="quiz-option" data-value="exec" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex exec "fix the build"</code></span>
+            </button>
+            <button class="quiz-option" data-value="resume" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex resume</code></span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="mcp-server"
+             data-explanation-right="Exactly. mcp-server flips the chairs around &mdash; instead of Codex being the one in charge, it becomes a tool that another agent can call. That's the whole point of the Model Context Protocol."
+             data-explanation-wrong="Not quite. Think about who is calling whom. You don't want Codex to call out to other tools &mdash; you want other tools to call Codex. That requires Codex to *become* a server other agents can talk to.">
+          <h3 class="quiz-question">You want Claude Code or Cursor to be able to call Codex as if Codex were one of their built-in tools. Which gate?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="exec" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex exec</code></span>
+            </button>
+            <button class="quiz-option" data-value="mcp-manage" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex mcp</code> (manages which servers Codex talks to)</span>
+            </button>
+            <button class="quiz-option" data-value="mcp-server" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex mcp-server</code></span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="sandbox"
+             data-explanation-right="Exactly. The sandbox subcommand is completely separable from the AI side &mdash; it's a pure jail-tester. You hand it a command, it tries to run that command inside the sandbox, and tells you what happened. No model tokens spent."
+             data-explanation-wrong="Not quite &mdash; that would also boot up the model, which costs you tokens and doesn't actually tell you what the sandbox would block. The sandbox itself is a separate piece you can drive directly, with no AI involved.">
+          <h3 class="quiz-question">You want to test whether <code>rm -rf node_modules</code> would be blocked by the sandbox rules &mdash; without launching the model at all. Which gate?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="exec-readonly" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex exec --sandbox read-only "try rm -rf"</code></span>
+            </button>
+            <button class="quiz-option" data-value="sandbox" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex sandbox rm -rf node_modules</code></span>
+            </button>
+            <button class="quiz-option" data-value="apply" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex apply</code></span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 7: BRIDGE TO MODULE 2 ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">Next: walk inside the chat gate</h2>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1F6AA;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Where we go from here</strong>
+          <p>We just stood in the terminal and picked the chat-mode gate &mdash; now let's walk inside and meet the people working in there. The next module introduces the actors: the model, the conversation, the tools, the approval guard, and the sandbox warden. Each one has a job. Each one has opinions.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-2">
+  <div class="module-content">
+
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h2 class="module-title">Meet the Actors</h2>
+      <p class="module-subtitle">We walked through the chat-mode gate. Now we&rsquo;re inside the building &mdash; and inside, five characters are doing all the work. Once you know their names, the wall of folders turns into a cast list.</p>
+    </header>
+
+    <!-- ────────────────────────────────── SCREEN 1: The Jazz Ensemble ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">Codex is a jazz ensemble, not a soloist</h3>
+
+      <p>Think of a small jazz group. The bassist holds the rhythm. The drummer cues changes. The horn plays the melody. Nobody plays every instrument &mdash; the music comes from how they listen to each other.</p>
+
+      <p>Codex is built the same way. It&rsquo;s not one giant program; it&rsquo;s a <span class="term" data-definition="A federation of crates is a project split into many small, focused libraries that each do one job and depend on each other &mdash; instead of one giant blob of code where everything tangles together.">federation</span> of small <span class="term" data-definition="A crate is a Rust library &mdash; a self-contained box of code that other boxes can pull in and use. Think of it like a single Lego brick: simple on its own, powerful when combined.">crates</span> that pass notes to each other. None of them is in charge alone.</p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">&#127911;</div>
+        <div class="callout-content">
+          <strong class="callout-title">The opposite of a monolith</strong>
+          <p>A <span class="term" data-definition="A monolith is one giant blob of code where every part depends on every other part. Change one thing and three other things break. The opposite of modular.">monolith</span> is one big tangled program where editing the chat UI could accidentally break the AI model logic. Codex is the opposite: each crate has one job, one job only, and refuses to do anyone else&rsquo;s.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 2: The Layout (File Tree) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">The rehearsal room: <code>codex-rs/</code></h3>
+
+      <p>If you open the Codex source code, the Rust side of the project lives in one folder called <code>codex-rs/</code>. Inside, you&rsquo;ll find a handful of crates &mdash; each one a member of the band.</p>
+
+      <div class="file-tree">
+        <div class="ft-folder open">
+          <span class="ft-name">codex-rs/</span>
+          <span class="ft-desc">The Rust workspace &mdash; where the band rehearses</span>
+          <div class="ft-children">
+            <div class="ft-folder">
+              <span class="ft-name">cli/</span>
+              <span class="ft-desc">Reads what you typed at the terminal and picks which Codex to launch</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">tui/</span>
+              <span class="ft-desc">The fullscreen chat box you actually look at &mdash; draws every pixel</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">core/</span>
+              <span class="ft-desc">The engine that talks to the AI model and runs tool calls</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">exec/</span>
+              <span class="ft-desc">A headless version for automation &mdash; same engine, no chat box</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">apply-patch/</span>
+              <span class="ft-desc">The crate that actually rewrites your files when the model proposes edits</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">mcp-server/</span>
+              <span class="ft-desc">Lets Codex be controlled by other AI tools through the Model Context Protocol</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">linux-sandbox/</span>
+              <span class="ft-desc">The safety cage that wraps shell commands on Linux</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>Each folder is one <span class="term" data-definition="A crate is a Rust library &mdash; a self-contained box of code. The crates listed above each get compiled separately and only know about each other through carefully chosen interfaces.">crate</span>. They live in the same workspace, but they only talk to each other through narrow, well-defined doors. That&rsquo;s the whole secret of how Codex stays understandable.</p>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 3: The Cast (Icon-Label Rows) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">The five actors</h3>
+
+      <p>Forget folders for a second. Here are the five characters that actually do the work, with the role each one plays in every Codex session.</p>
+
+      <div class="icon-rows">
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-1)">&#127979;</div>
+          <div>
+            <strong>The Receptionist &mdash; <code>cli/</code></strong>
+            <p>Reads the command you typed and decides which version of Codex to launch &mdash; chat mode, headless mode, or something else. The receptionist greets you, then hands you off to the right room.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-2)">&#127914;</div>
+          <div>
+            <strong>The Stage Manager &mdash; <code>tui/</code></strong>
+            <p>Draws the chat box, captures every keystroke, displays streamed messages from the model. Built with <span class="term" data-definition="Ratatui is a Rust library for drawing user interfaces inside a terminal window using boxes, borders, and colored text &mdash; no web browser involved.">Ratatui</span>. Crucially: the Stage Manager does <em>not</em> call the AI model. Ever.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-3)">&#127908;</div>
+          <div>
+            <strong>The Conductor &mdash; <code>core/</code></strong>
+            <p>Runs the turn loop (Module 3&rsquo;s star), talks to the AI model, decides which tool to call next, and dispatches the work. The Conductor does <em>not</em> draw a single pixel on your screen.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-4)">&#128221;</div>
+          <div>
+            <strong>The Stagehand &mdash; <code>exec/</code></strong>
+            <p>Same engine as the Conductor, but pipes results straight to plain <span class="term" data-definition="stdout is &lsquo;standard output&rsquo; &mdash; the default stream every command-line program prints normal results to. It&rsquo;s what you see scrolling past in a terminal when a script runs.">stdout</span> instead of a fancy chat UI. Used when Codex is wired into scripts, CI pipelines, or other automation.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-5)">&#128737;&#65039;</div>
+          <div>
+            <strong>The Bouncer &mdash; <code>linux-sandbox/</code>, <code>windows-sandbox-rs/</code>, seatbelt</strong>
+            <p>Sits between the model&rsquo;s shell commands and your real operating system. If the model says &ldquo;delete this folder,&rdquo; the Bouncer asks: <em>is that allowed?</em> We&rsquo;ll meet the Bouncer in depth in Module 5.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 4: The Channel (AppEvent enum) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">How they talk: events on a channel</h3>
+
+      <p>So if the Stage Manager can&rsquo;t call the model, and the Conductor can&rsquo;t draw the screen &mdash; how does anything get done?</p>
+
+      <p>They pass notes. Specifically, <span class="term" data-definition="An event is a small message describing something that just happened &mdash; like &lsquo;user pressed Enter&rsquo; or &lsquo;model finished thinking.&rsquo; Programs use events to react to changes without one piece directly poking another.">events</span> on a <span class="term" data-definition="A channel is a queue where one part of the program writes messages and another part reads them &mdash; like a conveyor belt between two workers who never have to look at each other.">channel</span> &mdash; like musicians watching the conductor&rsquo;s baton instead of whispering to each other. Here&rsquo;s the actual list of things the TUI is allowed to tell the rest of Codex:</p>
+
+      <div class="translation-block">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>#[allow(clippy::large_enum_variant)]
+#[derive(Debug)]
+pub(crate) enum AppEvent {
+    /// Open the agent picker for switching active threads.
+    OpenAgentPicker,
+    /// Switch the active thread to the selected agent.
+    SelectAgentThread(ThreadId),
+
+    /// Fork the current thread into a transient side conversation.
+    StartSide {
+        parent_thread_id: ThreadId,
+        user_message: Option&lt;UserMessage&gt;,
+    },
+    /// Submit an op to the specified thread, regardless of current focus.
+    // ...
+}</code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">This is the complete list of things the chat UI can ask the engine to do. Nothing else. If it&rsquo;s not on this list, it doesn&rsquo;t happen.</p>
+            <p class="tl">An <span class="term" data-definition="An enum (short for &lsquo;enumeration&rsquo;) is a type with a fixed list of possible values. Like a dropdown menu in code: a traffic light enum has Red, Yellow, Green &mdash; nothing else.">enum</span> means &ldquo;one of these specific options.&rdquo; <code>AppEvent</code> is the menu of possible notes the Stage Manager can pass.</p>
+            <p class="tl"><span class="term" data-definition="An enum variant is one of the possible &lsquo;shapes&rsquo; an enum can take &mdash; like one face of a die. Each line below is one variant.">Variant</span> 1: &ldquo;Open the menu for switching between different agent conversations.&rdquo;</p>
+            <p class="tl">Variant 2: &ldquo;Switch to this specific conversation thread.&rdquo; (The ID inside the parentheses says which one.)</p>
+            <p class="tl">Variant 3: &ldquo;Start a side conversation branched off this one&rdquo; &mdash; useful for trying an idea without polluting the main thread.</p>
+            <p class="tl">And the list keeps going. Every button, every shortcut, every message ultimately becomes one of these events fired down the channel.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>This is what software engineers mean by <em>message passing</em>. The Stage Manager doesn&rsquo;t reach inside the Conductor and pull levers. It writes a note, drops it on the conveyor belt, and trusts the Conductor to read it.</p>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 5: The Wall (deny print_stdout) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">A wall, not a guideline</h3>
+
+      <p>Here&rsquo;s the punchline. The Conductor&rsquo;s code starts with a single line that makes the whole arrangement non-negotiable:</p>
+
+      <div class="translation-block">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>//! Root of the `codex-core` library.
+
+// Prevent accidental direct writes to stdout/stderr in library code. All
+// user-visible output must go through the appropriate abstraction (e.g.,
+// the TUI or the tracing stack).
+#![deny(clippy::print_stdout, clippy::print_stderr)]</code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">The two slashes-bang at the top is just a header comment naming the file: &ldquo;this is the root of the core library.&rdquo;</p>
+            <p class="tl">The next comment is the team telling future-them <em>why</em>: nobody inside the engine is allowed to print directly to the terminal. All output must flow through the proper channel.</p>
+            <p class="tl">The last line is the enforcement. <code>#![deny(...)]</code> tells the compiler: refuse to build this code if anyone calls <code>println!</code> or <code>eprintln!</code> in here. Not a warning &mdash; a hard error.</p>
+            <p class="tl"><span class="term" data-definition="Clippy is Rust&rsquo;s built-in linter &mdash; a strict editor that reads your code and yells about sloppy patterns, common mistakes, or banned habits the team has agreed to avoid.">clippy</span> is the strict editor doing the yelling; <code>print_stdout</code> and <code>print_stderr</code> are the two <span class="term" data-definition="A lint is a warning from a tool about code style or potential bugs &mdash; like spellcheck for code. Some lints are configured to block the build entirely; this is one of them.">lints</span> being escalated from warning to wall.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! &mdash; the wall is the architecture</strong>
+          <p>The Conductor <em>cannot</em> print to your terminal &mdash; even if a developer forgets and tries. The compiler refuses to build it. Every word you see in the chat had to be sent as an event the Stage Manager chose to display. Engineers call this <strong>separation of concerns</strong>: give each piece one job, and one job only. Most projects treat this as a polite suggestion. Codex bakes it into the build.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 6: Why It Matters + Quiz ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">Why this map matters</h3>
+
+      <p>When something goes wrong with Codex, this cast list is your first debugging tool. The symptom tells you which actor to suspect.</p>
+
+      <div class="pattern-cards">
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">&#127914;</div>
+          <h4 class="pattern-title">UI frozen, files still changing</h4>
+          <p class="pattern-desc">The Stage Manager is stuck. The Conductor is fine &mdash; it&rsquo;s just that no one is updating the screen.</p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">&#127908;</div>
+          <h4 class="pattern-title">File written, no chat message</h4>
+          <p class="pattern-desc">The Conductor did the work, but the event announcing it never reached the Stage Manager. The channel got dropped.</p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-actor-5)">&#128737;&#65039;</div>
+          <h4 class="pattern-title">&ldquo;Permission denied&rdquo; on a shell command</h4>
+          <p class="pattern-desc">The Bouncer blocked it. Nothing to do with the model &mdash; it&rsquo;s the safety actor doing its job.</p>
+        </div>
+      </div>
+
+      <h3 class="screen-heading" style="margin-top: var(--space-12)">Pop quiz</h3>
+
+      <div class="quiz-container" id="quiz-module2">
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Exactly. The file changed, so the Conductor (core) did its job and even called the apply-patch crate successfully. The missing chat message means the event went out but the Stage Manager (tui) didn&rsquo;t render it &mdash; look there first."
+             data-explanation-wrong="Think about the symptom: the file actually changed on disk. That means the engine worked. The breakage has to be on the side that draws the screen.">
+          <h3 class="quiz-question">The agent successfully edits a file (you can see the change on disk), but no confirmation appears in the chat. Where do you look first?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The <code>tui/</code> crate &mdash; the Stage Manager either didn&rsquo;t receive the event or didn&rsquo;t render it.</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The <code>core/</code> crate &mdash; the Conductor must have failed silently.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The sandbox &mdash; the Bouncer probably blocked the message.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Right. Keyboard input lives in the TUI, so the new shortcut is wired up there. But that keystroke fires an AppEvent::StartSide that the core handles &mdash; so the real answer is &lsquo;mostly tui, with a matching event the core already knows about.&rsquo; That&rsquo;s exactly how the channel pattern works."
+             data-explanation-wrong="Keystrokes don&rsquo;t reach the engine directly &mdash; they hit the chat box first. The Stage Manager catches the key and decides what event to send. Pick the crate that captures keystrokes.">
+          <h3 class="quiz-question">You want to add a new keyboard shortcut that forks the conversation into a side thread. Which crate gets the new code?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>core/</code> &mdash; that&rsquo;s where the AI model and turn loop live.</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>tui/</code> &mdash; that&rsquo;s where keystrokes are captured. The shortcut emits an <code>AppEvent::StartSide</code>.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>cli/</code> &mdash; new shortcuts are registered when Codex starts up.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Yes! The deny lint makes the separation impossible to break by accident. If you ever try to println! from inside core, the build fails. The architecture isn&rsquo;t a polite agreement &mdash; it&rsquo;s enforced by the compiler. This is the difference between a guideline and a guarantee."
+             data-explanation-wrong="Not quite. The point isn&rsquo;t aesthetics or performance &mdash; it&rsquo;s a structural rule. The engine is forbidden from printing because all user-visible output has to flow through the chat box, so the chat box can&rsquo;t be bypassed.">
+          <h3 class="quiz-question">Why does <code>codex-core</code> use <code>#![deny(clippy::print_stdout)]</code> at the top of its library?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Performance &mdash; printing directly is slow and clutters the terminal.</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Style &mdash; the team prefers logging over printing.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To enforce architecture &mdash; user-visible output must flow through the TUI as events, never sneak past it.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 7: Bridge to Module 3 ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">Five actors, none in charge alone</h3>
+
+      <p>The Receptionist hands off. The Stage Manager watches and draws. The Conductor talks to the model. The Stagehand pipes things to scripts. The Bouncer guards the door. Nobody is the boss.</p>
+
+      <p>So who keeps the music going? What tells the Conductor when to count off the next bar, when to call the saxophone in, when to fade out? That&rsquo;s the <strong>turn loop</strong> &mdash; the heartbeat that drives every Codex conversation. Meet it in Module 3.</p>
+    </div>
+
+  </div>
+</section>
+<section class="module" id="module-3">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 3</span>
+      <h2 class="screen-title">The Turn Loop</h2>
+      <p class="screen-lede">
+        We met the actors. Now meet the <em>music</em> — the loop that drives every turn.
+      </p>
+
+      <p>
+        You ask Codex to <strong>&ldquo;fix the failing test.&rdquo;</strong>
+        Sometimes the answer arrives in 5 seconds. Sometimes it grinds for 5 minutes —
+        editing files, running commands, thinking again. Why the difference?
+      </p>
+
+      <p>
+        Because under the surface, that one prompt is not one round-trip.
+        It is a <strong>loop</strong>.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📻</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a two-way radio</strong>
+          <p>
+            Picture a ham-radio conversation. You press the button and speak (the
+            <span class="term" data-definition="The full text packet sent to the model — your message plus the conversation history plus instructions plus the list of tools the model is allowed to call.">prompt</span>).
+            The other person starts replying <em>while still thinking</em>, broadcasting word by word
+            (<span class="term" data-definition="A sequence of small events delivered one by one over time, instead of waiting for the whole answer and sending it all at once. Like a live radio broadcast versus a recorded album.">streaming</span>).
+            You can break in any time. Sometimes they pause to look something up
+            (a <span class="term" data-definition="The model saying &quot;please run this thing with these arguments&quot; instead of just replying with text. The radio operator looking something up before continuing.">tool call</span>)
+            before continuing. The call only ends when one of you says &ldquo;over and out.&rdquo;
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE FLOW ANIMATION ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Trace one turn, end to end</h2>
+      <p class="screen-lede">
+        Click <strong>Next Step</strong> to watch what actually happens between the moment
+        you hit Enter and the moment the answer feels &ldquo;done.&rdquo;
+      </p>
+
+      <div class="flow-animation" data-steps='[
+        {"highlight":"flow-actor-1","label":"You type Fix the failing test and press Enter"},
+        {"highlight":"flow-actor-2","label":"TUI captures the keystroke, wraps it in an AppEvent","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Core builds the prompt: history plus tools plus personality","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Core opens a stream to the model","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-3","label":"Model streams text tokens back, one at a time","packet":true,"from":"actor-4","to":"actor-3"},
+        {"highlight":"flow-actor-2","label":"TUI shows each token as it arrives — you see typing, not waiting","packet":true,"from":"actor-3","to":"actor-2"},
+        {"highlight":"flow-actor-4","label":"Model decides it needs to read a file — emits a function call"},
+        {"highlight":"flow-actor-5","label":"Core dispatches the tool call to the tools runtime","packet":true,"from":"actor-3","to":"actor-5"},
+        {"highlight":"flow-actor-3","label":"Tool result goes back into the conversation","packet":true,"from":"actor-5","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Loop continues — model gets the result and responds again","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-1","label":"Model says I am done — loop exits — answer is final"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">🧑</div>
+            <span>You</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">📺</div>
+            <span>TUI</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">⚙️</div>
+            <span>Core</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">🧠</div>
+            <span>Model</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-5">
+            <div class="flow-actor-icon">🛠️</div>
+            <span>Tools</span>
+          </div>
+        </div>
+
+        <div class="flow-packet" id="flow-packet"></div>
+
+        <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin.</div>
+
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Notice steps 7&ndash;10: the model talked, then asked Core to run something,
+        then talked again. That is the <em>loop</em>. It can repeat 1 time or 50.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE LOOP IN CODE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The loop, in code</h2>
+      <p class="screen-lede">
+        Here is the heart of <code>core/src/session/turn.rs</code>, distilled into
+        <span class="term" data-definition="Pretend-code that reads like English. It is not real Rust or JavaScript — it is the shape of the logic without the syntax noise.">pseudocode</span>.
+        The shocking thing for most people: <strong>this is a loop</strong>. Most users think it is one call.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+<pre><code><span class="code-line"><span class="code-keyword">loop</span> {</span>
+<span class="code-line">  <span class="code-comment">// 1. Pick up any new user input that arrived while we were thinking</span></span>
+<span class="code-line">  pending_input = <span class="code-function">drain_input_queue</span>();</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 2. Build the prompt: history + tools + personality</span></span>
+<span class="code-line">  prompt = <span class="code-function">build_prompt_from_history</span>();</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 3. Open a stream to the model and start receiving events</span></span>
+<span class="code-line">  stream = client.<span class="code-function">stream</span>(prompt, model_info).<span class="code-keyword">await</span>;</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 4. Pull events one by one until the stream ends</span></span>
+<span class="code-line">  <span class="code-keyword">while let</span> <span class="code-keyword">Some</span>(event) = stream.<span class="code-function">next</span>().<span class="code-keyword">await</span> {</span>
+<span class="code-line">    <span class="code-function">handle</span>(event);  <span class="code-comment">// could be a text token, a function call, etc.</span></span>
+<span class="code-line">  }</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 5. Did the model finish, or does it want to run a tool and continue?</span></span>
+<span class="code-line">  <span class="code-keyword">if</span> !needs_follow_up { <span class="code-keyword">break</span>; }</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>1.</strong> Before we talk to the model, scoop up anything new <em>you</em> typed while it was thinking. Codex never makes you wait to type.</p>
+            <p class="tl"><strong>2.</strong> Bundle the whole conversation so far (your messages, the model&rsquo;s replies, tool results) plus the list of tools it&rsquo;s allowed to use. That bundle is &ldquo;the prompt.&rdquo;</p>
+            <p class="tl"><strong>3.</strong> Open a live radio channel to the model. We are not asking for one big answer — we are asking it to start broadcasting.</p>
+            <p class="tl"><strong>4.</strong> Loop over every little event as it arrives: a token, a function call, a status update. Each one gets handled the moment it shows up.</p>
+            <p class="tl"><strong>5.</strong> When the stream ends, check: was that the final word, or does the model want a tool run so it can keep going? If it&rsquo;s done, exit. Otherwise, loop again with the new info.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: streaming is real</strong>
+          <p>
+            You see text appearing letter by letter not because of an animation.
+            The model is <em>literally</em> sending
+            <span class="term" data-definition="A chunk of text the model emits or consumes — usually around 4 characters. The model thinks and speaks in tokens, not letters or words.">tokens</span>
+            one at a time over a network connection, and the
+            <span class="term" data-definition="TUI = Terminal User Interface. The text-based screen you see in your terminal — Codex&rsquo;s window into the world.">TUI</span>
+            is rendering each one the moment it arrives.
+            The &ldquo;typing&rdquo; effect is real — which is also why you can interrupt mid-stream.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: GROUP CHAT ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Eavesdrop on the loop</h2>
+      <p class="screen-lede">
+        Inside the loop, <strong>Core</strong> and the <strong>Model</strong> are basically
+        texting each other. Here is what that group chat looks like for a real bug-fix turn.
+      </p>
+
+      <div class="chat-window" id="chat-module3">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-msg="0" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Here is the conversation so far plus the new user message: Fix the failing test.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="1" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>I need to look at the test file first. <em>(emits function call: shell)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="2" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Output of <code>pnpm test</code>: error in src/parser.ts line 47, undefined variable.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="3" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>Now I want to read src/parser.ts. <em>(function call: shell with cat)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="4" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Here are the contents. <em>(file contents)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="5" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>Applying this patch to fix the typo. <em>(function call: apply_patch)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="6" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Patch applied. Tests re-ran &mdash; all passing.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="7" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>Done. The typo on line 47 was the cause.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" id="chat-module3-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module3-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Eight messages. Three tool calls. One human prompt. <em>That</em> is what
+        happens between &ldquo;Fix the failing test&rdquo; and a green checkmark.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: WHEN THE LOOP STOPS ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">When (and how) the loop stops</h2>
+      <p class="screen-lede">
+        Two questions that explain 90% of Codex&rsquo;s behavior:
+        <strong>who decides when to stop?</strong> and <strong>what if the
+        <span class="term" data-definition="The live connection over which the model is sending tokens. If it dies mid-sentence, Codex needs to notice and react instead of hanging forever.">stream</span>
+        breaks mid-broadcast?</strong>
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; client_common.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub struct</span> <span class="code-function">ResponseStream</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) rx_event: mpsc::<span class="code-function">Receiver</span>&lt;<span class="code-function">Result</span>&lt;<span class="code-function">ResponseEvent</span>&gt;&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) consumer_dropped: <span class="code-function">CancellationToken</span>,</span>
+<span class="code-line">}</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">impl</span> <span class="code-function">Stream</span> <span class="code-keyword">for</span> <span class="code-function">ResponseStream</span> {</span>
+<span class="code-line">    <span class="code-keyword">type</span> Item = <span class="code-function">Result</span>&lt;<span class="code-function">ResponseEvent</span>&gt;;</span>
+<span class="code-line">    <span class="code-keyword">fn</span> <span class="code-function">poll_next</span>(<span class="code-keyword">mut</span> self: <span class="code-function">Pin</span>&lt;&amp;<span class="code-keyword">mut</span> Self&gt;, cx: &amp;<span class="code-keyword">mut</span> <span class="code-function">Context</span>&lt;'_&gt;) -&gt; <span class="code-function">Poll</span>&lt;<span class="code-function">Option</span>&lt;Self::Item&gt;&gt; {</span>
+<span class="code-line">        self.rx_event.<span class="code-function">poll_recv</span>(cx)</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">A <strong>ResponseStream</strong> is a little pipe with two ends. One end (<span class="term" data-definition="mpsc = multi-producer, single-consumer. A type of pipe where many writers can drop things in, but only one reader is pulling them out. Used here so one task reads the model&rsquo;s output even while other tasks push into it.">mpsc</span>) is for receiving events.</p>
+            <p class="tl">The other end is a <span class="term" data-definition="A flag you can wave to politely ask a running task to stop. Tasks check the flag and clean up — nobody gets killed in their sleep.">CancellationToken</span> — basically a kill switch. When you hit Ctrl-C, this flips, and any task watching it stops gracefully.</p>
+            <p class="tl">The <code>poll_next</code> function is how the loop asks &ldquo;got anything new for me yet?&rdquo; <em>This is the radio click between sentences.</em></p>
+            <p class="tl">No tokens? Quiet, but the line stays open. Tokens? Hand them up to the loop and keep listening.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="screen-subtitle">And if the radio cuts out?</h3>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; turn.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">let</span> event = <span class="code-keyword">match</span> event {</span>
+<span class="code-line">    <span class="code-function">Some</span>(<span class="code-function">Ok</span>(event)) =&gt; event,</span>
+<span class="code-line">    <span class="code-function">Some</span>(<span class="code-function">Err</span>(err)) =&gt; <span class="code-keyword">break</span> <span class="code-function">Err</span>(err),</span>
+<span class="code-line">    <span class="code-function">None</span> =&gt; {</span>
+<span class="code-line">        <span class="code-keyword">break</span> <span class="code-function">Err</span>(CodexErr::<span class="code-function">Stream</span>(</span>
+<span class="code-line">            <span class="code-string">"stream closed before response.completed"</span>.<span class="code-function">into</span>(),</span>
+<span class="code-line">            <span class="code-function">None</span>,</span>
+<span class="code-line">        ));</span>
+<span class="code-line">    }</span>
+<span class="code-line">};</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Three things can come down the pipe…</p>
+            <p class="tl"><strong>A real event:</strong> great, use it.</p>
+            <p class="tl"><strong>An error:</strong> stop the loop and bubble the error up.</p>
+            <p class="tl"><strong>Nothing (None):</strong> the connection went dead before the model said &ldquo;done.&rdquo; That is an error too — Codex throws <code>stream closed before response.completed</code> instead of pretending everything is fine.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: the loop ends when the model says so</strong>
+          <p>
+            There is no hard-coded turn limit. The <em>model</em> decides when its answer
+            is final. That is why a complex task can run for many round-trips — and why
+            setting a max-turns config matters when you want to bound runaway behavior.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: QUIZ + HANDOFF ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Check your radio skills</h2>
+      <p class="screen-lede">
+        Three scenarios from real Codex sessions. Pick what you think is happening
+        — then read the explanation.
+      </p>
+
+      <div class="quiz-container" id="quiz-module3">
+
+        <div class="quiz-question-block"
+             data-correct="option-many"
+             data-explanation-right="Exactly. Each tool call (read a file, write a patch, run tests) is a fresh trip back to the model. 17 files edited over 4 minutes is dozens of model calls inside one loop — not one giant call that did it all."
+             data-explanation-wrong="Think back to the loop. Each time the model wants to run a tool, the loop sends the tool result back and asks the model again. Editing 17 files means many trips around that loop — many model calls.">
+          <h3 class="quiz-question">You ask Codex &ldquo;rename <code>foo</code> to <code>bar</code> across the project.&rdquo; It edits 17 files over 4 minutes. How many times did the model actually get called?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-one" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Once. The model returned a giant batch of edits.</span>
+            </button>
+            <button class="quiz-option" data-value="option-many" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Many times — roughly once per tool round, looping until it&rsquo;s done.</span>
+            </button>
+            <button class="quiz-option" data-value="option-seventeen" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Exactly 17 — one model call per file.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-token"
+             data-explanation-right="Right. The ResponseStream carries a CancellationToken — a flag any task can watch. When you Ctrl-C, the flag flips, the stream stops pulling, the loop unwinds gracefully. Streams are cancellable by design."
+             data-explanation-wrong="Not quite. Codex doesn&rsquo;t kill processes with a sledgehammer. Look back at ResponseStream — it carries a small flag that running tasks check on every tick. That flag is how cancellation propagates cleanly.">
+          <h3 class="quiz-question">Mid-stream, you press <code>Ctrl-C</code>. What design feature makes this work cleanly — no half-edited files, no hung processes?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-kill" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Codex hard-kills the OS process holding the connection.</span>
+            </button>
+            <button class="quiz-option" data-value="option-token" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The CancellationToken attached to ResponseStream — when the consumer drops, the stream signals the mapper to stop.</span>
+            </button>
+            <button class="quiz-option" data-value="option-timeout" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A 30-second timeout fires and the network connection is dropped.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-feedback"
+             data-explanation-right="Yes! The parser returns InvalidArguments, and that error becomes the next tool output the model sees. The model reads its own mistake on the next loop iteration and self-corrects. Errors are feedback, not bombs."
+             data-explanation-wrong="Codex is designed to survive bad model output. The bad JSON gets turned into an error message — and that error message becomes the next thing the model reads inside the loop. So instead of crashing, Codex lets the model see its own mistake and try again.">
+          <h3 class="quiz-question">The model returns malformed JSON for a tool call. What happens — does Codex crash?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-crash" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes. Bad JSON means the turn aborts and surfaces a fatal error.</span>
+            </button>
+            <button class="quiz-option" data-value="option-feedback" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No. The parser returns InvalidArguments, that error becomes the tool output, and the model self-corrects on the next round.</span>
+            </button>
+            <button class="quiz-option" data-value="option-retry" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Codex silently retries with a brand-new prompt until JSON parses.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Next up: what is a &ldquo;tool,&rdquo; actually?</strong>
+          <p>
+            We saw the model &ldquo;call a tool&rdquo; — but what <em>is</em> a tool, and
+            why isn&rsquo;t it terrifying that a model can run shell commands on your machine?
+            That is Module 4.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<section class="module" id="module-4">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 4</span>
+      <h2 class="screen-title">Tools &amp; Approvals</h2>
+      <p class="screen-lede">
+        Last module we watched the model &ldquo;call a tool.&rdquo;
+        What does that even <em>mean</em>?
+      </p>
+
+      <p>
+        When you ask Codex to <strong>&ldquo;rename this variable,&rdquo;</strong> the model
+        does not reach into your filesystem. It writes a small request:
+        <em>please use the</em> <code>apply_patch</code> <em>tool with this diff</em>.
+        Then someone &mdash; you, or a policy &mdash; decides whether the key turns.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🔑</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a locksmith with a keyring</strong>
+          <p>
+            The model is a locksmith standing outside your house. It cannot just walk in.
+            It has to pick a key (a
+            <span class="term" data-definition="A named action the model is allowed to ask for — like a verb the model knows how to use. shell, apply_patch, read_file, web_search are all tools. Each one is a key on the locksmith&rsquo;s keyring.">tool</span>)
+            and ask permission to turn it. Some keys open anywhere
+            (reading a file). Some need the homeowner&rsquo;s nod (editing a file).
+            Some doors are bolted shut and <em>no</em> key works (writing outside the
+            workspace under read-only mode).
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Tools are <strong>named contracts</strong>. Every action the model takes is
+        one of a small, finite list of named tools, each with structured arguments.
+        Approval is <strong>layered</strong>: first the policy decides, then a safety
+        check decides, then maybe you decide. Three filters before a key turns.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE KEYRING (TOOL CARDS) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">What is on the keyring?</h2>
+      <p class="screen-lede">
+        Each card below is one key. When the model emits a
+        <span class="term" data-definition="The model sending a small JSON object that says please run this tool with these arguments — instead of just replying with text. It is how the model asks to do something instead of describe something.">function call</span>,
+        it is naming one of these &mdash; never anything else.
+      </p>
+
+      <div class="pattern-cards">
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">💻</div>
+          <h4 class="pattern-title">shell</h4>
+          <p class="pattern-desc">
+            Run a command inside your workspace &mdash; like
+            <code>pnpm test</code> or <code>git status</code>.
+            The biggest, most powerful key on the ring.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">✏️</div>
+          <h4 class="pattern-title">apply_patch</h4>
+          <p class="pattern-desc">
+            Edit one or more files
+            <span class="term" data-definition="All-or-nothing. Either every change in the patch lands, or none of them do. There is no half-applied state where you end up with a broken file.">atomically</span>
+            using a
+            <span class="term" data-definition="The standard format for describing edits. Lines beginning with a minus are removed; lines beginning with a plus are added. The same format git diff prints.">unified diff</span>.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">📄</div>
+          <h4 class="pattern-title">read_file</h4>
+          <p class="pattern-desc">
+            Pull the contents of a file into the conversation.
+            In practice often expressed as a <code>shell</code> call to <code>cat</code>.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: var(--color-actor-4)">🌐</div>
+          <h4 class="pattern-title">web_search</h4>
+          <p class="pattern-desc">
+            Look something up on the open internet &mdash; for fresh docs,
+            error messages, library versions Codex was not trained on.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-accent)">
+          <div class="pattern-icon" style="background: var(--color-accent)">🔌</div>
+          <h4 class="pattern-title">MCP tools</h4>
+          <p class="pattern-desc">
+            Custom keys you add to the ring via
+            <span class="term" data-definition="MCP = Model Context Protocol. An open standard for plugging external tools into AI agents. Think of it like USB for AI — you connect a server, and its tools show up on the keyring.">MCP</span>
+            servers &mdash; database queries, ticketing systems, your own scripts,
+            whatever you wire up.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Notice what is <em>not</em> here: there is no &ldquo;do anything you want&rdquo;
+        key. The model can only ask for things on this list. If you wanted Codex to
+        send a Slack message, you would have to add a Slack MCP server &mdash; a new key.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE HEREDOC SHOWPIECE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The <code>apply_patch</code> trick</h2>
+      <p class="screen-lede">
+        This is the most elegant hack in the whole codebase. Once you see it,
+        you will spot it everywhere &mdash; and you will know when an LLM is faking it.
+      </p>
+
+      <p>
+        How do you let an AI edit a file <em>safely</em>?
+        Codex&rsquo;s answer: don&rsquo;t invent a new format &mdash;
+        use bash. The model emits a regular shell command that <em>embeds</em>
+        a diff inside a
+        <span class="term" data-definition="A bash trick for stuffing multi-line text into a single command. The &lt;&lt;EOF marker says everything until the next EOF is one big string argument. Like a multi-line quote, but in a terminal.">heredoc</span>.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; what the model emits</span>
+<pre><code><span class="code-line"><span class="code-function">apply_patch</span> &lt;&lt;<span class="code-string">'EOF'</span></span>
+<span class="code-line"><span class="code-comment">*** Begin Patch</span></span>
+<span class="code-line"><span class="code-comment">*** Update File: src/parser.ts</span></span>
+<span class="code-line"><span class="code-comment">@@</span></span>
+<span class="code-line"><span class="code-keyword">-</span>  <span class="code-keyword">const</span> valeu = config.value;</span>
+<span class="code-line"><span class="code-keyword">+</span>  <span class="code-keyword">const</span> value = config.value;</span>
+<span class="code-line"><span class="code-comment">*** End Patch</span></span>
+<span class="code-line"><span class="code-string">EOF</span></span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>1.</strong> Call the <code>apply_patch</code> command. Everything between the two <code>EOF</code> markers is one giant string argument.</p>
+            <p class="tl"><strong>2.</strong> &ldquo;Here comes a patch.&rdquo;</p>
+            <p class="tl"><strong>3.</strong> &ldquo;The file I want to change is <code>src/parser.ts</code>.&rdquo;</p>
+            <p class="tl"><strong>4.</strong> A diff marker &mdash; like a chapter heading inside the patch.</p>
+            <p class="tl"><strong>5.</strong> The <em>minus</em> line: &ldquo;remove this typo, <code>valeu</code>.&rdquo;</p>
+            <p class="tl"><strong>6.</strong> The <em>plus</em> line: &ldquo;replace it with <code>value</code>.&rdquo;</p>
+            <p class="tl"><strong>7.</strong> &ldquo;End of patch.&rdquo;</p>
+            <p class="tl"><strong>8.</strong> Close the heredoc &mdash; the shell stops swallowing text and runs the command.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Codex parses that heredoc with
+        <span class="term" data-definition="A fast, robust parser library that understands the structure of code. Used here to read the shell command exactly the way bash would — no regex hacks, no guessing.">tree-sitter</span>
+        (a real bash parser), validates the diff format, and applies it atomically.
+        Three reasons this is brilliant:
+      </p>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why the heredoc is genius</strong>
+          <p>
+            <strong>(a)</strong> The model gets to reason about its edit as plain text &mdash;
+            a diff is just words.
+            <strong>(b)</strong> It <em>looks</em> like a normal shell command, so the
+            same approval pipeline that handles every other <code>shell</code> call
+            also handles patches &mdash; no separate code path.
+            <strong>(c)</strong> Shell escaping does the hard quoting work for free.
+            One trick, three problems solved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: THE THREE FILTERS (CODE TRANSLATION 1 + 2) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three filters before the key turns</h2>
+      <p class="screen-lede">
+        Even with a valid patch, the locksmith still has to ask. Inside Codex,
+        every <code>apply_patch</code> goes through a tiny pipeline that decides:
+        auto-approve, ask the user, or refuse outright.
+      </p>
+
+      <p>
+        The result of that decision is shaped like this &mdash; a Rust
+        <span class="term" data-definition="A type that says &lsquo;this value is one of these named possibilities, never anything else.&rsquo; Like a multiple-choice answer for the program: it must pick exactly one variant.">enum</span>
+        with two variants:
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; apply_patch.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">enum</span> <span class="code-function">InternalApplyPatchInvocation</span> {</span>
+<span class="code-line">    <span class="code-comment">/// The `apply_patch` call was handled programmatically, without any sort</span></span>
+<span class="code-line">    <span class="code-comment">/// of sandbox, because the user explicitly approved it. This is the</span></span>
+<span class="code-line">    <span class="code-comment">/// result to use with the `shell` function call that contained `apply_patch`.</span></span>
+<span class="code-line">    <span class="code-function">Output</span>(<span class="code-function">Result</span>&lt;<span class="code-function">String</span>, <span class="code-function">FunctionCallError</span>&gt;),</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-comment">/// The `apply_patch` call was approved, either automatically or explicitly.</span></span>
+<span class="code-line">    <span class="code-comment">/// The runtime realizes the patch through the selected environment filesystem.</span></span>
+<span class="code-line">    <span class="code-function">DelegateToRuntime</span>(<span class="code-function">ApplyPatchRuntimeInvocation</span>),</span>
+<span class="code-line">}</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment">#[derive(Debug)]</span></span>
+<span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">struct</span> <span class="code-function">ApplyPatchRuntimeInvocation</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) action: <span class="code-function">ApplyPatchAction</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) auto_approved: <span class="code-keyword">bool</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) exec_approval_requirement: <span class="code-function">ExecApprovalRequirement</span>,</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>Variant 1 &mdash; <code>Output</code>:</strong> We already ran the patch ourselves (because you explicitly approved it earlier). Here is the result &mdash; success message or error &mdash; ready to hand back to the model.</p>
+            <p class="tl"><strong>Variant 2 &mdash; <code>DelegateToRuntime</code>:</strong> The patch is approved. Hand it to the runtime, which will apply it through the
+            <span class="term" data-definition="Rules that decide which files the agent is allowed to read or write, and whether it can reach the network. A wall around the agent. Module 5 covers this in depth.">sandbox</span>
+            that&rsquo;s currently active. We do not run it ourselves.</p>
+            <p class="tl"><strong>The struct underneath</strong> just carries the details: the parsed patch, whether it was auto-approved, and what approval level the sandbox should treat it as.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        And here is the actual decision &mdash; a three-way switch with three possible
+        verdicts. This single <code>match</code> block is the whole approval engine.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; assess_patch_safety</span>
+<pre><code><span class="code-line"><span class="code-keyword">match</span> <span class="code-function">assess_patch_safety</span>(</span>
+<span class="code-line">    &amp;action,</span>
+<span class="code-line">    turn_context.approval_policy.<span class="code-function">value</span>(),</span>
+<span class="code-line">    &amp;turn_context.<span class="code-function">permission_profile</span>(),</span>
+<span class="code-line">    file_system_sandbox_policy,</span>
+<span class="code-line">    &amp;action.cwd,</span>
+<span class="code-line">    turn_context.windows_sandbox_level,</span>
+<span class="code-line">) {</span>
+<span class="code-line">    SafetyCheck::<span class="code-function">AutoApprove</span> { .. } =&gt; <span class="code-comment">/* run it */</span>,</span>
+<span class="code-line">    SafetyCheck::<span class="code-function">AskUser</span> =&gt; <span class="code-comment">/* show approval card to user */</span>,</span>
+<span class="code-line">    SafetyCheck::<span class="code-function">Reject</span> { reason } =&gt; <span class="code-comment">/* tell the model: nope, denied */</span>,</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>The call to <code>assess_patch_safety</code>:</strong> hand it the patch, your approval policy, your permission profile, the sandbox rules, and the working directory. It thinks &mdash; then returns a verdict.</p>
+            <p class="tl"><strong>Verdict A &mdash; <code>AutoApprove</code>:</strong> &ldquo;Just do it.&rdquo; The policy says this is safe enough to run without bothering you.</p>
+            <p class="tl"><strong>Verdict B &mdash; <code>AskUser</code>:</strong> &ldquo;Show them the approval card.&rdquo; The TUI pops up the diff and waits for you to click Allow or Deny.</p>
+            <p class="tl"><strong>Verdict C &mdash; <code>Reject</code>:</strong> &ldquo;Nope, denied.&rdquo; The reason gets sent back to the model as the tool output &mdash; so the model can adjust and try a different approach.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: THE THREE APPROVAL POLICIES (BADGES + CHAT) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three policies, three trust levels</h2>
+      <p class="screen-lede">
+        You get to pick how loud the locksmith knocks. This is set with
+        <code>--ask-for-approval</code> on the command line, or in your
+        <span class="term" data-definition="A small text file (config.toml) in your Codex settings folder where you can save defaults instead of typing flags every time.">config file</span>.
+        Three settings &mdash; biggest config knob you have.
+      </p>
+
+      <div class="badge-list">
+        <div class="badge-item">
+          <code class="badge-code">never</code>
+          <span class="badge-desc">
+            Auto-approve everything. The model can run anything the
+            <span class="term" data-definition="The other filter — the sandbox decides which files and which network can be touched, regardless of approval. Approval is &lsquo;may I ask?&rsquo;; sandbox is &lsquo;can I even reach it?&rsquo;">sandbox policy</span>
+            allows. Use when you trust the agent and have a tight sandbox.
+          </span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">on-request</code>
+          <span class="badge-desc">
+            Every tool call pops up an approval card. You click Allow or Deny each time.
+            Maximum paranoia, maximum interruptions.
+          </span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">unless-trusted</code>
+          <span class="badge-desc">
+            Codex auto-approves if the command&rsquo;s &ldquo;shape&rdquo; matches a known-safe
+            pattern (like <code>ls</code> or <code>cat</code>). Otherwise it asks. The default sweet spot.
+          </span>
+        </div>
+      </div>
+
+      <p>
+        Now watch one approval round play out. Same agent, same patch &mdash; under
+        <code>on-request</code> mode, where you are the final filter.
+      </p>
+
+      <div class="chat-window" id="chat-module4">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-msg="0" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>I want to clean up before running the build. <em>(function call: shell <code>rm -rf node_modules</code>)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="1" data-sender="safety" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🛡️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Safety Checker</span>
+              <p>This is a destructive shell command and the policy is on-request. Verdict: <code>AskUser</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="2" data-sender="you" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-accent)">🧑</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-accent)">You</span>
+              <p>The model wants to delete <code>node_modules</code>. Card shows the full command. I click <strong>Allow once</strong>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="3" data-sender="safety" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🛡️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Safety Checker</span>
+              <p>Approved. Running it through the sandbox now.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="4" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>Tool output received: removed 1,247 files. Continuing with the rebuild.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" id="chat-module4-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module4-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Switch the same scenario to <code>never</code>, and the Safety Checker
+        skips the middle two messages &mdash; verdict goes straight to <code>AutoApprove</code>.
+        Switch to <code>on-request</code> with a totally tight sandbox, and even an approved
+        <code>rm -rf</code> can still bounce off the sandbox wall. (That is Module 5.)
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: QUIZ + BRIDGE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Decide like Codex</h2>
+      <p class="screen-lede">
+        Three real scenarios. Pick what would actually happen &mdash; or what
+        <em>you</em> would set.
+      </p>
+
+      <div class="quiz-container" id="quiz-module4">
+
+        <div class="quiz-question-block"
+             data-correct="option-sandbox"
+             data-explanation-right="Exactly. Approval is one filter, the sandbox is another. You can grant the model unlimited approval and the sandbox can still slam the door — they are two independent layers. That is the whole point of defense in depth, and it is the reason &ldquo;never&rdquo; mode is not actually reckless."
+             data-explanation-wrong="Not quite. You set approval to never, so approval is not the blocker. There is a second filter running in parallel that controls which files the agent can touch — independent of any policy you click through. Look at the policy badges above for the hint.">
+          <h3 class="quiz-question">You set <code>--ask-for-approval never</code> and Codex still refuses to write a file outside your project folder. What is blocking it?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-bug" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A bug &mdash; <code>never</code> should mean &ldquo;allow everything.&rdquo;</span>
+            </button>
+            <button class="quiz-option" data-value="option-sandbox" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The sandbox filesystem policy &mdash; a separate layer below approval.</span>
+            </button>
+            <button class="quiz-option" data-value="option-model" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model refused on its own.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-feedback"
+             data-explanation-right="Right. The parse error gets turned into a tool-output string and handed back to the model as the next thing in the conversation. The model reads its own broken patch on the next loop iteration and tries a corrected version. Errors are feedback, not crashes &mdash; this is exactly the &lsquo;failing forward&rsquo; pattern from the callout."
+             data-explanation-wrong="Codex does not crash on bad tool input — it would be unusable if it did. Bad patches happen constantly. Think about what Module 3 taught: the tool output is the next thing the model sees. So a parse error becomes...">
+          <h3 class="quiz-question">The model emits an <code>apply_patch</code> heredoc that fails to parse (malformed diff). What does Codex do?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-crash" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Crashes the turn with a fatal error.</span>
+            </button>
+            <button class="quiz-option" data-value="option-feedback" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Returns the parse error as the tool output &mdash; the model reads it on the next loop and retries.</span>
+            </button>
+            <button class="quiz-option" data-value="option-silent" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Silently drops the patch and waits for you to notice.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-never"
+             data-explanation-right="Yes &mdash; pair never with a tight sandbox and you get hands-off autonomy without giving up safety. &ldquo;Never&rdquo; does not mean &ldquo;no safety&rdquo;; the sandbox still constrains the agent. That combo is how Codex can grind on a problem for 10 minutes without you babysitting every command."
+             data-explanation-wrong="That mode will absolutely fix the build &mdash; but it will also pop an approval card on every single shell command and patch. For a long autonomous task you will be clicking Allow dozens of times. Look at the badge that says &lsquo;auto-approve everything.&rsquo;">
+          <h3 class="quiz-question">You want Codex to fix a TypeScript build error fully autonomously &mdash; iterate until green &mdash; without prompting you 14 times. Which approval policy?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-on-request" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>on-request</code> &mdash; safest, always asks before acting.</span>
+            </button>
+            <button class="quiz-option" data-value="option-unless" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>unless-trusted</code> &mdash; still interrupts for any uncommon command.</span>
+            </button>
+            <button class="quiz-option" data-value="option-never" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>never</code>, paired with a tight sandbox so the model can iterate freely inside the wall.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: errors flow back as feedback</strong>
+          <p>
+            When a tool fails &mdash; bad patch, missing file, permission denied &mdash;
+            Codex does not crash or panic. It hands the error string to the model
+            as the next &ldquo;tool output.&rdquo; The model reads it like any other
+            piece of context and figures out what to do next. Engineers call this
+            <strong>failing forward</strong>: every error is just more information
+            for the next loop iteration.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🛡️</div>
+        <div class="callout-content">
+          <strong class="callout-title">Next up: but what if a tool itself misbehaves?</strong>
+          <p>
+            Approval is one filter &mdash; you (or a policy) deciding before the key
+            turns. But what if the model tricks the policy, or a tool has a bug, or
+            an MCP server you trusted goes rogue? You need a wall <em>around</em> the
+            locksmith, not just a checkpoint in front of him. That is the
+            <strong>sandbox</strong>. Module 5.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<section class="module" id="module-5">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 5</span>
+      <h2 class="screen-title">The Sandbox</h2>
+      <p class="screen-lede">
+        Module 4 ended with a question: <em>approval is one filter &mdash; what about the sandbox?</em>
+        Here is the layer that stands between a confused model and your home directory.
+      </p>
+
+      <p>
+        Codex runs <span class="term" data-definition="Programs that take typed instructions and do something — like delete a file, list a folder, or download something from the internet. Shell commands are how every developer drives their machine.">shell commands</span>.
+        <em>Real</em> ones. On your <em>real</em> machine. Have you ever wondered why there
+        aren&rsquo;t a million horror stories of agents nuking people&rsquo;s home folders?
+        Because of this layer.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🧪</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a glass-walled cleanroom</strong>
+          <p>
+            Picture a cleanroom inside a chip factory. The technician inside can <em>see</em>
+            the rest of the building through the glass &mdash; read manuals, look at samples
+            &mdash; but contaminants can&rsquo;t leak out. Sealed doors, filtered air, locked
+            exits. The agent works inside this room. macOS, Linux, and Windows each build
+            the room differently, but they all do the same job: contain the work.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Crucially, the cleanroom is enforced by the <em>building</em>, not by the technician&rsquo;s
+        good behavior. The agent doesn&rsquo;t politely refrain from misbehaving &mdash; it
+        literally <em>cannot</em>. The
+        <span class="term" data-definition="The deepest layer of an operating system — the part that actually talks to hardware and decides which programs can do what. When a program wants to open a file or use the network, the kernel is the gatekeeper that says yes or no.">kernel</span>
+        refuses.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE THREE LEVELS ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three sizes of cleanroom</h2>
+      <p class="screen-lede">
+        Codex offers exactly three settings &mdash; one safest, one default, one break-glass.
+        This is the most important config choice you&rsquo;ll make.
+      </p>
+
+      <div class="pattern-cards">
+
+        <div class="pattern-card" style="border-top: 3px solid #2D8B55">
+          <div class="pattern-icon" style="background: #2D8B55">👀</div>
+          <h4 class="pattern-title"><code>read-only</code></h4>
+          <p class="pattern-desc">
+            Can read any file. Can&rsquo;t write anything. No network. The safest setting.
+            Use when you want the agent to explore and <em>propose</em>, not act.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid #D4A843">
+          <div class="pattern-icon" style="background: #D4A843">✏️</div>
+          <h4 class="pattern-title"><code>workspace-write</code></h4>
+          <p class="pattern-desc">
+            Can read anything. Can write <em>only</em> inside the project folder. No network
+            unless explicitly allowed. <strong>The default.</strong> Best for most coding work.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid #D94F30">
+          <div class="pattern-icon" style="background: #D94F30">🔥</div>
+          <h4 class="pattern-title"><code>danger-full-access</code></h4>
+          <p class="pattern-desc">
+            No filesystem or network restrictions. Reserve for inside
+            <span class="term" data-definition="A sandboxed Linux environment that looks like its own little computer. Used to isolate apps so they can&rsquo;t see or break the host machine.">Docker containers</span>
+            or virtual machines. The README literally calls it &ldquo;Danger!&rdquo;
+          </p>
+        </div>
+
+      </div>
+
+      <p>
+        The three levels show up everywhere in the codebase &mdash; in the CLI, in
+        <span class="term" data-definition="A configuration file written in TOML format. It&rsquo;s where Codex stores your default settings, so you don&rsquo;t have to retype flags every time.">config.toml</span>,
+        in the internal policy types. One unified abstraction; three OS-specific
+        implementations underneath.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE TECHNOLOGIES ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three operating systems, three cleanrooms</h2>
+      <p class="screen-lede">
+        Same policy. Same levels. Three completely different mechanisms to actually
+        <em>enforce</em> the walls &mdash; one per OS.
+      </p>
+
+      <div class="pattern-cards">
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">🍎</div>
+          <h4 class="pattern-title">macOS &mdash; Seatbelt</h4>
+          <p class="pattern-desc">
+            <span class="term" data-definition="Apple&rsquo;s built-in macOS sandbox. The underlying command is sandbox-exec. You hand it a profile that lists what&rsquo;s allowed and the kernel enforces it.">Seatbelt</span>
+            (<code>sandbox-exec</code>) reads an Apple profile language describing what&rsquo;s
+            permitted. The kernel enforces it. Inside, <code>CODEX_SANDBOX=seatbelt</code> is
+            set so child code knows it&rsquo;s caged.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">🐧</div>
+          <h4 class="pattern-title">Linux &mdash; Landlock + bubblewrap</h4>
+          <p class="pattern-desc">
+            <span class="term" data-definition="A Linux kernel feature that lets a process voluntarily lock itself down — declaring exactly which folders it can read or write. Once set, even the process itself can&rsquo;t loosen it.">Landlock</span>
+            restricts which paths a process can touch.
+            <span class="term" data-definition="A Linux tool that runs commands in tight isolated environments (called namespaces). Often used as a portable jail for untrusted programs.">bubblewrap</span>
+            handles the surrounding cage. A helper binary, <code>codex-linux-sandbox</code>,
+            wraps the actual command.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">🪟</div>
+          <h4 class="pattern-title">Windows &mdash; Restricted Token</h4>
+          <p class="pattern-desc">
+            Two modes &mdash; <code>Elevated</code> and <code>RestrictedToken</code> &mdash; controlled
+            by a
+            <span class="term" data-definition="A Windows access token with fewer permissions than the user normally has. Windows checks the token before letting a process do almost anything, so a stripped-down token means a stripped-down process.">restricted token</span>,
+            Windows&rsquo;s way of saying &ldquo;this process has fewer permissions than you do.&rdquo;
+          </p>
+        </div>
+
+      </div>
+
+      <p>
+        The whole point of three implementations is that <em>the rest of Codex doesn&rsquo;t
+        care</em>. It just says &ldquo;spawn this sandboxed&rdquo; &mdash; the right cleanroom
+        gets built underneath.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: CODE — PICKING THE WINDOWS LEVEL ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">How Codex picks the cleanroom</h2>
+      <p class="screen-lede">
+        Here is the Windows side, in real Codex source. Notice how short it is &mdash; the
+        whole &ldquo;which cage do we use?&rdquo; decision fits on one screen.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; windows_sandbox.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">impl</span> WindowsSandboxLevelExt <span class="code-keyword">for</span> WindowsSandboxLevel {</span>
+<span class="code-line">    <span class="code-keyword">fn</span> <span class="code-function">from_config</span>(config: &amp;Config) -&gt; WindowsSandboxLevel {</span>
+<span class="code-line">        <span class="code-keyword">match</span> config.permissions.windows_sandbox_mode {</span>
+<span class="code-line">            <span class="code-function">Some</span>(WindowsSandboxModeToml::Elevated) =&gt; WindowsSandboxLevel::Elevated,</span>
+<span class="code-line">            <span class="code-function">Some</span>(WindowsSandboxModeToml::Unelevated) =&gt; WindowsSandboxLevel::RestrictedToken,</span>
+<span class="code-line">            <span class="code-function">None</span> =&gt; Self::<span class="code-function">from_features</span>(&amp;config.features),</span>
+<span class="code-line">        }</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Given the user&rsquo;s config, decide which Windows cage to build.</p>
+            <p class="tl"><strong>Config says <code>Elevated</code>?</strong> Use the elevated cage &mdash; more privileges, used for setup-style tasks.</p>
+            <p class="tl"><strong>Config says <code>Unelevated</code>?</strong> Use the restricted-token cage &mdash; the tighter, more locked-down one.</p>
+            <p class="tl"><strong>No config at all?</strong> Fall back to picking based on
+              <span class="term" data-definition="Optional features that can be turned on or off — like checkboxes for behaviors a project hasn&rsquo;t committed to as defaults yet.">feature flags</span>.
+              Codex always has <em>some</em> answer.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: defense in depth</strong>
+          <p>
+            The sandbox does not trust the agent &mdash; it trusts the
+            <strong>operating system</strong>. Even if the model is malicious or buggy,
+            even if the tool runtime has a bug, the kernel still refuses the
+            <span class="term" data-definition="A request a program makes to the kernel — like &lsquo;open this file&rsquo; or &lsquo;send this network packet.&rsquo; If the kernel says no, nothing happens.">syscall</span>.
+            The safety isn&rsquo;t a check the agent runs &mdash; it&rsquo;s a wall it
+            can&rsquo;t see through. Engineers call this
+            <span class="term" data-definition="A security strategy where multiple independent layers each block bad behavior. If one layer fails, the next still holds. Approval is one layer; the sandbox is another; the OS kernel is a third.">defense in depth</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: GROUP CHAT — A DENIED OPERATION ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Watch the wall hold</h2>
+      <p class="screen-lede">
+        A bad command comes in. The model wants to delete the user&rsquo;s home directory.
+        Approval lets it through. Watch what happens at the next layer.
+      </p>
+
+      <div class="chat-window" id="chat-module5">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-msg="0" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>Run this shell: <code>rm -rf ~</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="1" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Core</span>
+              <p>Approved by policy. Spawning under <code>workspace-write</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="2" data-sender="sandbox" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">🧪</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Sandbox</span>
+              <p>Telling the kernel: run <code>rm</code>, but only allow writes inside the workspace path.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="3" data-sender="kernel" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-4)">🛡️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-4)">Kernel</span>
+              <p><strong>Denied.</strong> Write attempt outside allowed paths.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="4" data-sender="sandbox" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">🧪</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Sandbox</span>
+              <p>Process exited with error: <code>permission denied</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="5" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Core</span>
+              <p>Output to model: <code>rm: cannot remove &lsquo;/Users/owl&rsquo; &mdash; permission denied</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="6" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>Acknowledged. Trying a safer approach.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" id="chat-module5-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module5-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        The model didn&rsquo;t &ldquo;learn its lesson&rdquo; through training. The error
+        came back like any other tool result &mdash; and the loop kept going. The error
+        <em>is</em> the feedback.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: CONFIG BADGES + QUIZ ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The dials you actually touch</h2>
+      <p class="screen-lede">
+        Three flags and two
+        <span class="term" data-definition="An environment variable — a setting that lives in the process&rsquo;s environment, not in any file. Programs read them on startup. Like a sticky note attached to the running program.">env vars</span>
+        explain almost every &ldquo;why can&rsquo;t Codex do this?&rdquo; moment.
+      </p>
+
+      <h3 class="screen-subtitle">User-facing CLI flags</h3>
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; README.md</span>
+<pre><code><span class="code-line">codex --sandbox read-only           <span class="code-comment"># default — explore freely, can&rsquo;t write</span></span>
+<span class="code-line">codex --sandbox workspace-write     <span class="code-comment"># write inside the project, no network</span></span>
+<span class="code-line">codex --sandbox danger-full-access  <span class="code-comment"># break glass — only inside containers</span></span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Three commands, three cleanrooms. Same Codex, different walls.</p>
+            <p class="tl"><strong>read-only:</strong> &ldquo;Look but don&rsquo;t touch.&rdquo; Great for code review and exploration.</p>
+            <p class="tl"><strong>workspace-write:</strong> &ldquo;Edit my project, leave my home alone.&rdquo; The everyday default.</p>
+            <p class="tl"><strong>danger-full-access:</strong> &ldquo;I built the room around you &mdash; you don&rsquo;t need your own.&rdquo; For Docker, CI, throwaway VMs.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="screen-subtitle">Env vars and config you&rsquo;ll spot in the wild</h3>
+      <div class="badge-list">
+        <div class="badge-item">
+          <code class="badge-code">CODEX_SANDBOX=seatbelt</code>
+          <span class="badge-desc">Set inside Seatbelt&rsquo;d processes so code can detect it&rsquo;s caged. Tests use it to skip operations the sandbox would block (you can&rsquo;t nest Seatbelt).</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">CODEX_SANDBOX_NETWORK_DISABLED=1</code>
+          <span class="badge-desc">Set when network is blocked. Tests check this and skip anything that needs the internet.</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">--sandbox &lt;level&gt;</code>
+          <span class="badge-desc">CLI flag that overrides the configured default for this single run.</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">[permissions] in config.toml</code>
+          <span class="badge-desc">The persistent way to set the default sandbox level &mdash; per machine, or per project. This is what
+            <span class="term" data-definition="Codex&rsquo;s internal data structure describing what a session is allowed to do — which paths, which network access, which level. The shared object every sandbox implementation reads from.">permission profiles</span>
+            are built from.</span>
+        </div>
+      </div>
+
+      <h2 class="screen-title" style="margin-top: var(--space-12)">Check your cleanroom instincts</h2>
+      <p class="screen-lede">Three real situations. Pick the one a thoughtful Codex user would choose.</p>
+
+      <div class="quiz-container" id="quiz-module5">
+
+        <div class="quiz-question-block"
+             data-correct="option-sandbox"
+             data-explanation-right="Right. When the chat looks fine but the file didn&rsquo;t change, it&rsquo;s almost always a layer below the model saying no &mdash; usually the sandbox blocking a write outside the workspace. Check the sandbox logs or the recent tool outputs. &lsquo;The model lied&rsquo; is rarely the issue."
+             data-explanation-wrong="The model lying is rarely the cause. When the chat looks normal but the disk didn&rsquo;t change, something deeper said no &mdash; and the sandbox is the most common culprit. The write attempt happened, the kernel refused, and the failure didn&rsquo;t bubble up clearly.">
+          <h3 class="quiz-question">Codex says it edited a file. The chat looks normal. You check the file on disk &mdash; it didn&rsquo;t change. What is most likely?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-lie" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model hallucinated the edit. It never actually tried.</span>
+            </button>
+            <button class="quiz-option" data-value="option-sandbox" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A sandbox denial that wasn&rsquo;t surfaced &mdash; the write was outside the allowed path. Check sandbox logs and recent tool outputs.</span>
+            </button>
+            <button class="quiz-option" data-value="option-cache" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Your editor is caching the file and showing the old version.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-full"
+             data-explanation-right="Right. The container is already the cleanroom &mdash; layering Codex&rsquo;s sandbox inside is mostly friction with little added safety. This is the classic defense-in-depth-vs-friction trade-off. Outside containers, you&rsquo;d want workspace-write; inside one, danger-full-access is reasonable."
+             data-explanation-wrong="Think about where the security boundary actually lives. Inside a Docker container, the container itself is the cage &mdash; the host can&rsquo;t be touched. Adding Codex&rsquo;s sandbox inside that already-sealed environment mostly just stops Codex from doing useful work, with little extra safety.">
+          <h3 class="quiz-question">You run Codex inside a Docker container that is itself the security boundary. Which sandbox level makes sense?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-read" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>read-only</code> &mdash; safest is always best.</span>
+            </button>
+            <button class="quiz-option" data-value="option-write" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>workspace-write</code> &mdash; the default is always the right call.</span>
+            </button>
+            <button class="quiz-option" data-value="option-full" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>danger-full-access</code> &mdash; the container is the cage; an inner sandbox is mostly friction.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-introspect"
+             data-explanation-right="Exactly. Code running inside the sandbox can read CODEX_SANDBOX=seatbelt and adjust &mdash; especially tests that would otherwise try to spawn another sandbox (you can&rsquo;t nest them) or hit the network. This is called introspectable sandboxing: the cage tells you it&rsquo;s there."
+             data-explanation-wrong="The env var isn&rsquo;t there to enable the sandbox &mdash; the sandbox is already running by the time it&rsquo;s set. It&rsquo;s a signal for the code inside: &lsquo;you&rsquo;re in a cage right now, plan accordingly.&rsquo; Mostly used by tests to skip operations the sandbox would block.">
+          <h3 class="quiz-question">Why does Codex set <code>CODEX_SANDBOX=seatbelt</code> on child processes?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-enable" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To turn the sandbox on &mdash; without the variable, there&rsquo;s no cage.</span>
+            </button>
+            <button class="quiz-option" data-value="option-introspect" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>So code <em>inside</em> the sandbox can detect that it&rsquo;s caged &mdash; useful for tests that need to skip operations the sandbox would block.</span>
+            </button>
+            <button class="quiz-option" data-value="option-billing" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>For logging and billing &mdash; OpenAI charges differently for sandboxed runs.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📦</div>
+        <div class="callout-content">
+          <strong class="callout-title">Next up: how does Codex remember?</strong>
+          <p>
+            We have an agent, a turn loop, tools, and a sandbox. But conversations are
+            long &mdash; and the model&rsquo;s memory is finite. How does Codex hold onto
+            context across hundreds of turns without forgetting what you asked for?
+            Last module.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<section class="module" id="module-6">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 6 &middot; Finale</span>
+      <h2 class="screen-title">Memory &mdash; how a conversation survives</h2>
+      <p class="screen-lede">
+        Module 5 ended with a question: <em>how does Codex remember?</em>
+        Answer: it keeps a <strong>logbook</strong>.
+      </p>
+
+      <p>
+        Close your terminal. Walk away. Come back tomorrow. Type
+        <code>codex resume</code> &mdash; and the conversation picks up exactly where you
+        left it, with the agent remembering every file it read, every patch it wrote,
+        every decision the two of you made. That is not magic.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📖</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a ship&rsquo;s logbook</strong>
+          <p>
+            Picture an old sailing ship. Every shift, the officer on watch writes one line
+            in a bound book: <em>14:02 &mdash; spotted reef to port. 14:05 &mdash; turned hard
+            starboard. 14:18 &mdash; clear water.</em> Pages are never torn out. If the
+            ship sinks, the next crew reads the log and knows what happened. If the book
+            gets too thick to carry, someone writes a
+            <span class="term" data-definition="A condensed retelling of older log pages, written so the captain doesn&rsquo;t have to read the whole book on every shift. In Codex, this is what compaction produces.">summary page</span>
+            so the captain doesn&rsquo;t have to read the whole thing on every shift.
+            That is Codex&rsquo;s memory, exactly.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE THREE LAYERS OF MEMORY ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three layers of memory</h2>
+      <p class="screen-lede">
+        Codex has memory at three different time scales. Each layer lives in a different
+        place &mdash; and forgets at a different speed.
+      </p>
+
+      <div class="pattern-cards">
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">⚡</div>
+          <h4 class="pattern-title">In-turn (live)</h4>
+          <p class="pattern-desc">
+            The active turn&rsquo;s tool outputs, model tokens, current
+            <span class="term" data-definition="A small holding pen for new user messages that arrive while the model is still busy thinking. Codex never makes you wait to type.">input queue</span>.
+            Disappears when the turn ends if not promoted.
+          </p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">📜</div>
+          <h4 class="pattern-title">In-session (rollout)</h4>
+          <p class="pattern-desc">
+            Everything in the current conversation, on disk as
+            <span class="term" data-definition="In Codex terms, the persisted append-only event log for one session &mdash; a JSONL file on disk.">rollout</span>.<code>jsonl</code>.
+            Survives crashes. Resumable via <code>codex resume</code>.
+          </p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">🗂️</div>
+          <h4 class="pattern-title">Across sessions</h4>
+          <p class="pattern-desc">
+            Long-term notes the agent writes to <code>~/.codex/memories/</code>
+            and skills configured in user / project scope. Survive across all sessions.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        The middle layer &mdash; the <strong>rollout</strong> &mdash; is where most of the
+        interesting machinery lives. The rest of this module is about that one file.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE ROLLOUT FILE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">What the logbook actually looks like</h2>
+      <p class="screen-lede">
+        Every conversation is one file on your disk. Each line is one event.
+        Open it in any text editor &mdash; it is just
+        <span class="term" data-definition="JSON Lines &mdash; a file format where each line is its own JSON object. Easy to append, easy to stream, easy to read with the human eye.">JSONL</span>.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">FILE &mdash; ~/.codex/threads/&hellip;/rollout.jsonl</span>
+<pre><code><span class="code-line"><span class="code-comment"># ~/.codex/threads/2026-05-27/{thread_id}/rollout.jsonl</span></span>
+<span class="code-line"></span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"TurnStarted"</span>,<span class="code-string">"timestamp"</span>:...}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"UserMessage"</span>,<span class="code-string">"text"</span>:<span class="code-string">"fix the failing test"</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"AgentMessage"</span>,<span class="code-string">"text"</span>:<span class="code-string">"Looking at the test file first..."</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionCall"</span>,<span class="code-string">"tool"</span>:<span class="code-string">"shell"</span>,<span class="code-string">"args"</span>:{<span class="code-string">"cmd"</span>:<span class="code-string">"pnpm test"</span>}}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionResult"</span>,<span class="code-string">"output"</span>:<span class="code-string">"error in src/parser.ts line 47..."</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionCall"</span>,<span class="code-string">"tool"</span>:<span class="code-string">"apply_patch"</span>,<span class="code-string">"args"</span>:{...}}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionResult"</span>,<span class="code-string">"output"</span>:<span class="code-string">"patch applied"</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"AgentMessage"</span>,<span class="code-string">"text"</span>:<span class="code-string">"Done. The typo was on line 47."</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"TurnEnded"</span>,<span class="code-string">"timestamp"</span>:...}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Each line is one <strong>event</strong> &mdash; one thing that happened, in the order it happened.</p>
+            <p class="tl">User messages, agent messages, tool calls, tool results &mdash; all written down as they occur, no editing afterward.</p>
+            <p class="tl">The file is <span class="term" data-definition="A data structure you can only add to, never edit or delete in place. Like writing in pen in a bound notebook.">append-only</span>. New events go on the bottom. Old events are never rewritten.</p>
+            <p class="tl">To re-create the conversation in memory, you just read the file from top to bottom and replay every event. That is what <code>codex resume</code> does.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: append-only is a superpower</strong>
+          <p>
+            Because the log only grows &mdash; never edits or deletes &mdash; you can
+            <span class="term" data-definition="Start a new conversation that shares history with an existing one up to a branching point. Like saving-as a document and editing the copy without touching the original.">fork</span>
+            it (start a side thread from any point), replay it (debug exactly what happened),
+            or rebuild from it (recover from a crash). Engineers call this
+            <span class="term" data-definition="Storing state as a sequence of events instead of as a current snapshot. Reconstruct the present by replaying the past.">event sourcing</span>
+            &mdash; and it&rsquo;s the same trick <code>git</code> uses for your commits.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: THE SESSION STRUCT ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">A Session, in code</h2>
+      <p class="screen-lede">
+        The rollout is the on-disk shape. The <strong>Session</strong> is the in-memory shape.
+        Here is what one conversation looks like to Codex while it is running.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; core/src/session/session.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">struct</span> <span class="code-function">Session</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) conversation_id: <span class="code-function">ThreadId</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) installation_id: <span class="code-function">String</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) tx_event: <span class="code-function">Sender</span>&lt;<span class="code-function">Event</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) agent_status: watch::<span class="code-function">Sender</span>&lt;<span class="code-function">AgentStatus</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) state: <span class="code-function">Mutex</span>&lt;<span class="code-function">SessionState</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) conversation: <span class="code-function">Arc</span>&lt;<span class="code-function">RealtimeConversationManager</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) active_turn: <span class="code-function">Mutex</span>&lt;<span class="code-function">Option</span>&lt;<span class="code-function">ActiveTurn</span>&gt;&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) input_queue: <span class="code-function">InputQueue</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) goal_runtime: <span class="code-function">GoalRuntimeState</span>,</span>
+<span class="code-line">    <span class="code-comment">// ...</span></span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>conversation_id:</strong> a unique ID for this chat &mdash; like a file name. Engineers call it a <span class="term" data-definition="In Codex, a single conversation. The ThreadId is its unique name &mdash; the label on the spine of the logbook.">ThreadId</span>.</p>
+            <p class="tl"><strong>tx_event:</strong> the wire that carries events out to the UI. Every time something happens, an event goes down this wire and the TUI sees it.</p>
+            <p class="tl"><strong>state:</strong> the in-memory bookkeeping, wrapped in a <span class="term" data-definition="A lock that lets only one piece of code touch shared data at a time &mdash; like a do-not-disturb sign on a hotel room door.">Mutex</span> so two pieces of code never trample each other.</p>
+            <p class="tl"><strong>active_turn:</strong> the in-progress turn if there is one, otherwise nothing. Most of the time this is empty &mdash; Codex is waiting for you.</p>
+            <p class="tl"><strong>input_queue:</strong> the holding pen where your keystrokes wait if you type while the model is still thinking.</p>
+            <p class="tl">Together: <em>this is everything one conversation needs to be itself.</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: THE LIFECYCLE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The life of one session</h2>
+      <p class="screen-lede">
+        From <code>codex</code> to <code>codex resume</code>, five things have to happen.
+        Each step is just a page in the logbook.
+      </p>
+
+      <div class="step-cards">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Session starts</strong>
+            <p>A <code>ThreadId</code> is minted; a new <code>rollout.jsonl</code> file is opened on disk.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Each turn appends events</strong>
+            <p>User message, model output, function calls, function results &mdash; every event is written to disk as it happens.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Context window fills up</strong>
+            <p>A <span class="term" data-definition="A counter that tracks how much text has been accumulated in the prompt. Used to detect when the model is about to hit its context-window ceiling.">token counter</span> detects the prompt is getting close to the model&rsquo;s
+            <span class="term" data-definition="The maximum amount of text a model can read in one go &mdash; like the model&rsquo;s working memory. Once it&rsquo;s full, something has to be left out.">context window</span> limit.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Compaction kicks in</strong>
+            <p>A special turn runs: &ldquo;summarize the old history.&rdquo; The summary replaces those old turns in the prompt; the rollout file still has the raw events.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Resume later</strong>
+            <p><code>codex resume</code> reads the rollout file, rebuilds the session in memory, and you continue.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: COMPACTION (CODE) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Compaction &mdash; squeezing the past</h2>
+      <p class="screen-lede">
+        The model&rsquo;s context window has a ceiling. When the conversation pushes against it,
+        Codex runs a special turn whose job is to <em>summarize the older pages of the logbook</em>.
+        Same machinery as any other turn &mdash; but the answer becomes the new history.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; core/src/compact.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">async fn</span> <span class="code-function">run_inline_auto_compact_task</span>(</span>
+<span class="code-line">    sess: <span class="code-function">Arc</span>&lt;<span class="code-function">Session</span>&gt;,</span>
+<span class="code-line">    turn_context: <span class="code-function">Arc</span>&lt;<span class="code-function">TurnContext</span>&gt;,</span>
+<span class="code-line">    initial_context_injection: <span class="code-function">InitialContextInjection</span>,</span>
+<span class="code-line">    reason: <span class="code-function">CompactionReason</span>,</span>
+<span class="code-line">    phase: <span class="code-function">CompactionPhase</span>,</span>
+<span class="code-line">) -&gt; <span class="code-function">CodexResult</span>&lt;()&gt; {</span>
+<span class="code-line">    <span class="code-keyword">let</span> prompt = turn_context.<span class="code-function">compact_prompt</span>().<span class="code-function">to_string</span>();</span>
+<span class="code-line">    <span class="code-keyword">let</span> input = <span class="code-function">vec!</span>[UserInput::<span class="code-function">Text</span> {</span>
+<span class="code-line">        text: prompt,</span>
+<span class="code-line">        text_elements: <span class="code-function">Vec</span>::<span class="code-function">new</span>(),</span>
+<span class="code-line">    }];</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-function">run_compact_task_inner</span>(</span>
+<span class="code-line">        sess,</span>
+<span class="code-line">        turn_context,</span>
+<span class="code-line">        input,</span>
+<span class="code-line">        initial_context_injection,</span>
+<span class="code-line">        CompactionTrigger::<span class="code-function">Auto</span>,</span>
+<span class="code-line">        reason,</span>
+<span class="code-line">        phase,</span>
+<span class="code-line">    )</span>
+<span class="code-line">    .<span class="code-keyword">await</span>?;</span>
+<span class="code-line">    <span class="code-function">Ok</span>(())</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Build a special prompt that essentially says: <em>&ldquo;summarize everything above this point.&rdquo;</em></p>
+            <p class="tl">Wrap that prompt as if <em>you</em> had typed it &mdash; same shape as a normal user message.</p>
+            <p class="tl">Run it as a turn, using the exact same loop as any other turn. There is no separate &ldquo;summarizer&rdquo; engine &mdash; just the model, given a different job for one round.</p>
+            <p class="tl">The model&rsquo;s answer <em>is</em> the summary. That summary gets injected into the in-memory history in place of the older turns. The original logbook on disk is untouched.</p>
+            <p class="tl">Then the regular conversation resumes &mdash; with room to breathe again.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: the disk log and the model&rsquo;s view are two different things</strong>
+          <p>
+            The <span class="term" data-definition="Replacing a long stretch of history with a shorter summary so it still fits the context window. Lossy by design &mdash; details can fall out.">compaction</span>
+            step rewrites the model&rsquo;s view of history, but the rollout file always has the
+            <em>complete</em> history. The model sees a smaller view that fits its context window.
+            Compaction is what bridges the gap. This is why you can <code>codex resume</code> a
+            three-hour session and find perfect recall &mdash; even when the model itself
+            only remembers a summary of most of it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 7: FLOW ANIMATION ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Watch the logbook in motion</h2>
+      <p class="screen-lede">
+        Eight steps. Four actors. Click <strong>Next Step</strong> to see how a long
+        conversation stays usable when the model&rsquo;s working memory is finite.
+      </p>
+
+      <div class="flow-animation" data-steps='[
+        {"highlight":"flow-actor-2","label":"Each new turn appends events to the session"},
+        {"highlight":"flow-actor-1","label":"Events also append to the rollout file on disk","packet":true,"from":"actor-2","to":"actor-1"},
+        {"highlight":"flow-actor-2","label":"Many turns later the history is large"},
+        {"highlight":"flow-actor-4","label":"Context window is near full the model cannot swallow more","packet":true,"from":"actor-2","to":"actor-4"},
+        {"highlight":"flow-actor-3","label":"Compactor runs asks the model to summarize old turns","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-2","label":"Summary replaces the old turns in the in-memory history","packet":true,"from":"actor-3","to":"actor-2"},
+        {"highlight":"flow-actor-1","label":"Original rollout on disk is untouched full history preserved"},
+        {"highlight":"flow-actor-2","label":"Conversation continues model has room again"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">📜</div>
+            <span>Memory (rollout file)</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">💬</div>
+            <span>Session</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">📝</div>
+            <span>Compactor</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">🧠</div>
+            <span>Context Window</span>
+          </div>
+        </div>
+
+        <div class="flow-packet" id="flow-packet"></div>
+
+        <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin.</div>
+
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Notice step 7: the rollout on disk is never touched by compaction. That is why
+        nothing is truly lost &mdash; you can always re-read the raw log, even if the
+        model is only carrying a summary of it forward.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 8: QUIZ + CAPSTONE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three scenarios &mdash; what is really happening?</h2>
+      <p class="screen-lede">
+        Real situations from real Codex sessions. Pick the best answer, then read the
+        explanation. (No grade. This is a thinking exercise.)
+      </p>
+
+      <div class="quiz-container" id="quiz-module6">
+
+        <div class="quiz-question-block"
+             data-correct="option-replay"
+             data-explanation-right="Exactly. The model itself has no persistent memory &mdash; it is a stateless function that takes a prompt and returns text. What you experience as memory is Codex reading the rollout file from disk, rebuilding the session in memory, and feeding the model that history. The system around the model is what remembers; the model just reacts to what is handed to it."
+             data-explanation-wrong="Not quite. Language models are stateless &mdash; they don&rsquo;t store anything between calls. The continuity you experienced came from somewhere else: a file on your disk that Codex read and replayed before re-engaging the model.">
+          <h3 class="quiz-question">You had a 3-hour session yesterday. Today you <code>codex resume</code> and ask &ldquo;what did we decide about the database schema?&rdquo; Codex answers correctly. Did the model itself &ldquo;remember&rdquo; three hours of conversation directly?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-yes" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes &mdash; the model has long-term memory and recalls past sessions.</span>
+            </button>
+            <button class="quiz-option" data-value="option-replay" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No &mdash; Codex replayed the rollout file and rebuilt the model&rsquo;s view of history before asking again.</span>
+            </button>
+            <button class="quiz-option" data-value="option-cloud" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>OpenAI&rsquo;s servers stored your conversation and re-attached it automatically.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-compaction"
+             data-explanation-right="Right. Compaction is lossy by design &mdash; it shrinks old turns into a summary that fits the context window, and specific details routinely fall out of summaries. Your fix: lift the important detail into the latest user message, or save it as a memory in ~/.codex/memories/ so it survives across compactions and across sessions."
+             data-explanation-wrong="Think about what happens when the conversation grows past the model&rsquo;s context window. The full rollout is still on disk, but the model has stopped seeing the raw old turns &mdash; it is reading a condensed retelling of them. Condensed retellings drop details.">
+          <h3 class="quiz-question">Mid-way through a long conversation, the agent suddenly forgets a detail you mentioned an hour ago. What probably happened?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-bug" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A bug corrupted the rollout file and the detail was lost forever.</span>
+            </button>
+            <button class="quiz-option" data-value="option-compaction" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Compaction summarized that section of history and the summary dropped the specific detail.</span>
+            </button>
+            <button class="quiz-option" data-value="option-modelmood" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model gets &ldquo;tired&rdquo; over long sessions and accuracy drops randomly.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-fork"
+             data-explanation-right="Exactly. Because the rollout is append-only, you can branch from any point: keep the shared history, then write new events on a different filename. Append-only logs naturally support branching &mdash; the same reason git can give you a side branch without disturbing main."
+             data-explanation-wrong="Think back to the &lsquo;append-only is a superpower&rsquo; callout. Because the log only grows and never edits in place, you can copy the shared history and start writing on a side track &mdash; without touching the original.">
+          <h3 class="quiz-question">You want to test a risky idea without polluting your main conversation. What does the system give you?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-undo" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>An undo button that rewinds the last few turns in place.</span>
+            </button>
+            <button class="quiz-option" data-value="option-fork" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Fork into a side thread &mdash; same rollout history up to a point, then a new branch.</span>
+            </button>
+            <button class="quiz-option" data-value="option-delete" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Delete and rewrite the rollout file by hand.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 9: CAPSTONE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">The journey</span>
+      <h2 class="screen-title">You can read this codebase now</h2>
+      <p class="screen-lede">
+        Take a breath. Look at how far you came.
+      </p>
+
+      <div class="icon-rows">
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-1)">🚪</div>
+          <div>
+            <strong>Module 1 &middot; The gate</strong>
+            <p>One prompt enters &mdash; through CLI parsing, config loading, auth.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-2)">🎭</div>
+          <div>
+            <strong>Module 2 &middot; The cast</strong>
+            <p>TUI, Core, Model, Tools, Sandbox &mdash; the components and how they divide the work.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-3)">🔁</div>
+          <div>
+            <strong>Module 3 &middot; The turn loop</strong>
+            <p>How one prompt becomes many round-trips with the model, streamed token by token.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-4)">🛠️</div>
+          <div>
+            <strong>Module 4 &middot; Tools and approvals</strong>
+            <p>Why the model has hands at all &mdash; and how Codex asks permission before using them.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-5)">🛡️</div>
+          <div>
+            <strong>Module 5 &middot; The sandbox</strong>
+            <p>The walls that contain the agent&rsquo;s hands &mdash; so a bad tool call cannot eat your machine.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-accent)">📖</div>
+          <div>
+            <strong>Module 6 &middot; The logbook</strong>
+            <p>How a conversation survives crashes, time, and the model&rsquo;s finite working memory.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">🧭</div>
+        <div class="callout-content">
+          <strong class="callout-title">What to do next</strong>
+          <p>
+            Open a terminal. Type <code>codex</code>. Ask it to do something real.
+            Watch the streaming text &mdash; that is the loop from Module 3. Notice the approval
+            prompt when it wants to run a shell command &mdash; that is Module 4. Notice the
+            <code>~/.codex/threads/</code> folder filling with JSONL files &mdash; that is Module 6.
+            Every piece you read about is right there, working in front of you. The shape is the shape.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        You learned the gate (M1), the cast (M2), the turn loop (M3), the tools (M4),
+        the sandbox (M5), and the memory (M6). You can now open the Codex source tree
+        and point to the file responsible for any feature you use. More importantly:
+        the same shape powers Claude Code, Cursor, and almost every other serious AI
+        coding agent &mdash; a TUI on top of a turn loop that calls a model that calls
+        tools through a sandbox while writing to an append-only log. Once you see that
+        shape, you see it everywhere. You are not a passenger in these tools anymore.
+        You are a captain reading the logbook.
+      </p>
+    </div>
+  </div>
+
+</section>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<section class="module" id="module-1">
+  <div class="module-content">
+
+    <!-- ───────────────── MODULE HEADER ───────────────── -->
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">The Prompt's Journey</h1>
+      <p class="module-subtitle">You type <code>codex</code>. Something starts up. But which something? Same binary, six different destinations &mdash; let's walk through the terminal.</p>
+    </header>
+
+    <!-- ───────────────── SCREEN 1: WHAT IS CODEX ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">First, what even is Codex?</h2>
+
+      <div class="animate-in">
+        <p>Codex is an <span class="term" data-definition="An AI coding agent is a program that reads your code, talks to a language model on your behalf, and can actually edit files and run shell commands &mdash; not just chat about them.">AI coding agent</span> that runs on your own laptop. It reads your files, edits them, and runs shell commands &mdash; all under permissions you control. The whole thing is one <span class="term" data-definition="A binary is a compiled program file &mdash; the kind you can double-click or type the name of to run. Think of it as a single sealed envelope containing all the machine instructions.">binary</span> called <code>codex</code>.</p>
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x2708;&#xFE0F;</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor for this module: an airport terminal</strong>
+          <p>The <code>codex</code> binary is one building. Each <span class="term" data-definition="A subcommand is the word you type AFTER the main command to switch into a different mode &mdash; like 'git push' versus 'git pull'. Same git, different gates.">subcommand</span> (<code>exec</code>, <code>mcp-server</code>, <code>sandbox</code>, &hellip;) is a different gate that leads to a completely different journey. Same building. Totally different flights.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 2: THE HOOK ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">Same word, two very different worlds</h2>
+
+      <div class="animate-in">
+        <p>Type <code>codex</code> on its own and you get a chat box. Type <code>codex exec "fix the bug"</code> and there's no chat at all &mdash; just answers piped straight to your terminal. How does the same program know which one you wanted?</p>
+      </div>
+
+      <div class="icon-rows animate-in stagger-children">
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-1)">&#x1F4AC;</div>
+          <div>
+            <strong>You type: <code>codex</code></strong>
+            <p>A full-screen chat opens up. You talk to it. It talks back. This is the <span class="term" data-definition="TUI stands for terminal user interface &mdash; an app that draws a clickable-ish UI right inside your terminal window, no browser needed.">TUI</span> mode.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-2)">&#x26A1;</div>
+          <div>
+            <strong>You type: <code>codex exec "fix the bug"</code></strong>
+            <p>No UI. Codex thinks, acts, prints the result, and exits. This is <span class="term" data-definition="Headless means no visible interface &mdash; the program just takes input, does its job, and prints output, like a script. Perfect for automation.">headless</span> mode &mdash; perfect for scripts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1F4A1;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Key Insight: Codex is a polymorphic binary</strong>
+          <p>One executable that becomes whichever sub-program you ask for. The very first thing it does &mdash; before anything model-related &mdash; is decide <em>which version of itself to be</em>. Engineers call this <span class="term" data-definition="Polymorphic means 'taking many forms'. Same name on the outside, different behavior on the inside, depending on how you call it.">polymorphic</span> behavior.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 3: THE SIX GATES ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">The six gates of the terminal</h2>
+
+      <div class="animate-in">
+        <p>Most vibe coders only ever discover gate #6 &mdash; the chat. The other five are where the real power lives. Here's each one and where it takes you.</p>
+      </div>
+
+      <div class="pattern-cards animate-in stagger-children">
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">&#x26A1;</div>
+          <h4 class="pattern-title"><code>codex exec</code></h4>
+          <p class="pattern-desc">Run Codex once, headless. Give it a prompt, get a result, exit. The gate for shell scripts and CI pipelines.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">&#x1F50C;</div>
+          <h4 class="pattern-title"><code>codex mcp-server</code></h4>
+          <p class="pattern-desc">Become a server that <em>other</em> AI tools (Claude Code, Cursor) can call as a tool. <span class="term" data-definition="MCP stands for Model Context Protocol &mdash; a standard for one AI tool to call another, like a universal adapter between agents.">MCP</span> = AI talking to AI.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">&#x1F510;</div>
+          <h4 class="pattern-title"><code>codex sandbox</code></h4>
+          <p class="pattern-desc">Test any shell command inside the sandbox jail &mdash; no AI involved. Pure permissions playground.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: var(--color-actor-4)">&#x1F4DD;</div>
+          <h4 class="pattern-title"><code>codex apply</code></h4>
+          <p class="pattern-desc">Take the diff Codex last suggested and run <code>git apply</code> on it. The "okay, do it for real" gate.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-actor-5)">&#x1F4DA;</div>
+          <h4 class="pattern-title"><code>codex resume</code></h4>
+          <p class="pattern-desc">Reopen a past conversation thread. Codex remembers where you left off so you can keep going.</p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-accent)">
+          <div class="pattern-icon" style="background: var(--color-accent)">&#x1F4AC;</div>
+          <h4 class="pattern-title"><code>codex</code> (default)</h4>
+          <p class="pattern-desc">No subcommand &mdash; you land in the full chat interface. This is the gate almost everyone uses.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 4: THE CODE THAT DECIDES ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">The receptionist that routes you</h2>
+
+      <div class="animate-in">
+        <p>So how does the binary actually decide? It uses a little Rust library called <span class="term" data-definition="clap is a Rust library that parses command-line arguments &mdash; like a receptionist who reads your form, checks the boxes, and tells the rest of the program what you asked for.">clap</span> to read what you typed and match it against a list of <span class="term" data-definition="An enum (short for enumeration) is a type that can be exactly one of a fixed list of variants &mdash; like a multiple-choice question with one answer selected.">enum</span> variants. Each variant is a gate.</p>
+      </div>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &middot; codex-rs/cli/src/main.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">#[derive(Debug, clap::Subcommand)]</span></span>
+<span class="code-line"><span class="code-keyword">enum</span> <span class="code-function">Subcommand</span> {</span>
+<span class="code-line">    <span class="code-keyword">#[clap(visible_alias = "e")]</span></span>
+<span class="code-line">    <span class="code-function">Exec</span>(ExecCli),               <span class="code-comment">// non-interactive one-shot</span></span>
+<span class="code-line">    <span class="code-function">Mcp</span>(McpCli),                 <span class="code-comment">// MCP server management</span></span>
+<span class="code-line">    <span class="code-function">McpServer</span>(McpServerCommand), <span class="code-comment">// become an MCP server</span></span>
+<span class="code-line">    <span class="code-function">Sandbox</span>(HostSandboxArgs),    <span class="code-comment">// sandboxed exec wrapper</span></span>
+<span class="code-line">    <span class="code-function">Apply</span>(ApplyCommand),         <span class="code-comment">// git apply last diff</span></span>
+<span class="code-line">    <span class="code-function">Resume</span>(ResumeCommand),       <span class="code-comment">// reopen past thread</span></span>
+<span class="code-line">    <span class="code-comment">// ... plus AppServer, Cloud, Debug, Plugin, Doctor, etc.</span></span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">"Hey clap, this enum is a list of subcommands &mdash; please match the user's input against it."</p>
+            <p class="tl">Define the list of possible gates the user might walk through.</p>
+            <p class="tl">Let the user type just <code>e</code> as a shortcut for <code>exec</code> &mdash; the receptionist accepts both forms.</p>
+            <p class="tl">Gate 1: headless one-shot. You ask, it answers, it leaves.</p>
+            <p class="tl">Gate 2: manage which external MCP servers Codex itself talks to.</p>
+            <p class="tl">Gate 3: <em>become</em> an MCP server so other agents can call Codex.</p>
+            <p class="tl">Gate 4: run a plain shell command inside the sandbox &mdash; no AI involved.</p>
+            <p class="tl">Gate 5: take the most recent suggested diff and apply it to your git repo.</p>
+            <p class="tl">Gate 6: pick up an old thread where you left off.</p>
+            <p class="tl">Trailing comment: there are more gates we'll explore later (cloud, debug, doctor&hellip;).</p>
+            <p class="tl">Close the enum &mdash; that's the full menu of gates.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="animate-in">
+        <p>What you see in the docs is just the public face of this same enum &mdash; the friendly side of the receptionist's clipboard:</p>
+      </div>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &middot; codex-rs/README.md</span>
+<pre><code><span class="code-line">codex exec PROMPT            <span class="code-comment"># run Codex non-interactively in the terminal</span></span>
+<span class="code-line">codex mcp-server             <span class="code-comment"># let *other* agents call Codex as an MCP tool</span></span>
+<span class="code-line">codex sandbox [COMMAND]...   <span class="code-comment"># test a command inside the sandbox, no AI</span></span>
+<span class="code-line">codex --sandbox read-only    <span class="code-comment"># run with read-only filesystem</span></span>
+<span class="code-line">codex --sandbox workspace-write</span>
+<span class="code-line">codex --sandbox danger-full-access</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">"<code>exec</code> + a prompt" = the headless gate. Great for scripts.</p>
+            <p class="tl">"<code>mcp-server</code>" = flip the chairs around. Other AI tools now call <em>you</em>.</p>
+            <p class="tl">"<code>sandbox</code> + a command" = test what the jail will and won't allow.</p>
+            <p class="tl">A <span class="term" data-definition="A flag is an option you add to a command (usually starting with -- or -) that changes its behavior. Like adding '--json' to ask for structured output instead of plain text.">flag</span>, not a subcommand: tell the chat gate to make everything read-only.</p>
+            <p class="tl">Same idea, but Codex can write files inside your project folder.</p>
+            <p class="tl">"Trust me, I know what I'm doing" mode &mdash; the safety net is off.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 5: THE JOURNEY OF YOUR KEYSTROKE ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">What actually happens when you hit Enter</h2>
+
+      <div class="animate-in">
+        <p>Trace one keystroke from your fingertips all the way to whichever gate you end up at. Five steps, in order:</p>
+      </div>
+
+      <div class="step-cards animate-in stagger-children">
+
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>You type the command and press Enter</strong>
+            <p>Your shell hands the binary its <span class="term" data-definition="argv is the array of arguments your program was launched with. arg0 is the very first one &mdash; the program's own name as it was invoked. Programs can read their own name to behave differently.">argv</span> &mdash; the list of words you typed, starting with the program's own name (<code>arg0</code>).</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Codex peeks at its own name first</strong>
+            <p>Before parsing anything, it checks <code>arg0</code>. If it was invoked as <code>codex-linux-sandbox</code>, it reroutes itself into the sandbox entrypoint &mdash; the famous "<span class="term" data-definition="The arg0 trick is when a program changes behavior based on what name it was called by. Symlink the same binary under a different name and it acts like a different program &mdash; one file, many personalities.">arg0 dispatch</span>" trick. Same binary, different personality.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>clap parses the rest of your words</strong>
+            <p>The receptionist library reads "<code>exec</code>" or "<code>mcp-server</code>" or sees nothing at all, and matches it against the <code>Subcommand</code> enum from the last screen.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>The matching gate is selected</strong>
+            <p>Now Codex knows which version of itself to become &mdash; headless runner, MCP server, sandbox tester, diff applier, thread resumer, or the chat TUI.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>That gate's <code>run()</code> boots its own world</strong>
+            <p>Each subcommand has its own startup routine. TUI builds a chat interface. <code>exec</code> opens a pipe. <code>mcp-server</code> starts listening on a socket. The model is loaded only <em>after</em> the gate decides it actually needs one.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-info animate-in">
+        <div class="callout-icon">&#x1F50D;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why this matters for you</strong>
+          <p>Most users never get past step&nbsp;3 because they never type a subcommand. Knowing the gates means you can drop Codex into scripts (<code>exec</code>), wire it into other agents (<code>mcp-server</code>), or test sandbox rules without burning model tokens (<code>sandbox</code>). Same superpower, different doorway.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 6: QUIZ ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">Pick the right gate</h2>
+
+      <div class="animate-in">
+        <p>Three scenarios. For each one, which subcommand would you reach for? No memorizing &mdash; just think about which gate fits the journey.</p>
+      </div>
+
+      <div class="quiz-container animate-in" id="quiz-module1">
+
+        <div class="quiz-question-block"
+             data-correct="exec"
+             data-explanation-right="Exactly. codex exec is the headless one-shot gate &mdash; perfect inside a shell script. It takes a prompt, runs once, prints the result, and exits. No chat box to babysit."
+             data-explanation-wrong="Not quite. The default codex command opens an interactive chat TUI, which freezes your script waiting for keystrokes. You want the headless one-shot gate that takes a prompt as an argument and exits when done.">
+          <h3 class="quiz-question">You want to run Codex inside a shell script that fixes a build error and then exits. Which gate?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="default-codex" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Just <code>codex</code> (the default chat)</span>
+            </button>
+            <button class="quiz-option" data-value="exec" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex exec "fix the build"</code></span>
+            </button>
+            <button class="quiz-option" data-value="resume" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex resume</code></span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="mcp-server"
+             data-explanation-right="Exactly. mcp-server flips the chairs around &mdash; instead of Codex being the one in charge, it becomes a tool that another agent can call. That's the whole point of the Model Context Protocol."
+             data-explanation-wrong="Not quite. Think about who is calling whom. You don't want Codex to call out to other tools &mdash; you want other tools to call Codex. That requires Codex to *become* a server other agents can talk to.">
+          <h3 class="quiz-question">You want Claude Code or Cursor to be able to call Codex as if Codex were one of their built-in tools. Which gate?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="exec" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex exec</code></span>
+            </button>
+            <button class="quiz-option" data-value="mcp-manage" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex mcp</code> (manages which servers Codex talks to)</span>
+            </button>
+            <button class="quiz-option" data-value="mcp-server" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex mcp-server</code></span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="sandbox"
+             data-explanation-right="Exactly. The sandbox subcommand is completely separable from the AI side &mdash; it's a pure jail-tester. You hand it a command, it tries to run that command inside the sandbox, and tells you what happened. No model tokens spent."
+             data-explanation-wrong="Not quite &mdash; that would also boot up the model, which costs you tokens and doesn't actually tell you what the sandbox would block. The sandbox itself is a separate piece you can drive directly, with no AI involved.">
+          <h3 class="quiz-question">You want to test whether <code>rm -rf node_modules</code> would be blocked by the sandbox rules &mdash; without launching the model at all. Which gate?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="exec-readonly" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex exec --sandbox read-only "try rm -rf"</code></span>
+            </button>
+            <button class="quiz-option" data-value="sandbox" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex sandbox rm -rf node_modules</code></span>
+            </button>
+            <button class="quiz-option" data-value="apply" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>codex apply</code></span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+      </div>
+    </div>
+
+    <!-- ───────────────── SCREEN 7: BRIDGE TO MODULE 2 ───────────────── -->
+    <div class="screen">
+      <h2 class="screen-heading animate-in">Next: walk inside the chat gate</h2>
+
+      <div class="callout callout-accent animate-in">
+        <div class="callout-icon">&#x1F6AA;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Where we go from here</strong>
+          <p>We just stood in the terminal and picked the chat-mode gate &mdash; now let's walk inside and meet the people working in there. The next module introduces the actors: the model, the conversation, the tools, the approval guard, and the sandbox warden. Each one has a job. Each one has opinions.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

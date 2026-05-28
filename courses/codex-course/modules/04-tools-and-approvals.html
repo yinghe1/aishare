@@ -1,0 +1,491 @@
+<section class="module" id="module-4">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 4</span>
+      <h2 class="screen-title">Tools &amp; Approvals</h2>
+      <p class="screen-lede">
+        Last module we watched the model &ldquo;call a tool.&rdquo;
+        What does that even <em>mean</em>?
+      </p>
+
+      <p>
+        When you ask Codex to <strong>&ldquo;rename this variable,&rdquo;</strong> the model
+        does not reach into your filesystem. It writes a small request:
+        <em>please use the</em> <code>apply_patch</code> <em>tool with this diff</em>.
+        Then someone &mdash; you, or a policy &mdash; decides whether the key turns.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🔑</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a locksmith with a keyring</strong>
+          <p>
+            The model is a locksmith standing outside your house. It cannot just walk in.
+            It has to pick a key (a
+            <span class="term" data-definition="A named action the model is allowed to ask for — like a verb the model knows how to use. shell, apply_patch, read_file, web_search are all tools. Each one is a key on the locksmith&rsquo;s keyring.">tool</span>)
+            and ask permission to turn it. Some keys open anywhere
+            (reading a file). Some need the homeowner&rsquo;s nod (editing a file).
+            Some doors are bolted shut and <em>no</em> key works (writing outside the
+            workspace under read-only mode).
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Tools are <strong>named contracts</strong>. Every action the model takes is
+        one of a small, finite list of named tools, each with structured arguments.
+        Approval is <strong>layered</strong>: first the policy decides, then a safety
+        check decides, then maybe you decide. Three filters before a key turns.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE KEYRING (TOOL CARDS) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">What is on the keyring?</h2>
+      <p class="screen-lede">
+        Each card below is one key. When the model emits a
+        <span class="term" data-definition="The model sending a small JSON object that says please run this tool with these arguments — instead of just replying with text. It is how the model asks to do something instead of describe something.">function call</span>,
+        it is naming one of these &mdash; never anything else.
+      </p>
+
+      <div class="pattern-cards">
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">💻</div>
+          <h4 class="pattern-title">shell</h4>
+          <p class="pattern-desc">
+            Run a command inside your workspace &mdash; like
+            <code>pnpm test</code> or <code>git status</code>.
+            The biggest, most powerful key on the ring.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">✏️</div>
+          <h4 class="pattern-title">apply_patch</h4>
+          <p class="pattern-desc">
+            Edit one or more files
+            <span class="term" data-definition="All-or-nothing. Either every change in the patch lands, or none of them do. There is no half-applied state where you end up with a broken file.">atomically</span>
+            using a
+            <span class="term" data-definition="The standard format for describing edits. Lines beginning with a minus are removed; lines beginning with a plus are added. The same format git diff prints.">unified diff</span>.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">📄</div>
+          <h4 class="pattern-title">read_file</h4>
+          <p class="pattern-desc">
+            Pull the contents of a file into the conversation.
+            In practice often expressed as a <code>shell</code> call to <code>cat</code>.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+          <div class="pattern-icon" style="background: var(--color-actor-4)">🌐</div>
+          <h4 class="pattern-title">web_search</h4>
+          <p class="pattern-desc">
+            Look something up on the open internet &mdash; for fresh docs,
+            error messages, library versions Codex was not trained on.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-accent)">
+          <div class="pattern-icon" style="background: var(--color-accent)">🔌</div>
+          <h4 class="pattern-title">MCP tools</h4>
+          <p class="pattern-desc">
+            Custom keys you add to the ring via
+            <span class="term" data-definition="MCP = Model Context Protocol. An open standard for plugging external tools into AI agents. Think of it like USB for AI — you connect a server, and its tools show up on the keyring.">MCP</span>
+            servers &mdash; database queries, ticketing systems, your own scripts,
+            whatever you wire up.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Notice what is <em>not</em> here: there is no &ldquo;do anything you want&rdquo;
+        key. The model can only ask for things on this list. If you wanted Codex to
+        send a Slack message, you would have to add a Slack MCP server &mdash; a new key.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE HEREDOC SHOWPIECE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The <code>apply_patch</code> trick</h2>
+      <p class="screen-lede">
+        This is the most elegant hack in the whole codebase. Once you see it,
+        you will spot it everywhere &mdash; and you will know when an LLM is faking it.
+      </p>
+
+      <p>
+        How do you let an AI edit a file <em>safely</em>?
+        Codex&rsquo;s answer: don&rsquo;t invent a new format &mdash;
+        use bash. The model emits a regular shell command that <em>embeds</em>
+        a diff inside a
+        <span class="term" data-definition="A bash trick for stuffing multi-line text into a single command. The &lt;&lt;EOF marker says everything until the next EOF is one big string argument. Like a multi-line quote, but in a terminal.">heredoc</span>.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; what the model emits</span>
+<pre><code><span class="code-line"><span class="code-function">apply_patch</span> &lt;&lt;<span class="code-string">'EOF'</span></span>
+<span class="code-line"><span class="code-comment">*** Begin Patch</span></span>
+<span class="code-line"><span class="code-comment">*** Update File: src/parser.ts</span></span>
+<span class="code-line"><span class="code-comment">@@</span></span>
+<span class="code-line"><span class="code-keyword">-</span>  <span class="code-keyword">const</span> valeu = config.value;</span>
+<span class="code-line"><span class="code-keyword">+</span>  <span class="code-keyword">const</span> value = config.value;</span>
+<span class="code-line"><span class="code-comment">*** End Patch</span></span>
+<span class="code-line"><span class="code-string">EOF</span></span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>1.</strong> Call the <code>apply_patch</code> command. Everything between the two <code>EOF</code> markers is one giant string argument.</p>
+            <p class="tl"><strong>2.</strong> &ldquo;Here comes a patch.&rdquo;</p>
+            <p class="tl"><strong>3.</strong> &ldquo;The file I want to change is <code>src/parser.ts</code>.&rdquo;</p>
+            <p class="tl"><strong>4.</strong> A diff marker &mdash; like a chapter heading inside the patch.</p>
+            <p class="tl"><strong>5.</strong> The <em>minus</em> line: &ldquo;remove this typo, <code>valeu</code>.&rdquo;</p>
+            <p class="tl"><strong>6.</strong> The <em>plus</em> line: &ldquo;replace it with <code>value</code>.&rdquo;</p>
+            <p class="tl"><strong>7.</strong> &ldquo;End of patch.&rdquo;</p>
+            <p class="tl"><strong>8.</strong> Close the heredoc &mdash; the shell stops swallowing text and runs the command.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Codex parses that heredoc with
+        <span class="term" data-definition="A fast, robust parser library that understands the structure of code. Used here to read the shell command exactly the way bash would — no regex hacks, no guessing.">tree-sitter</span>
+        (a real bash parser), validates the diff format, and applies it atomically.
+        Three reasons this is brilliant:
+      </p>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Why the heredoc is genius</strong>
+          <p>
+            <strong>(a)</strong> The model gets to reason about its edit as plain text &mdash;
+            a diff is just words.
+            <strong>(b)</strong> It <em>looks</em> like a normal shell command, so the
+            same approval pipeline that handles every other <code>shell</code> call
+            also handles patches &mdash; no separate code path.
+            <strong>(c)</strong> Shell escaping does the hard quoting work for free.
+            One trick, three problems solved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: THE THREE FILTERS (CODE TRANSLATION 1 + 2) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three filters before the key turns</h2>
+      <p class="screen-lede">
+        Even with a valid patch, the locksmith still has to ask. Inside Codex,
+        every <code>apply_patch</code> goes through a tiny pipeline that decides:
+        auto-approve, ask the user, or refuse outright.
+      </p>
+
+      <p>
+        The result of that decision is shaped like this &mdash; a Rust
+        <span class="term" data-definition="A type that says &lsquo;this value is one of these named possibilities, never anything else.&rsquo; Like a multiple-choice answer for the program: it must pick exactly one variant.">enum</span>
+        with two variants:
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; apply_patch.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">enum</span> <span class="code-function">InternalApplyPatchInvocation</span> {</span>
+<span class="code-line">    <span class="code-comment">/// The `apply_patch` call was handled programmatically, without any sort</span></span>
+<span class="code-line">    <span class="code-comment">/// of sandbox, because the user explicitly approved it. This is the</span></span>
+<span class="code-line">    <span class="code-comment">/// result to use with the `shell` function call that contained `apply_patch`.</span></span>
+<span class="code-line">    <span class="code-function">Output</span>(<span class="code-function">Result</span>&lt;<span class="code-function">String</span>, <span class="code-function">FunctionCallError</span>&gt;),</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-comment">/// The `apply_patch` call was approved, either automatically or explicitly.</span></span>
+<span class="code-line">    <span class="code-comment">/// The runtime realizes the patch through the selected environment filesystem.</span></span>
+<span class="code-line">    <span class="code-function">DelegateToRuntime</span>(<span class="code-function">ApplyPatchRuntimeInvocation</span>),</span>
+<span class="code-line">}</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment">#[derive(Debug)]</span></span>
+<span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">struct</span> <span class="code-function">ApplyPatchRuntimeInvocation</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) action: <span class="code-function">ApplyPatchAction</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) auto_approved: <span class="code-keyword">bool</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) exec_approval_requirement: <span class="code-function">ExecApprovalRequirement</span>,</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>Variant 1 &mdash; <code>Output</code>:</strong> We already ran the patch ourselves (because you explicitly approved it earlier). Here is the result &mdash; success message or error &mdash; ready to hand back to the model.</p>
+            <p class="tl"><strong>Variant 2 &mdash; <code>DelegateToRuntime</code>:</strong> The patch is approved. Hand it to the runtime, which will apply it through the
+            <span class="term" data-definition="Rules that decide which files the agent is allowed to read or write, and whether it can reach the network. A wall around the agent. Module 5 covers this in depth.">sandbox</span>
+            that&rsquo;s currently active. We do not run it ourselves.</p>
+            <p class="tl"><strong>The struct underneath</strong> just carries the details: the parsed patch, whether it was auto-approved, and what approval level the sandbox should treat it as.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        And here is the actual decision &mdash; a three-way switch with three possible
+        verdicts. This single <code>match</code> block is the whole approval engine.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; assess_patch_safety</span>
+<pre><code><span class="code-line"><span class="code-keyword">match</span> <span class="code-function">assess_patch_safety</span>(</span>
+<span class="code-line">    &amp;action,</span>
+<span class="code-line">    turn_context.approval_policy.<span class="code-function">value</span>(),</span>
+<span class="code-line">    &amp;turn_context.<span class="code-function">permission_profile</span>(),</span>
+<span class="code-line">    file_system_sandbox_policy,</span>
+<span class="code-line">    &amp;action.cwd,</span>
+<span class="code-line">    turn_context.windows_sandbox_level,</span>
+<span class="code-line">) {</span>
+<span class="code-line">    SafetyCheck::<span class="code-function">AutoApprove</span> { .. } =&gt; <span class="code-comment">/* run it */</span>,</span>
+<span class="code-line">    SafetyCheck::<span class="code-function">AskUser</span> =&gt; <span class="code-comment">/* show approval card to user */</span>,</span>
+<span class="code-line">    SafetyCheck::<span class="code-function">Reject</span> { reason } =&gt; <span class="code-comment">/* tell the model: nope, denied */</span>,</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>The call to <code>assess_patch_safety</code>:</strong> hand it the patch, your approval policy, your permission profile, the sandbox rules, and the working directory. It thinks &mdash; then returns a verdict.</p>
+            <p class="tl"><strong>Verdict A &mdash; <code>AutoApprove</code>:</strong> &ldquo;Just do it.&rdquo; The policy says this is safe enough to run without bothering you.</p>
+            <p class="tl"><strong>Verdict B &mdash; <code>AskUser</code>:</strong> &ldquo;Show them the approval card.&rdquo; The TUI pops up the diff and waits for you to click Allow or Deny.</p>
+            <p class="tl"><strong>Verdict C &mdash; <code>Reject</code>:</strong> &ldquo;Nope, denied.&rdquo; The reason gets sent back to the model as the tool output &mdash; so the model can adjust and try a different approach.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: THE THREE APPROVAL POLICIES (BADGES + CHAT) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three policies, three trust levels</h2>
+      <p class="screen-lede">
+        You get to pick how loud the locksmith knocks. This is set with
+        <code>--ask-for-approval</code> on the command line, or in your
+        <span class="term" data-definition="A small text file (config.toml) in your Codex settings folder where you can save defaults instead of typing flags every time.">config file</span>.
+        Three settings &mdash; biggest config knob you have.
+      </p>
+
+      <div class="badge-list">
+        <div class="badge-item">
+          <code class="badge-code">never</code>
+          <span class="badge-desc">
+            Auto-approve everything. The model can run anything the
+            <span class="term" data-definition="The other filter — the sandbox decides which files and which network can be touched, regardless of approval. Approval is &lsquo;may I ask?&rsquo;; sandbox is &lsquo;can I even reach it?&rsquo;">sandbox policy</span>
+            allows. Use when you trust the agent and have a tight sandbox.
+          </span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">on-request</code>
+          <span class="badge-desc">
+            Every tool call pops up an approval card. You click Allow or Deny each time.
+            Maximum paranoia, maximum interruptions.
+          </span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">unless-trusted</code>
+          <span class="badge-desc">
+            Codex auto-approves if the command&rsquo;s &ldquo;shape&rdquo; matches a known-safe
+            pattern (like <code>ls</code> or <code>cat</code>). Otherwise it asks. The default sweet spot.
+          </span>
+        </div>
+      </div>
+
+      <p>
+        Now watch one approval round play out. Same agent, same patch &mdash; under
+        <code>on-request</code> mode, where you are the final filter.
+      </p>
+
+      <div class="chat-window" id="chat-module4">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-msg="0" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>I want to clean up before running the build. <em>(function call: shell <code>rm -rf node_modules</code>)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="1" data-sender="safety" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🛡️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Safety Checker</span>
+              <p>This is a destructive shell command and the policy is on-request. Verdict: <code>AskUser</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="2" data-sender="you" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-accent)">🧑</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-accent)">You</span>
+              <p>The model wants to delete <code>node_modules</code>. Card shows the full command. I click <strong>Allow once</strong>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="3" data-sender="safety" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🛡️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Safety Checker</span>
+              <p>Approved. Running it through the sandbox now.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="4" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>Tool output received: removed 1,247 files. Continuing with the rebuild.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" id="chat-module4-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module4-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Switch the same scenario to <code>never</code>, and the Safety Checker
+        skips the middle two messages &mdash; verdict goes straight to <code>AutoApprove</code>.
+        Switch to <code>on-request</code> with a totally tight sandbox, and even an approved
+        <code>rm -rf</code> can still bounce off the sandbox wall. (That is Module 5.)
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: QUIZ + BRIDGE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Decide like Codex</h2>
+      <p class="screen-lede">
+        Three real scenarios. Pick what would actually happen &mdash; or what
+        <em>you</em> would set.
+      </p>
+
+      <div class="quiz-container" id="quiz-module4">
+
+        <div class="quiz-question-block"
+             data-correct="option-sandbox"
+             data-explanation-right="Exactly. Approval is one filter, the sandbox is another. You can grant the model unlimited approval and the sandbox can still slam the door — they are two independent layers. That is the whole point of defense in depth, and it is the reason &ldquo;never&rdquo; mode is not actually reckless."
+             data-explanation-wrong="Not quite. You set approval to never, so approval is not the blocker. There is a second filter running in parallel that controls which files the agent can touch — independent of any policy you click through. Look at the policy badges above for the hint.">
+          <h3 class="quiz-question">You set <code>--ask-for-approval never</code> and Codex still refuses to write a file outside your project folder. What is blocking it?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-bug" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A bug &mdash; <code>never</code> should mean &ldquo;allow everything.&rdquo;</span>
+            </button>
+            <button class="quiz-option" data-value="option-sandbox" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The sandbox filesystem policy &mdash; a separate layer below approval.</span>
+            </button>
+            <button class="quiz-option" data-value="option-model" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model refused on its own.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-feedback"
+             data-explanation-right="Right. The parse error gets turned into a tool-output string and handed back to the model as the next thing in the conversation. The model reads its own broken patch on the next loop iteration and tries a corrected version. Errors are feedback, not crashes &mdash; this is exactly the &lsquo;failing forward&rsquo; pattern from the callout."
+             data-explanation-wrong="Codex does not crash on bad tool input — it would be unusable if it did. Bad patches happen constantly. Think about what Module 3 taught: the tool output is the next thing the model sees. So a parse error becomes...">
+          <h3 class="quiz-question">The model emits an <code>apply_patch</code> heredoc that fails to parse (malformed diff). What does Codex do?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-crash" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Crashes the turn with a fatal error.</span>
+            </button>
+            <button class="quiz-option" data-value="option-feedback" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Returns the parse error as the tool output &mdash; the model reads it on the next loop and retries.</span>
+            </button>
+            <button class="quiz-option" data-value="option-silent" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Silently drops the patch and waits for you to notice.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-never"
+             data-explanation-right="Yes &mdash; pair never with a tight sandbox and you get hands-off autonomy without giving up safety. &ldquo;Never&rdquo; does not mean &ldquo;no safety&rdquo;; the sandbox still constrains the agent. That combo is how Codex can grind on a problem for 10 minutes without you babysitting every command."
+             data-explanation-wrong="That mode will absolutely fix the build &mdash; but it will also pop an approval card on every single shell command and patch. For a long autonomous task you will be clicking Allow dozens of times. Look at the badge that says &lsquo;auto-approve everything.&rsquo;">
+          <h3 class="quiz-question">You want Codex to fix a TypeScript build error fully autonomously &mdash; iterate until green &mdash; without prompting you 14 times. Which approval policy?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-on-request" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>on-request</code> &mdash; safest, always asks before acting.</span>
+            </button>
+            <button class="quiz-option" data-value="option-unless" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>unless-trusted</code> &mdash; still interrupts for any uncommon command.</span>
+            </button>
+            <button class="quiz-option" data-value="option-never" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>never</code>, paired with a tight sandbox so the model can iterate freely inside the wall.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: errors flow back as feedback</strong>
+          <p>
+            When a tool fails &mdash; bad patch, missing file, permission denied &mdash;
+            Codex does not crash or panic. It hands the error string to the model
+            as the next &ldquo;tool output.&rdquo; The model reads it like any other
+            piece of context and figures out what to do next. Engineers call this
+            <strong>failing forward</strong>: every error is just more information
+            for the next loop iteration.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🛡️</div>
+        <div class="callout-content">
+          <strong class="callout-title">Next up: but what if a tool itself misbehaves?</strong>
+          <p>
+            Approval is one filter &mdash; you (or a policy) deciding before the key
+            turns. But what if the model tricks the policy, or a tool has a bug, or
+            an MCP server you trusted goes rogue? You need a wall <em>around</em> the
+            locksmith, not just a checkpoint in front of him. That is the
+            <strong>sandbox</strong>. Module 5.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

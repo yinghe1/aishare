@@ -1,0 +1,311 @@
+<section class="module" id="module-2">
+  <div class="module-content">
+
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h2 class="module-title">Meet the Actors</h2>
+      <p class="module-subtitle">We walked through the chat-mode gate. Now we&rsquo;re inside the building &mdash; and inside, five characters are doing all the work. Once you know their names, the wall of folders turns into a cast list.</p>
+    </header>
+
+    <!-- ────────────────────────────────── SCREEN 1: The Jazz Ensemble ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">Codex is a jazz ensemble, not a soloist</h3>
+
+      <p>Think of a small jazz group. The bassist holds the rhythm. The drummer cues changes. The horn plays the melody. Nobody plays every instrument &mdash; the music comes from how they listen to each other.</p>
+
+      <p>Codex is built the same way. It&rsquo;s not one giant program; it&rsquo;s a <span class="term" data-definition="A federation of crates is a project split into many small, focused libraries that each do one job and depend on each other &mdash; instead of one giant blob of code where everything tangles together.">federation</span> of small <span class="term" data-definition="A crate is a Rust library &mdash; a self-contained box of code that other boxes can pull in and use. Think of it like a single Lego brick: simple on its own, powerful when combined.">crates</span> that pass notes to each other. None of them is in charge alone.</p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">&#127911;</div>
+        <div class="callout-content">
+          <strong class="callout-title">The opposite of a monolith</strong>
+          <p>A <span class="term" data-definition="A monolith is one giant blob of code where every part depends on every other part. Change one thing and three other things break. The opposite of modular.">monolith</span> is one big tangled program where editing the chat UI could accidentally break the AI model logic. Codex is the opposite: each crate has one job, one job only, and refuses to do anyone else&rsquo;s.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 2: The Layout (File Tree) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">The rehearsal room: <code>codex-rs/</code></h3>
+
+      <p>If you open the Codex source code, the Rust side of the project lives in one folder called <code>codex-rs/</code>. Inside, you&rsquo;ll find a handful of crates &mdash; each one a member of the band.</p>
+
+      <div class="file-tree">
+        <div class="ft-folder open">
+          <span class="ft-name">codex-rs/</span>
+          <span class="ft-desc">The Rust workspace &mdash; where the band rehearses</span>
+          <div class="ft-children">
+            <div class="ft-folder">
+              <span class="ft-name">cli/</span>
+              <span class="ft-desc">Reads what you typed at the terminal and picks which Codex to launch</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">tui/</span>
+              <span class="ft-desc">The fullscreen chat box you actually look at &mdash; draws every pixel</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">core/</span>
+              <span class="ft-desc">The engine that talks to the AI model and runs tool calls</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">exec/</span>
+              <span class="ft-desc">A headless version for automation &mdash; same engine, no chat box</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">apply-patch/</span>
+              <span class="ft-desc">The crate that actually rewrites your files when the model proposes edits</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">mcp-server/</span>
+              <span class="ft-desc">Lets Codex be controlled by other AI tools through the Model Context Protocol</span>
+            </div>
+            <div class="ft-folder">
+              <span class="ft-name">linux-sandbox/</span>
+              <span class="ft-desc">The safety cage that wraps shell commands on Linux</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>Each folder is one <span class="term" data-definition="A crate is a Rust library &mdash; a self-contained box of code. The crates listed above each get compiled separately and only know about each other through carefully chosen interfaces.">crate</span>. They live in the same workspace, but they only talk to each other through narrow, well-defined doors. That&rsquo;s the whole secret of how Codex stays understandable.</p>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 3: The Cast (Icon-Label Rows) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">The five actors</h3>
+
+      <p>Forget folders for a second. Here are the five characters that actually do the work, with the role each one plays in every Codex session.</p>
+
+      <div class="icon-rows">
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-1)">&#127979;</div>
+          <div>
+            <strong>The Receptionist &mdash; <code>cli/</code></strong>
+            <p>Reads the command you typed and decides which version of Codex to launch &mdash; chat mode, headless mode, or something else. The receptionist greets you, then hands you off to the right room.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-2)">&#127914;</div>
+          <div>
+            <strong>The Stage Manager &mdash; <code>tui/</code></strong>
+            <p>Draws the chat box, captures every keystroke, displays streamed messages from the model. Built with <span class="term" data-definition="Ratatui is a Rust library for drawing user interfaces inside a terminal window using boxes, borders, and colored text &mdash; no web browser involved.">Ratatui</span>. Crucially: the Stage Manager does <em>not</em> call the AI model. Ever.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-3)">&#127908;</div>
+          <div>
+            <strong>The Conductor &mdash; <code>core/</code></strong>
+            <p>Runs the turn loop (Module 3&rsquo;s star), talks to the AI model, decides which tool to call next, and dispatches the work. The Conductor does <em>not</em> draw a single pixel on your screen.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-4)">&#128221;</div>
+          <div>
+            <strong>The Stagehand &mdash; <code>exec/</code></strong>
+            <p>Same engine as the Conductor, but pipes results straight to plain <span class="term" data-definition="stdout is &lsquo;standard output&rsquo; &mdash; the default stream every command-line program prints normal results to. It&rsquo;s what you see scrolling past in a terminal when a script runs.">stdout</span> instead of a fancy chat UI. Used when Codex is wired into scripts, CI pipelines, or other automation.</p>
+          </div>
+        </div>
+
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-5)">&#128737;&#65039;</div>
+          <div>
+            <strong>The Bouncer &mdash; <code>linux-sandbox/</code>, <code>windows-sandbox-rs/</code>, seatbelt</strong>
+            <p>Sits between the model&rsquo;s shell commands and your real operating system. If the model says &ldquo;delete this folder,&rdquo; the Bouncer asks: <em>is that allowed?</em> We&rsquo;ll meet the Bouncer in depth in Module 5.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 4: The Channel (AppEvent enum) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">How they talk: events on a channel</h3>
+
+      <p>So if the Stage Manager can&rsquo;t call the model, and the Conductor can&rsquo;t draw the screen &mdash; how does anything get done?</p>
+
+      <p>They pass notes. Specifically, <span class="term" data-definition="An event is a small message describing something that just happened &mdash; like &lsquo;user pressed Enter&rsquo; or &lsquo;model finished thinking.&rsquo; Programs use events to react to changes without one piece directly poking another.">events</span> on a <span class="term" data-definition="A channel is a queue where one part of the program writes messages and another part reads them &mdash; like a conveyor belt between two workers who never have to look at each other.">channel</span> &mdash; like musicians watching the conductor&rsquo;s baton instead of whispering to each other. Here&rsquo;s the actual list of things the TUI is allowed to tell the rest of Codex:</p>
+
+      <div class="translation-block">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>#[allow(clippy::large_enum_variant)]
+#[derive(Debug)]
+pub(crate) enum AppEvent {
+    /// Open the agent picker for switching active threads.
+    OpenAgentPicker,
+    /// Switch the active thread to the selected agent.
+    SelectAgentThread(ThreadId),
+
+    /// Fork the current thread into a transient side conversation.
+    StartSide {
+        parent_thread_id: ThreadId,
+        user_message: Option&lt;UserMessage&gt;,
+    },
+    /// Submit an op to the specified thread, regardless of current focus.
+    // ...
+}</code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">This is the complete list of things the chat UI can ask the engine to do. Nothing else. If it&rsquo;s not on this list, it doesn&rsquo;t happen.</p>
+            <p class="tl">An <span class="term" data-definition="An enum (short for &lsquo;enumeration&rsquo;) is a type with a fixed list of possible values. Like a dropdown menu in code: a traffic light enum has Red, Yellow, Green &mdash; nothing else.">enum</span> means &ldquo;one of these specific options.&rdquo; <code>AppEvent</code> is the menu of possible notes the Stage Manager can pass.</p>
+            <p class="tl"><span class="term" data-definition="An enum variant is one of the possible &lsquo;shapes&rsquo; an enum can take &mdash; like one face of a die. Each line below is one variant.">Variant</span> 1: &ldquo;Open the menu for switching between different agent conversations.&rdquo;</p>
+            <p class="tl">Variant 2: &ldquo;Switch to this specific conversation thread.&rdquo; (The ID inside the parentheses says which one.)</p>
+            <p class="tl">Variant 3: &ldquo;Start a side conversation branched off this one&rdquo; &mdash; useful for trying an idea without polluting the main thread.</p>
+            <p class="tl">And the list keeps going. Every button, every shortcut, every message ultimately becomes one of these events fired down the channel.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>This is what software engineers mean by <em>message passing</em>. The Stage Manager doesn&rsquo;t reach inside the Conductor and pull levers. It writes a note, drops it on the conveyor belt, and trusts the Conductor to read it.</p>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 5: The Wall (deny print_stdout) ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">A wall, not a guideline</h3>
+
+      <p>Here&rsquo;s the punchline. The Conductor&rsquo;s code starts with a single line that makes the whole arrangement non-negotiable:</p>
+
+      <div class="translation-block">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+          <pre><code>//! Root of the `codex-core` library.
+
+// Prevent accidental direct writes to stdout/stderr in library code. All
+// user-visible output must go through the appropriate abstraction (e.g.,
+// the TUI or the tracing stack).
+#![deny(clippy::print_stdout, clippy::print_stderr)]</code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">The two slashes-bang at the top is just a header comment naming the file: &ldquo;this is the root of the core library.&rdquo;</p>
+            <p class="tl">The next comment is the team telling future-them <em>why</em>: nobody inside the engine is allowed to print directly to the terminal. All output must flow through the proper channel.</p>
+            <p class="tl">The last line is the enforcement. <code>#![deny(...)]</code> tells the compiler: refuse to build this code if anyone calls <code>println!</code> or <code>eprintln!</code> in here. Not a warning &mdash; a hard error.</p>
+            <p class="tl"><span class="term" data-definition="Clippy is Rust&rsquo;s built-in linter &mdash; a strict editor that reads your code and yells about sloppy patterns, common mistakes, or banned habits the team has agreed to avoid.">clippy</span> is the strict editor doing the yelling; <code>print_stdout</code> and <code>print_stderr</code> are the two <span class="term" data-definition="A lint is a warning from a tool about code style or potential bugs &mdash; like spellcheck for code. Some lints are configured to block the build entirely; this is one of them.">lints</span> being escalated from warning to wall.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">&#128161;</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! &mdash; the wall is the architecture</strong>
+          <p>The Conductor <em>cannot</em> print to your terminal &mdash; even if a developer forgets and tries. The compiler refuses to build it. Every word you see in the chat had to be sent as an event the Stage Manager chose to display. Engineers call this <strong>separation of concerns</strong>: give each piece one job, and one job only. Most projects treat this as a polite suggestion. Codex bakes it into the build.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 6: Why It Matters + Quiz ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">Why this map matters</h3>
+
+      <p>When something goes wrong with Codex, this cast list is your first debugging tool. The symptom tells you which actor to suspect.</p>
+
+      <div class="pattern-cards">
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">&#127914;</div>
+          <h4 class="pattern-title">UI frozen, files still changing</h4>
+          <p class="pattern-desc">The Stage Manager is stuck. The Conductor is fine &mdash; it&rsquo;s just that no one is updating the screen.</p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">&#127908;</div>
+          <h4 class="pattern-title">File written, no chat message</h4>
+          <p class="pattern-desc">The Conductor did the work, but the event announcing it never reached the Stage Manager. The channel got dropped.</p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-5)">
+          <div class="pattern-icon" style="background: var(--color-actor-5)">&#128737;&#65039;</div>
+          <h4 class="pattern-title">&ldquo;Permission denied&rdquo; on a shell command</h4>
+          <p class="pattern-desc">The Bouncer blocked it. Nothing to do with the model &mdash; it&rsquo;s the safety actor doing its job.</p>
+        </div>
+      </div>
+
+      <h3 class="screen-heading" style="margin-top: var(--space-12)">Pop quiz</h3>
+
+      <div class="quiz-container" id="quiz-module2">
+
+        <div class="quiz-question-block"
+             data-correct="option-a"
+             data-explanation-right="Exactly. The file changed, so the Conductor (core) did its job and even called the apply-patch crate successfully. The missing chat message means the event went out but the Stage Manager (tui) didn&rsquo;t render it &mdash; look there first."
+             data-explanation-wrong="Think about the symptom: the file actually changed on disk. That means the engine worked. The breakage has to be on the side that draws the screen.">
+          <h3 class="quiz-question">The agent successfully edits a file (you can see the change on disk), but no confirmation appears in the chat. Where do you look first?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The <code>tui/</code> crate &mdash; the Stage Manager either didn&rsquo;t receive the event or didn&rsquo;t render it.</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The <code>core/</code> crate &mdash; the Conductor must have failed silently.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The sandbox &mdash; the Bouncer probably blocked the message.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-b"
+             data-explanation-right="Right. Keyboard input lives in the TUI, so the new shortcut is wired up there. But that keystroke fires an AppEvent::StartSide that the core handles &mdash; so the real answer is &lsquo;mostly tui, with a matching event the core already knows about.&rsquo; That&rsquo;s exactly how the channel pattern works."
+             data-explanation-wrong="Keystrokes don&rsquo;t reach the engine directly &mdash; they hit the chat box first. The Stage Manager catches the key and decides what event to send. Pick the crate that captures keystrokes.">
+          <h3 class="quiz-question">You want to add a new keyboard shortcut that forks the conversation into a side thread. Which crate gets the new code?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>core/</code> &mdash; that&rsquo;s where the AI model and turn loop live.</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>tui/</code> &mdash; that&rsquo;s where keystrokes are captured. The shortcut emits an <code>AppEvent::StartSide</code>.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>cli/</code> &mdash; new shortcuts are registered when Codex starts up.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-c"
+             data-explanation-right="Yes! The deny lint makes the separation impossible to break by accident. If you ever try to println! from inside core, the build fails. The architecture isn&rsquo;t a polite agreement &mdash; it&rsquo;s enforced by the compiler. This is the difference between a guideline and a guarantee."
+             data-explanation-wrong="Not quite. The point isn&rsquo;t aesthetics or performance &mdash; it&rsquo;s a structural rule. The engine is forbidden from printing because all user-visible output has to flow through the chat box, so the chat box can&rsquo;t be bypassed.">
+          <h3 class="quiz-question">Why does <code>codex-core</code> use <code>#![deny(clippy::print_stdout)]</code> at the top of its library?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-a" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Performance &mdash; printing directly is slow and clutters the terminal.</span>
+            </button>
+            <button class="quiz-option" data-value="option-b" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Style &mdash; the team prefers logging over printing.</span>
+            </button>
+            <button class="quiz-option" data-value="option-c" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To enforce architecture &mdash; user-visible output must flow through the TUI as events, never sneak past it.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────── SCREEN 7: Bridge to Module 3 ────────────────────────────────── -->
+    <div class="screen animate-in">
+      <h3 class="screen-heading">Five actors, none in charge alone</h3>
+
+      <p>The Receptionist hands off. The Stage Manager watches and draws. The Conductor talks to the model. The Stagehand pipes things to scripts. The Bouncer guards the door. Nobody is the boss.</p>
+
+      <p>So who keeps the music going? What tells the Conductor when to count off the next bar, when to call the saxophone in, when to fade out? That&rsquo;s the <strong>turn loop</strong> &mdash; the heartbeat that drives every Codex conversation. Meet it in Module 3.</p>
+    </div>
+
+  </div>
+</section>

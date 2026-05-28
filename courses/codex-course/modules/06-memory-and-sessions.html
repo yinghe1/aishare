@@ -1,0 +1,516 @@
+<section class="module" id="module-6">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 6 &middot; Finale</span>
+      <h2 class="screen-title">Memory &mdash; how a conversation survives</h2>
+      <p class="screen-lede">
+        Module 5 ended with a question: <em>how does Codex remember?</em>
+        Answer: it keeps a <strong>logbook</strong>.
+      </p>
+
+      <p>
+        Close your terminal. Walk away. Come back tomorrow. Type
+        <code>codex resume</code> &mdash; and the conversation picks up exactly where you
+        left it, with the agent remembering every file it read, every patch it wrote,
+        every decision the two of you made. That is not magic.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📖</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a ship&rsquo;s logbook</strong>
+          <p>
+            Picture an old sailing ship. Every shift, the officer on watch writes one line
+            in a bound book: <em>14:02 &mdash; spotted reef to port. 14:05 &mdash; turned hard
+            starboard. 14:18 &mdash; clear water.</em> Pages are never torn out. If the
+            ship sinks, the next crew reads the log and knows what happened. If the book
+            gets too thick to carry, someone writes a
+            <span class="term" data-definition="A condensed retelling of older log pages, written so the captain doesn&rsquo;t have to read the whole book on every shift. In Codex, this is what compaction produces.">summary page</span>
+            so the captain doesn&rsquo;t have to read the whole thing on every shift.
+            That is Codex&rsquo;s memory, exactly.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE THREE LAYERS OF MEMORY ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three layers of memory</h2>
+      <p class="screen-lede">
+        Codex has memory at three different time scales. Each layer lives in a different
+        place &mdash; and forgets at a different speed.
+      </p>
+
+      <div class="pattern-cards">
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">⚡</div>
+          <h4 class="pattern-title">In-turn (live)</h4>
+          <p class="pattern-desc">
+            The active turn&rsquo;s tool outputs, model tokens, current
+            <span class="term" data-definition="A small holding pen for new user messages that arrive while the model is still busy thinking. Codex never makes you wait to type.">input queue</span>.
+            Disappears when the turn ends if not promoted.
+          </p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">📜</div>
+          <h4 class="pattern-title">In-session (rollout)</h4>
+          <p class="pattern-desc">
+            Everything in the current conversation, on disk as
+            <span class="term" data-definition="In Codex terms, the persisted append-only event log for one session &mdash; a JSONL file on disk.">rollout</span>.<code>jsonl</code>.
+            Survives crashes. Resumable via <code>codex resume</code>.
+          </p>
+        </div>
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">🗂️</div>
+          <h4 class="pattern-title">Across sessions</h4>
+          <p class="pattern-desc">
+            Long-term notes the agent writes to <code>~/.codex/memories/</code>
+            and skills configured in user / project scope. Survive across all sessions.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        The middle layer &mdash; the <strong>rollout</strong> &mdash; is where most of the
+        interesting machinery lives. The rest of this module is about that one file.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE ROLLOUT FILE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">What the logbook actually looks like</h2>
+      <p class="screen-lede">
+        Every conversation is one file on your disk. Each line is one event.
+        Open it in any text editor &mdash; it is just
+        <span class="term" data-definition="JSON Lines &mdash; a file format where each line is its own JSON object. Easy to append, easy to stream, easy to read with the human eye.">JSONL</span>.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">FILE &mdash; ~/.codex/threads/&hellip;/rollout.jsonl</span>
+<pre><code><span class="code-line"><span class="code-comment"># ~/.codex/threads/2026-05-27/{thread_id}/rollout.jsonl</span></span>
+<span class="code-line"></span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"TurnStarted"</span>,<span class="code-string">"timestamp"</span>:...}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"UserMessage"</span>,<span class="code-string">"text"</span>:<span class="code-string">"fix the failing test"</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"AgentMessage"</span>,<span class="code-string">"text"</span>:<span class="code-string">"Looking at the test file first..."</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionCall"</span>,<span class="code-string">"tool"</span>:<span class="code-string">"shell"</span>,<span class="code-string">"args"</span>:{<span class="code-string">"cmd"</span>:<span class="code-string">"pnpm test"</span>}}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionResult"</span>,<span class="code-string">"output"</span>:<span class="code-string">"error in src/parser.ts line 47..."</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionCall"</span>,<span class="code-string">"tool"</span>:<span class="code-string">"apply_patch"</span>,<span class="code-string">"args"</span>:{...}}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"FunctionResult"</span>,<span class="code-string">"output"</span>:<span class="code-string">"patch applied"</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"AgentMessage"</span>,<span class="code-string">"text"</span>:<span class="code-string">"Done. The typo was on line 47."</span>}</span>
+<span class="code-line">{<span class="code-string">"type"</span>:<span class="code-string">"TurnEnded"</span>,<span class="code-string">"timestamp"</span>:...}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Each line is one <strong>event</strong> &mdash; one thing that happened, in the order it happened.</p>
+            <p class="tl">User messages, agent messages, tool calls, tool results &mdash; all written down as they occur, no editing afterward.</p>
+            <p class="tl">The file is <span class="term" data-definition="A data structure you can only add to, never edit or delete in place. Like writing in pen in a bound notebook.">append-only</span>. New events go on the bottom. Old events are never rewritten.</p>
+            <p class="tl">To re-create the conversation in memory, you just read the file from top to bottom and replay every event. That is what <code>codex resume</code> does.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: append-only is a superpower</strong>
+          <p>
+            Because the log only grows &mdash; never edits or deletes &mdash; you can
+            <span class="term" data-definition="Start a new conversation that shares history with an existing one up to a branching point. Like saving-as a document and editing the copy without touching the original.">fork</span>
+            it (start a side thread from any point), replay it (debug exactly what happened),
+            or rebuild from it (recover from a crash). Engineers call this
+            <span class="term" data-definition="Storing state as a sequence of events instead of as a current snapshot. Reconstruct the present by replaying the past.">event sourcing</span>
+            &mdash; and it&rsquo;s the same trick <code>git</code> uses for your commits.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: THE SESSION STRUCT ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">A Session, in code</h2>
+      <p class="screen-lede">
+        The rollout is the on-disk shape. The <strong>Session</strong> is the in-memory shape.
+        Here is what one conversation looks like to Codex while it is running.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; core/src/session/session.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">struct</span> <span class="code-function">Session</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) conversation_id: <span class="code-function">ThreadId</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) installation_id: <span class="code-function">String</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) tx_event: <span class="code-function">Sender</span>&lt;<span class="code-function">Event</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) agent_status: watch::<span class="code-function">Sender</span>&lt;<span class="code-function">AgentStatus</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) state: <span class="code-function">Mutex</span>&lt;<span class="code-function">SessionState</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) conversation: <span class="code-function">Arc</span>&lt;<span class="code-function">RealtimeConversationManager</span>&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) active_turn: <span class="code-function">Mutex</span>&lt;<span class="code-function">Option</span>&lt;<span class="code-function">ActiveTurn</span>&gt;&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) input_queue: <span class="code-function">InputQueue</span>,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">super</span>) goal_runtime: <span class="code-function">GoalRuntimeState</span>,</span>
+<span class="code-line">    <span class="code-comment">// ...</span></span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>conversation_id:</strong> a unique ID for this chat &mdash; like a file name. Engineers call it a <span class="term" data-definition="In Codex, a single conversation. The ThreadId is its unique name &mdash; the label on the spine of the logbook.">ThreadId</span>.</p>
+            <p class="tl"><strong>tx_event:</strong> the wire that carries events out to the UI. Every time something happens, an event goes down this wire and the TUI sees it.</p>
+            <p class="tl"><strong>state:</strong> the in-memory bookkeeping, wrapped in a <span class="term" data-definition="A lock that lets only one piece of code touch shared data at a time &mdash; like a do-not-disturb sign on a hotel room door.">Mutex</span> so two pieces of code never trample each other.</p>
+            <p class="tl"><strong>active_turn:</strong> the in-progress turn if there is one, otherwise nothing. Most of the time this is empty &mdash; Codex is waiting for you.</p>
+            <p class="tl"><strong>input_queue:</strong> the holding pen where your keystrokes wait if you type while the model is still thinking.</p>
+            <p class="tl">Together: <em>this is everything one conversation needs to be itself.</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: THE LIFECYCLE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The life of one session</h2>
+      <p class="screen-lede">
+        From <code>codex</code> to <code>codex resume</code>, five things have to happen.
+        Each step is just a page in the logbook.
+      </p>
+
+      <div class="step-cards">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Session starts</strong>
+            <p>A <code>ThreadId</code> is minted; a new <code>rollout.jsonl</code> file is opened on disk.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Each turn appends events</strong>
+            <p>User message, model output, function calls, function results &mdash; every event is written to disk as it happens.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Context window fills up</strong>
+            <p>A <span class="term" data-definition="A counter that tracks how much text has been accumulated in the prompt. Used to detect when the model is about to hit its context-window ceiling.">token counter</span> detects the prompt is getting close to the model&rsquo;s
+            <span class="term" data-definition="The maximum amount of text a model can read in one go &mdash; like the model&rsquo;s working memory. Once it&rsquo;s full, something has to be left out.">context window</span> limit.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Compaction kicks in</strong>
+            <p>A special turn runs: &ldquo;summarize the old history.&rdquo; The summary replaces those old turns in the prompt; the rollout file still has the raw events.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Resume later</strong>
+            <p><code>codex resume</code> reads the rollout file, rebuilds the session in memory, and you continue.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: COMPACTION (CODE) ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Compaction &mdash; squeezing the past</h2>
+      <p class="screen-lede">
+        The model&rsquo;s context window has a ceiling. When the conversation pushes against it,
+        Codex runs a special turn whose job is to <em>summarize the older pages of the logbook</em>.
+        Same machinery as any other turn &mdash; but the answer becomes the new history.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; core/src/compact.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) <span class="code-keyword">async fn</span> <span class="code-function">run_inline_auto_compact_task</span>(</span>
+<span class="code-line">    sess: <span class="code-function">Arc</span>&lt;<span class="code-function">Session</span>&gt;,</span>
+<span class="code-line">    turn_context: <span class="code-function">Arc</span>&lt;<span class="code-function">TurnContext</span>&gt;,</span>
+<span class="code-line">    initial_context_injection: <span class="code-function">InitialContextInjection</span>,</span>
+<span class="code-line">    reason: <span class="code-function">CompactionReason</span>,</span>
+<span class="code-line">    phase: <span class="code-function">CompactionPhase</span>,</span>
+<span class="code-line">) -&gt; <span class="code-function">CodexResult</span>&lt;()&gt; {</span>
+<span class="code-line">    <span class="code-keyword">let</span> prompt = turn_context.<span class="code-function">compact_prompt</span>().<span class="code-function">to_string</span>();</span>
+<span class="code-line">    <span class="code-keyword">let</span> input = <span class="code-function">vec!</span>[UserInput::<span class="code-function">Text</span> {</span>
+<span class="code-line">        text: prompt,</span>
+<span class="code-line">        text_elements: <span class="code-function">Vec</span>::<span class="code-function">new</span>(),</span>
+<span class="code-line">    }];</span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-function">run_compact_task_inner</span>(</span>
+<span class="code-line">        sess,</span>
+<span class="code-line">        turn_context,</span>
+<span class="code-line">        input,</span>
+<span class="code-line">        initial_context_injection,</span>
+<span class="code-line">        CompactionTrigger::<span class="code-function">Auto</span>,</span>
+<span class="code-line">        reason,</span>
+<span class="code-line">        phase,</span>
+<span class="code-line">    )</span>
+<span class="code-line">    .<span class="code-keyword">await</span>?;</span>
+<span class="code-line">    <span class="code-function">Ok</span>(())</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Build a special prompt that essentially says: <em>&ldquo;summarize everything above this point.&rdquo;</em></p>
+            <p class="tl">Wrap that prompt as if <em>you</em> had typed it &mdash; same shape as a normal user message.</p>
+            <p class="tl">Run it as a turn, using the exact same loop as any other turn. There is no separate &ldquo;summarizer&rdquo; engine &mdash; just the model, given a different job for one round.</p>
+            <p class="tl">The model&rsquo;s answer <em>is</em> the summary. That summary gets injected into the in-memory history in place of the older turns. The original logbook on disk is untouched.</p>
+            <p class="tl">Then the regular conversation resumes &mdash; with room to breathe again.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: the disk log and the model&rsquo;s view are two different things</strong>
+          <p>
+            The <span class="term" data-definition="Replacing a long stretch of history with a shorter summary so it still fits the context window. Lossy by design &mdash; details can fall out.">compaction</span>
+            step rewrites the model&rsquo;s view of history, but the rollout file always has the
+            <em>complete</em> history. The model sees a smaller view that fits its context window.
+            Compaction is what bridges the gap. This is why you can <code>codex resume</code> a
+            three-hour session and find perfect recall &mdash; even when the model itself
+            only remembers a summary of most of it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 7: FLOW ANIMATION ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Watch the logbook in motion</h2>
+      <p class="screen-lede">
+        Eight steps. Four actors. Click <strong>Next Step</strong> to see how a long
+        conversation stays usable when the model&rsquo;s working memory is finite.
+      </p>
+
+      <div class="flow-animation" data-steps='[
+        {"highlight":"flow-actor-2","label":"Each new turn appends events to the session"},
+        {"highlight":"flow-actor-1","label":"Events also append to the rollout file on disk","packet":true,"from":"actor-2","to":"actor-1"},
+        {"highlight":"flow-actor-2","label":"Many turns later the history is large"},
+        {"highlight":"flow-actor-4","label":"Context window is near full the model cannot swallow more","packet":true,"from":"actor-2","to":"actor-4"},
+        {"highlight":"flow-actor-3","label":"Compactor runs asks the model to summarize old turns","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-2","label":"Summary replaces the old turns in the in-memory history","packet":true,"from":"actor-3","to":"actor-2"},
+        {"highlight":"flow-actor-1","label":"Original rollout on disk is untouched full history preserved"},
+        {"highlight":"flow-actor-2","label":"Conversation continues model has room again"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">📜</div>
+            <span>Memory (rollout file)</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">💬</div>
+            <span>Session</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">📝</div>
+            <span>Compactor</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">🧠</div>
+            <span>Context Window</span>
+          </div>
+        </div>
+
+        <div class="flow-packet" id="flow-packet"></div>
+
+        <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin.</div>
+
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Notice step 7: the rollout on disk is never touched by compaction. That is why
+        nothing is truly lost &mdash; you can always re-read the raw log, even if the
+        model is only carrying a summary of it forward.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 8: QUIZ + CAPSTONE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three scenarios &mdash; what is really happening?</h2>
+      <p class="screen-lede">
+        Real situations from real Codex sessions. Pick the best answer, then read the
+        explanation. (No grade. This is a thinking exercise.)
+      </p>
+
+      <div class="quiz-container" id="quiz-module6">
+
+        <div class="quiz-question-block"
+             data-correct="option-replay"
+             data-explanation-right="Exactly. The model itself has no persistent memory &mdash; it is a stateless function that takes a prompt and returns text. What you experience as memory is Codex reading the rollout file from disk, rebuilding the session in memory, and feeding the model that history. The system around the model is what remembers; the model just reacts to what is handed to it."
+             data-explanation-wrong="Not quite. Language models are stateless &mdash; they don&rsquo;t store anything between calls. The continuity you experienced came from somewhere else: a file on your disk that Codex read and replayed before re-engaging the model.">
+          <h3 class="quiz-question">You had a 3-hour session yesterday. Today you <code>codex resume</code> and ask &ldquo;what did we decide about the database schema?&rdquo; Codex answers correctly. Did the model itself &ldquo;remember&rdquo; three hours of conversation directly?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-yes" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes &mdash; the model has long-term memory and recalls past sessions.</span>
+            </button>
+            <button class="quiz-option" data-value="option-replay" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No &mdash; Codex replayed the rollout file and rebuilt the model&rsquo;s view of history before asking again.</span>
+            </button>
+            <button class="quiz-option" data-value="option-cloud" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>OpenAI&rsquo;s servers stored your conversation and re-attached it automatically.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-compaction"
+             data-explanation-right="Right. Compaction is lossy by design &mdash; it shrinks old turns into a summary that fits the context window, and specific details routinely fall out of summaries. Your fix: lift the important detail into the latest user message, or save it as a memory in ~/.codex/memories/ so it survives across compactions and across sessions."
+             data-explanation-wrong="Think about what happens when the conversation grows past the model&rsquo;s context window. The full rollout is still on disk, but the model has stopped seeing the raw old turns &mdash; it is reading a condensed retelling of them. Condensed retellings drop details.">
+          <h3 class="quiz-question">Mid-way through a long conversation, the agent suddenly forgets a detail you mentioned an hour ago. What probably happened?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-bug" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A bug corrupted the rollout file and the detail was lost forever.</span>
+            </button>
+            <button class="quiz-option" data-value="option-compaction" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Compaction summarized that section of history and the summary dropped the specific detail.</span>
+            </button>
+            <button class="quiz-option" data-value="option-modelmood" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model gets &ldquo;tired&rdquo; over long sessions and accuracy drops randomly.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-fork"
+             data-explanation-right="Exactly. Because the rollout is append-only, you can branch from any point: keep the shared history, then write new events on a different filename. Append-only logs naturally support branching &mdash; the same reason git can give you a side branch without disturbing main."
+             data-explanation-wrong="Think back to the &lsquo;append-only is a superpower&rsquo; callout. Because the log only grows and never edits in place, you can copy the shared history and start writing on a side track &mdash; without touching the original.">
+          <h3 class="quiz-question">You want to test a risky idea without polluting your main conversation. What does the system give you?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-undo" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>An undo button that rewinds the last few turns in place.</span>
+            </button>
+            <button class="quiz-option" data-value="option-fork" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Fork into a side thread &mdash; same rollout history up to a point, then a new branch.</span>
+            </button>
+            <button class="quiz-option" data-value="option-delete" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Delete and rewrite the rollout file by hand.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 9: CAPSTONE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">The journey</span>
+      <h2 class="screen-title">You can read this codebase now</h2>
+      <p class="screen-lede">
+        Take a breath. Look at how far you came.
+      </p>
+
+      <div class="icon-rows">
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-1)">🚪</div>
+          <div>
+            <strong>Module 1 &middot; The gate</strong>
+            <p>One prompt enters &mdash; through CLI parsing, config loading, auth.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-2)">🎭</div>
+          <div>
+            <strong>Module 2 &middot; The cast</strong>
+            <p>TUI, Core, Model, Tools, Sandbox &mdash; the components and how they divide the work.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-3)">🔁</div>
+          <div>
+            <strong>Module 3 &middot; The turn loop</strong>
+            <p>How one prompt becomes many round-trips with the model, streamed token by token.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-4)">🛠️</div>
+          <div>
+            <strong>Module 4 &middot; Tools and approvals</strong>
+            <p>Why the model has hands at all &mdash; and how Codex asks permission before using them.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-actor-5)">🛡️</div>
+          <div>
+            <strong>Module 5 &middot; The sandbox</strong>
+            <p>The walls that contain the agent&rsquo;s hands &mdash; so a bad tool call cannot eat your machine.</p>
+          </div>
+        </div>
+        <div class="icon-row">
+          <div class="icon-circle" style="background: var(--color-accent)">📖</div>
+          <div>
+            <strong>Module 6 &middot; The logbook</strong>
+            <p>How a conversation survives crashes, time, and the model&rsquo;s finite working memory.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">🧭</div>
+        <div class="callout-content">
+          <strong class="callout-title">What to do next</strong>
+          <p>
+            Open a terminal. Type <code>codex</code>. Ask it to do something real.
+            Watch the streaming text &mdash; that is the loop from Module 3. Notice the approval
+            prompt when it wants to run a shell command &mdash; that is Module 4. Notice the
+            <code>~/.codex/threads/</code> folder filling with JSONL files &mdash; that is Module 6.
+            Every piece you read about is right there, working in front of you. The shape is the shape.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        You learned the gate (M1), the cast (M2), the turn loop (M3), the tools (M4),
+        the sandbox (M5), and the memory (M6). You can now open the Codex source tree
+        and point to the file responsible for any feature you use. More importantly:
+        the same shape powers Claude Code, Cursor, and almost every other serious AI
+        coding agent &mdash; a TUI on top of a turn loop that calls a model that calls
+        tools through a sandbox while writing to an append-only log. Once you see that
+        shape, you see it everywhere. You are not a passenger in these tools anymore.
+        You are a captain reading the logbook.
+      </p>
+    </div>
+  </div>
+
+</section>

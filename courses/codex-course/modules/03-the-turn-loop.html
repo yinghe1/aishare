@@ -1,0 +1,441 @@
+<section class="module" id="module-3">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 3</span>
+      <h2 class="screen-title">The Turn Loop</h2>
+      <p class="screen-lede">
+        We met the actors. Now meet the <em>music</em> — the loop that drives every turn.
+      </p>
+
+      <p>
+        You ask Codex to <strong>&ldquo;fix the failing test.&rdquo;</strong>
+        Sometimes the answer arrives in 5 seconds. Sometimes it grinds for 5 minutes —
+        editing files, running commands, thinking again. Why the difference?
+      </p>
+
+      <p>
+        Because under the surface, that one prompt is not one round-trip.
+        It is a <strong>loop</strong>.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📻</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a two-way radio</strong>
+          <p>
+            Picture a ham-radio conversation. You press the button and speak (the
+            <span class="term" data-definition="The full text packet sent to the model — your message plus the conversation history plus instructions plus the list of tools the model is allowed to call.">prompt</span>).
+            The other person starts replying <em>while still thinking</em>, broadcasting word by word
+            (<span class="term" data-definition="A sequence of small events delivered one by one over time, instead of waiting for the whole answer and sending it all at once. Like a live radio broadcast versus a recorded album.">streaming</span>).
+            You can break in any time. Sometimes they pause to look something up
+            (a <span class="term" data-definition="The model saying &quot;please run this thing with these arguments&quot; instead of just replying with text. The radio operator looking something up before continuing.">tool call</span>)
+            before continuing. The call only ends when one of you says &ldquo;over and out.&rdquo;
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE FLOW ANIMATION ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Trace one turn, end to end</h2>
+      <p class="screen-lede">
+        Click <strong>Next Step</strong> to watch what actually happens between the moment
+        you hit Enter and the moment the answer feels &ldquo;done.&rdquo;
+      </p>
+
+      <div class="flow-animation" data-steps='[
+        {"highlight":"flow-actor-1","label":"You type Fix the failing test and press Enter"},
+        {"highlight":"flow-actor-2","label":"TUI captures the keystroke, wraps it in an AppEvent","packet":true,"from":"actor-1","to":"actor-2"},
+        {"highlight":"flow-actor-3","label":"Core builds the prompt: history plus tools plus personality","packet":true,"from":"actor-2","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Core opens a stream to the model","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-3","label":"Model streams text tokens back, one at a time","packet":true,"from":"actor-4","to":"actor-3"},
+        {"highlight":"flow-actor-2","label":"TUI shows each token as it arrives — you see typing, not waiting","packet":true,"from":"actor-3","to":"actor-2"},
+        {"highlight":"flow-actor-4","label":"Model decides it needs to read a file — emits a function call"},
+        {"highlight":"flow-actor-5","label":"Core dispatches the tool call to the tools runtime","packet":true,"from":"actor-3","to":"actor-5"},
+        {"highlight":"flow-actor-3","label":"Tool result goes back into the conversation","packet":true,"from":"actor-5","to":"actor-3"},
+        {"highlight":"flow-actor-4","label":"Loop continues — model gets the result and responds again","packet":true,"from":"actor-3","to":"actor-4"},
+        {"highlight":"flow-actor-1","label":"Model says I am done — loop exits — answer is final"}
+      ]'>
+        <div class="flow-actors">
+          <div class="flow-actor" id="flow-actor-1">
+            <div class="flow-actor-icon">🧑</div>
+            <span>You</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-2">
+            <div class="flow-actor-icon">📺</div>
+            <span>TUI</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-3">
+            <div class="flow-actor-icon">⚙️</div>
+            <span>Core</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-4">
+            <div class="flow-actor-icon">🧠</div>
+            <span>Model</span>
+          </div>
+          <div class="flow-actor" id="flow-actor-5">
+            <div class="flow-actor-icon">🛠️</div>
+            <span>Tools</span>
+          </div>
+        </div>
+
+        <div class="flow-packet" id="flow-packet"></div>
+
+        <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin.</div>
+
+        <div class="flow-controls">
+          <button class="btn flow-next-btn">Next Step</button>
+          <button class="btn flow-reset-btn">Restart</button>
+          <span class="flow-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Notice steps 7&ndash;10: the model talked, then asked Core to run something,
+        then talked again. That is the <em>loop</em>. It can repeat 1 time or 50.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE LOOP IN CODE ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The loop, in code</h2>
+      <p class="screen-lede">
+        Here is the heart of <code>core/src/session/turn.rs</code>, distilled into
+        <span class="term" data-definition="Pretend-code that reads like English. It is not real Rust or JavaScript — it is the shape of the logic without the syntax noise.">pseudocode</span>.
+        The shocking thing for most people: <strong>this is a loop</strong>. Most users think it is one call.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE</span>
+<pre><code><span class="code-line"><span class="code-keyword">loop</span> {</span>
+<span class="code-line">  <span class="code-comment">// 1. Pick up any new user input that arrived while we were thinking</span></span>
+<span class="code-line">  pending_input = <span class="code-function">drain_input_queue</span>();</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 2. Build the prompt: history + tools + personality</span></span>
+<span class="code-line">  prompt = <span class="code-function">build_prompt_from_history</span>();</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 3. Open a stream to the model and start receiving events</span></span>
+<span class="code-line">  stream = client.<span class="code-function">stream</span>(prompt, model_info).<span class="code-keyword">await</span>;</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 4. Pull events one by one until the stream ends</span></span>
+<span class="code-line">  <span class="code-keyword">while let</span> <span class="code-keyword">Some</span>(event) = stream.<span class="code-function">next</span>().<span class="code-keyword">await</span> {</span>
+<span class="code-line">    <span class="code-function">handle</span>(event);  <span class="code-comment">// could be a text token, a function call, etc.</span></span>
+<span class="code-line">  }</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-comment">// 5. Did the model finish, or does it want to run a tool and continue?</span></span>
+<span class="code-line">  <span class="code-keyword">if</span> !needs_follow_up { <span class="code-keyword">break</span>; }</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl"><strong>1.</strong> Before we talk to the model, scoop up anything new <em>you</em> typed while it was thinking. Codex never makes you wait to type.</p>
+            <p class="tl"><strong>2.</strong> Bundle the whole conversation so far (your messages, the model&rsquo;s replies, tool results) plus the list of tools it&rsquo;s allowed to use. That bundle is &ldquo;the prompt.&rdquo;</p>
+            <p class="tl"><strong>3.</strong> Open a live radio channel to the model. We are not asking for one big answer — we are asking it to start broadcasting.</p>
+            <p class="tl"><strong>4.</strong> Loop over every little event as it arrives: a token, a function call, a status update. Each one gets handled the moment it shows up.</p>
+            <p class="tl"><strong>5.</strong> When the stream ends, check: was that the final word, or does the model want a tool run so it can keep going? If it&rsquo;s done, exit. Otherwise, loop again with the new info.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: streaming is real</strong>
+          <p>
+            You see text appearing letter by letter not because of an animation.
+            The model is <em>literally</em> sending
+            <span class="term" data-definition="A chunk of text the model emits or consumes — usually around 4 characters. The model thinks and speaks in tokens, not letters or words.">tokens</span>
+            one at a time over a network connection, and the
+            <span class="term" data-definition="TUI = Terminal User Interface. The text-based screen you see in your terminal — Codex&rsquo;s window into the world.">TUI</span>
+            is rendering each one the moment it arrives.
+            The &ldquo;typing&rdquo; effect is real — which is also why you can interrupt mid-stream.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: GROUP CHAT ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Eavesdrop on the loop</h2>
+      <p class="screen-lede">
+        Inside the loop, <strong>Core</strong> and the <strong>Model</strong> are basically
+        texting each other. Here is what that group chat looks like for a real bug-fix turn.
+      </p>
+
+      <div class="chat-window" id="chat-module3">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-msg="0" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Here is the conversation so far plus the new user message: Fix the failing test.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="1" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>I need to look at the test file first. <em>(emits function call: shell)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="2" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Output of <code>pnpm test</code>: error in src/parser.ts line 47, undefined variable.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="3" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>Now I want to read src/parser.ts. <em>(function call: shell with cat)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="4" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Here are the contents. <em>(file contents)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="5" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>Applying this patch to fix the typo. <em>(function call: apply_patch)</em></p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="6" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Core</span>
+              <p>Patch applied. Tests re-ran &mdash; all passing.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="7" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Model</span>
+              <p>Done. The typo on line 47 was the cause.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" id="chat-module3-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module3-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        Eight messages. Three tool calls. One human prompt. <em>That</em> is what
+        happens between &ldquo;Fix the failing test&rdquo; and a green checkmark.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: WHEN THE LOOP STOPS ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">When (and how) the loop stops</h2>
+      <p class="screen-lede">
+        Two questions that explain 90% of Codex&rsquo;s behavior:
+        <strong>who decides when to stop?</strong> and <strong>what if the
+        <span class="term" data-definition="The live connection over which the model is sending tokens. If it dies mid-sentence, Codex needs to notice and react instead of hanging forever.">stream</span>
+        breaks mid-broadcast?</strong>
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; client_common.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">pub struct</span> <span class="code-function">ResponseStream</span> {</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) rx_event: mpsc::<span class="code-function">Receiver</span>&lt;<span class="code-function">Result</span>&lt;<span class="code-function">ResponseEvent</span>&gt;&gt;,</span>
+<span class="code-line">    <span class="code-keyword">pub</span>(<span class="code-keyword">crate</span>) consumer_dropped: <span class="code-function">CancellationToken</span>,</span>
+<span class="code-line">}</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">impl</span> <span class="code-function">Stream</span> <span class="code-keyword">for</span> <span class="code-function">ResponseStream</span> {</span>
+<span class="code-line">    <span class="code-keyword">type</span> Item = <span class="code-function">Result</span>&lt;<span class="code-function">ResponseEvent</span>&gt;;</span>
+<span class="code-line">    <span class="code-keyword">fn</span> <span class="code-function">poll_next</span>(<span class="code-keyword">mut</span> self: <span class="code-function">Pin</span>&lt;&amp;<span class="code-keyword">mut</span> Self&gt;, cx: &amp;<span class="code-keyword">mut</span> <span class="code-function">Context</span>&lt;'_&gt;) -&gt; <span class="code-function">Poll</span>&lt;<span class="code-function">Option</span>&lt;Self::Item&gt;&gt; {</span>
+<span class="code-line">        self.rx_event.<span class="code-function">poll_recv</span>(cx)</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">A <strong>ResponseStream</strong> is a little pipe with two ends. One end (<span class="term" data-definition="mpsc = multi-producer, single-consumer. A type of pipe where many writers can drop things in, but only one reader is pulling them out. Used here so one task reads the model&rsquo;s output even while other tasks push into it.">mpsc</span>) is for receiving events.</p>
+            <p class="tl">The other end is a <span class="term" data-definition="A flag you can wave to politely ask a running task to stop. Tasks check the flag and clean up — nobody gets killed in their sleep.">CancellationToken</span> — basically a kill switch. When you hit Ctrl-C, this flips, and any task watching it stops gracefully.</p>
+            <p class="tl">The <code>poll_next</code> function is how the loop asks &ldquo;got anything new for me yet?&rdquo; <em>This is the radio click between sentences.</em></p>
+            <p class="tl">No tokens? Quiet, but the line stays open. Tokens? Hand them up to the loop and keep listening.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="screen-subtitle">And if the radio cuts out?</h3>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; turn.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">let</span> event = <span class="code-keyword">match</span> event {</span>
+<span class="code-line">    <span class="code-function">Some</span>(<span class="code-function">Ok</span>(event)) =&gt; event,</span>
+<span class="code-line">    <span class="code-function">Some</span>(<span class="code-function">Err</span>(err)) =&gt; <span class="code-keyword">break</span> <span class="code-function">Err</span>(err),</span>
+<span class="code-line">    <span class="code-function">None</span> =&gt; {</span>
+<span class="code-line">        <span class="code-keyword">break</span> <span class="code-function">Err</span>(CodexErr::<span class="code-function">Stream</span>(</span>
+<span class="code-line">            <span class="code-string">"stream closed before response.completed"</span>.<span class="code-function">into</span>(),</span>
+<span class="code-line">            <span class="code-function">None</span>,</span>
+<span class="code-line">        ));</span>
+<span class="code-line">    }</span>
+<span class="code-line">};</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Three things can come down the pipe…</p>
+            <p class="tl"><strong>A real event:</strong> great, use it.</p>
+            <p class="tl"><strong>An error:</strong> stop the loop and bubble the error up.</p>
+            <p class="tl"><strong>Nothing (None):</strong> the connection went dead before the model said &ldquo;done.&rdquo; That is an error too — Codex throws <code>stream closed before response.completed</code> instead of pretending everything is fine.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: the loop ends when the model says so</strong>
+          <p>
+            There is no hard-coded turn limit. The <em>model</em> decides when its answer
+            is final. That is why a complex task can run for many round-trips — and why
+            setting a max-turns config matters when you want to bound runaway behavior.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: QUIZ + HANDOFF ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Check your radio skills</h2>
+      <p class="screen-lede">
+        Three scenarios from real Codex sessions. Pick what you think is happening
+        — then read the explanation.
+      </p>
+
+      <div class="quiz-container" id="quiz-module3">
+
+        <div class="quiz-question-block"
+             data-correct="option-many"
+             data-explanation-right="Exactly. Each tool call (read a file, write a patch, run tests) is a fresh trip back to the model. 17 files edited over 4 minutes is dozens of model calls inside one loop — not one giant call that did it all."
+             data-explanation-wrong="Think back to the loop. Each time the model wants to run a tool, the loop sends the tool result back and asks the model again. Editing 17 files means many trips around that loop — many model calls.">
+          <h3 class="quiz-question">You ask Codex &ldquo;rename <code>foo</code> to <code>bar</code> across the project.&rdquo; It edits 17 files over 4 minutes. How many times did the model actually get called?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-one" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Once. The model returned a giant batch of edits.</span>
+            </button>
+            <button class="quiz-option" data-value="option-many" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Many times — roughly once per tool round, looping until it&rsquo;s done.</span>
+            </button>
+            <button class="quiz-option" data-value="option-seventeen" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Exactly 17 — one model call per file.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-token"
+             data-explanation-right="Right. The ResponseStream carries a CancellationToken — a flag any task can watch. When you Ctrl-C, the flag flips, the stream stops pulling, the loop unwinds gracefully. Streams are cancellable by design."
+             data-explanation-wrong="Not quite. Codex doesn&rsquo;t kill processes with a sledgehammer. Look back at ResponseStream — it carries a small flag that running tasks check on every tick. That flag is how cancellation propagates cleanly.">
+          <h3 class="quiz-question">Mid-stream, you press <code>Ctrl-C</code>. What design feature makes this work cleanly — no half-edited files, no hung processes?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-kill" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Codex hard-kills the OS process holding the connection.</span>
+            </button>
+            <button class="quiz-option" data-value="option-token" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The CancellationToken attached to ResponseStream — when the consumer drops, the stream signals the mapper to stop.</span>
+            </button>
+            <button class="quiz-option" data-value="option-timeout" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A 30-second timeout fires and the network connection is dropped.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-feedback"
+             data-explanation-right="Yes! The parser returns InvalidArguments, and that error becomes the next tool output the model sees. The model reads its own mistake on the next loop iteration and self-corrects. Errors are feedback, not bombs."
+             data-explanation-wrong="Codex is designed to survive bad model output. The bad JSON gets turned into an error message — and that error message becomes the next thing the model reads inside the loop. So instead of crashing, Codex lets the model see its own mistake and try again.">
+          <h3 class="quiz-question">The model returns malformed JSON for a tool call. What happens — does Codex crash?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-crash" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Yes. Bad JSON means the turn aborts and surfaces a fatal error.</span>
+            </button>
+            <button class="quiz-option" data-value="option-feedback" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>No. The parser returns InvalidArguments, that error becomes the tool output, and the model self-corrects on the next round.</span>
+            </button>
+            <button class="quiz-option" data-value="option-retry" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Codex silently retries with a brand-new prompt until JSON parses.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Next up: what is a &ldquo;tool,&rdquo; actually?</strong>
+          <p>
+            We saw the model &ldquo;call a tool&rdquo; — but what <em>is</em> a tool, and
+            why isn&rsquo;t it terrifying that a model can run shell commands on your machine?
+            That is Module 4.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

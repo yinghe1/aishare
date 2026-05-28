@@ -1,0 +1,438 @@
+<section class="module" id="module-5">
+
+  <!-- ───────────────────── SCREEN 1: HOOK + METAPHOR ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <span class="module-tag">Module 5</span>
+      <h2 class="screen-title">The Sandbox</h2>
+      <p class="screen-lede">
+        Module 4 ended with a question: <em>approval is one filter &mdash; what about the sandbox?</em>
+        Here is the layer that stands between a confused model and your home directory.
+      </p>
+
+      <p>
+        Codex runs <span class="term" data-definition="Programs that take typed instructions and do something — like delete a file, list a folder, or download something from the internet. Shell commands are how every developer drives their machine.">shell commands</span>.
+        <em>Real</em> ones. On your <em>real</em> machine. Have you ever wondered why there
+        aren&rsquo;t a million horror stories of agents nuking people&rsquo;s home folders?
+        Because of this layer.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">🧪</div>
+        <div class="callout-content">
+          <strong class="callout-title">The metaphor: a glass-walled cleanroom</strong>
+          <p>
+            Picture a cleanroom inside a chip factory. The technician inside can <em>see</em>
+            the rest of the building through the glass &mdash; read manuals, look at samples
+            &mdash; but contaminants can&rsquo;t leak out. Sealed doors, filtered air, locked
+            exits. The agent works inside this room. macOS, Linux, and Windows each build
+            the room differently, but they all do the same job: contain the work.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Crucially, the cleanroom is enforced by the <em>building</em>, not by the technician&rsquo;s
+        good behavior. The agent doesn&rsquo;t politely refrain from misbehaving &mdash; it
+        literally <em>cannot</em>. The
+        <span class="term" data-definition="The deepest layer of an operating system — the part that actually talks to hardware and decides which programs can do what. When a program wants to open a file or use the network, the kernel is the gatekeeper that says yes or no.">kernel</span>
+        refuses.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 2: THE THREE LEVELS ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three sizes of cleanroom</h2>
+      <p class="screen-lede">
+        Codex offers exactly three settings &mdash; one safest, one default, one break-glass.
+        This is the most important config choice you&rsquo;ll make.
+      </p>
+
+      <div class="pattern-cards">
+
+        <div class="pattern-card" style="border-top: 3px solid #2D8B55">
+          <div class="pattern-icon" style="background: #2D8B55">👀</div>
+          <h4 class="pattern-title"><code>read-only</code></h4>
+          <p class="pattern-desc">
+            Can read any file. Can&rsquo;t write anything. No network. The safest setting.
+            Use when you want the agent to explore and <em>propose</em>, not act.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid #D4A843">
+          <div class="pattern-icon" style="background: #D4A843">✏️</div>
+          <h4 class="pattern-title"><code>workspace-write</code></h4>
+          <p class="pattern-desc">
+            Can read anything. Can write <em>only</em> inside the project folder. No network
+            unless explicitly allowed. <strong>The default.</strong> Best for most coding work.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid #D94F30">
+          <div class="pattern-icon" style="background: #D94F30">🔥</div>
+          <h4 class="pattern-title"><code>danger-full-access</code></h4>
+          <p class="pattern-desc">
+            No filesystem or network restrictions. Reserve for inside
+            <span class="term" data-definition="A sandboxed Linux environment that looks like its own little computer. Used to isolate apps so they can&rsquo;t see or break the host machine.">Docker containers</span>
+            or virtual machines. The README literally calls it &ldquo;Danger!&rdquo;
+          </p>
+        </div>
+
+      </div>
+
+      <p>
+        The three levels show up everywhere in the codebase &mdash; in the CLI, in
+        <span class="term" data-definition="A configuration file written in TOML format. It&rsquo;s where Codex stores your default settings, so you don&rsquo;t have to retype flags every time.">config.toml</span>,
+        in the internal policy types. One unified abstraction; three OS-specific
+        implementations underneath.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 3: THE TECHNOLOGIES ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Three operating systems, three cleanrooms</h2>
+      <p class="screen-lede">
+        Same policy. Same levels. Three completely different mechanisms to actually
+        <em>enforce</em> the walls &mdash; one per OS.
+      </p>
+
+      <div class="pattern-cards">
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+          <div class="pattern-icon" style="background: var(--color-actor-1)">🍎</div>
+          <h4 class="pattern-title">macOS &mdash; Seatbelt</h4>
+          <p class="pattern-desc">
+            <span class="term" data-definition="Apple&rsquo;s built-in macOS sandbox. The underlying command is sandbox-exec. You hand it a profile that lists what&rsquo;s allowed and the kernel enforces it.">Seatbelt</span>
+            (<code>sandbox-exec</code>) reads an Apple profile language describing what&rsquo;s
+            permitted. The kernel enforces it. Inside, <code>CODEX_SANDBOX=seatbelt</code> is
+            set so child code knows it&rsquo;s caged.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+          <div class="pattern-icon" style="background: var(--color-actor-2)">🐧</div>
+          <h4 class="pattern-title">Linux &mdash; Landlock + bubblewrap</h4>
+          <p class="pattern-desc">
+            <span class="term" data-definition="A Linux kernel feature that lets a process voluntarily lock itself down — declaring exactly which folders it can read or write. Once set, even the process itself can&rsquo;t loosen it.">Landlock</span>
+            restricts which paths a process can touch.
+            <span class="term" data-definition="A Linux tool that runs commands in tight isolated environments (called namespaces). Often used as a portable jail for untrusted programs.">bubblewrap</span>
+            handles the surrounding cage. A helper binary, <code>codex-linux-sandbox</code>,
+            wraps the actual command.
+          </p>
+        </div>
+
+        <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+          <div class="pattern-icon" style="background: var(--color-actor-3)">🪟</div>
+          <h4 class="pattern-title">Windows &mdash; Restricted Token</h4>
+          <p class="pattern-desc">
+            Two modes &mdash; <code>Elevated</code> and <code>RestrictedToken</code> &mdash; controlled
+            by a
+            <span class="term" data-definition="A Windows access token with fewer permissions than the user normally has. Windows checks the token before letting a process do almost anything, so a stripped-down token means a stripped-down process.">restricted token</span>,
+            Windows&rsquo;s way of saying &ldquo;this process has fewer permissions than you do.&rdquo;
+          </p>
+        </div>
+
+      </div>
+
+      <p>
+        The whole point of three implementations is that <em>the rest of Codex doesn&rsquo;t
+        care</em>. It just says &ldquo;spawn this sandboxed&rdquo; &mdash; the right cleanroom
+        gets built underneath.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 4: CODE — PICKING THE WINDOWS LEVEL ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">How Codex picks the cleanroom</h2>
+      <p class="screen-lede">
+        Here is the Windows side, in real Codex source. Notice how short it is &mdash; the
+        whole &ldquo;which cage do we use?&rdquo; decision fits on one screen.
+      </p>
+
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; windows_sandbox.rs</span>
+<pre><code><span class="code-line"><span class="code-keyword">impl</span> WindowsSandboxLevelExt <span class="code-keyword">for</span> WindowsSandboxLevel {</span>
+<span class="code-line">    <span class="code-keyword">fn</span> <span class="code-function">from_config</span>(config: &amp;Config) -&gt; WindowsSandboxLevel {</span>
+<span class="code-line">        <span class="code-keyword">match</span> config.permissions.windows_sandbox_mode {</span>
+<span class="code-line">            <span class="code-function">Some</span>(WindowsSandboxModeToml::Elevated) =&gt; WindowsSandboxLevel::Elevated,</span>
+<span class="code-line">            <span class="code-function">Some</span>(WindowsSandboxModeToml::Unelevated) =&gt; WindowsSandboxLevel::RestrictedToken,</span>
+<span class="code-line">            <span class="code-function">None</span> =&gt; Self::<span class="code-function">from_features</span>(&amp;config.features),</span>
+<span class="code-line">        }</span>
+<span class="code-line">    }</span>
+<span class="code-line">}</span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Given the user&rsquo;s config, decide which Windows cage to build.</p>
+            <p class="tl"><strong>Config says <code>Elevated</code>?</strong> Use the elevated cage &mdash; more privileges, used for setup-style tasks.</p>
+            <p class="tl"><strong>Config says <code>Unelevated</code>?</strong> Use the restricted-token cage &mdash; the tighter, more locked-down one.</p>
+            <p class="tl"><strong>No config at all?</strong> Fall back to picking based on
+              <span class="term" data-definition="Optional features that can be turned on or off — like checkboxes for behaviors a project hasn&rsquo;t committed to as defaults yet.">feature flags</span>.
+              Codex always has <em>some</em> answer.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-accent">
+        <div class="callout-icon">💡</div>
+        <div class="callout-content">
+          <strong class="callout-title">Aha! moment: defense in depth</strong>
+          <p>
+            The sandbox does not trust the agent &mdash; it trusts the
+            <strong>operating system</strong>. Even if the model is malicious or buggy,
+            even if the tool runtime has a bug, the kernel still refuses the
+            <span class="term" data-definition="A request a program makes to the kernel — like &lsquo;open this file&rsquo; or &lsquo;send this network packet.&rsquo; If the kernel says no, nothing happens.">syscall</span>.
+            The safety isn&rsquo;t a check the agent runs &mdash; it&rsquo;s a wall it
+            can&rsquo;t see through. Engineers call this
+            <span class="term" data-definition="A security strategy where multiple independent layers each block bad behavior. If one layer fails, the next still holds. Approval is one layer; the sandbox is another; the OS kernel is a third.">defense in depth</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 5: GROUP CHAT — A DENIED OPERATION ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Watch the wall hold</h2>
+      <p class="screen-lede">
+        A bad command comes in. The model wants to delete the user&rsquo;s home directory.
+        Approval lets it through. Watch what happens at the next layer.
+      </p>
+
+      <div class="chat-window" id="chat-module5">
+        <div class="chat-messages">
+
+          <div class="chat-message" data-msg="0" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>Run this shell: <code>rm -rf ~</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="1" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Core</span>
+              <p>Approved by policy. Spawning under <code>workspace-write</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="2" data-sender="sandbox" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">🧪</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Sandbox</span>
+              <p>Telling the kernel: run <code>rm</code>, but only allow writes inside the workspace path.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="3" data-sender="kernel" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-4)">🛡️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-4)">Kernel</span>
+              <p><strong>Denied.</strong> Write attempt outside allowed paths.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="4" data-sender="sandbox" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-3)">🧪</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-3)">Sandbox</span>
+              <p>Process exited with error: <code>permission denied</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="5" data-sender="core" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-2)">⚙️</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-2)">Core</span>
+              <p>Output to model: <code>rm: cannot remove &lsquo;/Users/owl&rsquo; &mdash; permission denied</code>.</p>
+            </div>
+          </div>
+
+          <div class="chat-message" data-msg="6" data-sender="model" style="display:none">
+            <div class="chat-avatar" style="background: var(--color-actor-1)">🧠</div>
+            <div class="chat-bubble">
+              <span class="chat-sender" style="color: var(--color-actor-1)">Model</span>
+              <p>Acknowledged. Trying a safer approach.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chat-typing" id="chat-module5-typing" style="display:none">
+          <div class="chat-avatar" id="chat-module5-typing-avatar">?</div>
+          <div class="chat-typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+        <div class="chat-controls">
+          <button class="btn chat-next-btn">Next Message</button>
+          <button class="btn chat-all-btn">Play All</button>
+          <button class="btn chat-reset-btn">Replay</button>
+          <span class="chat-progress"></span>
+        </div>
+      </div>
+
+      <p>
+        The model didn&rsquo;t &ldquo;learn its lesson&rdquo; through training. The error
+        came back like any other tool result &mdash; and the loop kept going. The error
+        <em>is</em> the feedback.
+      </p>
+    </div>
+  </div>
+
+  <!-- ───────────────────── SCREEN 6: CONFIG BADGES + QUIZ ───────────────────── -->
+  <div class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">The dials you actually touch</h2>
+      <p class="screen-lede">
+        Three flags and two
+        <span class="term" data-definition="An environment variable — a setting that lives in the process&rsquo;s environment, not in any file. Programs read them on startup. Like a sticky note attached to the running program.">env vars</span>
+        explain almost every &ldquo;why can&rsquo;t Codex do this?&rdquo; moment.
+      </p>
+
+      <h3 class="screen-subtitle">User-facing CLI flags</h3>
+      <div class="translation-block animate-in">
+        <div class="translation-code">
+          <span class="translation-label">CODE &mdash; README.md</span>
+<pre><code><span class="code-line">codex --sandbox read-only           <span class="code-comment"># default — explore freely, can&rsquo;t write</span></span>
+<span class="code-line">codex --sandbox workspace-write     <span class="code-comment"># write inside the project, no network</span></span>
+<span class="code-line">codex --sandbox danger-full-access  <span class="code-comment"># break glass — only inside containers</span></span></code></pre>
+        </div>
+        <div class="translation-english">
+          <span class="translation-label">PLAIN ENGLISH</span>
+          <div class="translation-lines">
+            <p class="tl">Three commands, three cleanrooms. Same Codex, different walls.</p>
+            <p class="tl"><strong>read-only:</strong> &ldquo;Look but don&rsquo;t touch.&rdquo; Great for code review and exploration.</p>
+            <p class="tl"><strong>workspace-write:</strong> &ldquo;Edit my project, leave my home alone.&rdquo; The everyday default.</p>
+            <p class="tl"><strong>danger-full-access:</strong> &ldquo;I built the room around you &mdash; you don&rsquo;t need your own.&rdquo; For Docker, CI, throwaway VMs.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="screen-subtitle">Env vars and config you&rsquo;ll spot in the wild</h3>
+      <div class="badge-list">
+        <div class="badge-item">
+          <code class="badge-code">CODEX_SANDBOX=seatbelt</code>
+          <span class="badge-desc">Set inside Seatbelt&rsquo;d processes so code can detect it&rsquo;s caged. Tests use it to skip operations the sandbox would block (you can&rsquo;t nest Seatbelt).</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">CODEX_SANDBOX_NETWORK_DISABLED=1</code>
+          <span class="badge-desc">Set when network is blocked. Tests check this and skip anything that needs the internet.</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">--sandbox &lt;level&gt;</code>
+          <span class="badge-desc">CLI flag that overrides the configured default for this single run.</span>
+        </div>
+        <div class="badge-item">
+          <code class="badge-code">[permissions] in config.toml</code>
+          <span class="badge-desc">The persistent way to set the default sandbox level &mdash; per machine, or per project. This is what
+            <span class="term" data-definition="Codex&rsquo;s internal data structure describing what a session is allowed to do — which paths, which network access, which level. The shared object every sandbox implementation reads from.">permission profiles</span>
+            are built from.</span>
+        </div>
+      </div>
+
+      <h2 class="screen-title" style="margin-top: var(--space-12)">Check your cleanroom instincts</h2>
+      <p class="screen-lede">Three real situations. Pick the one a thoughtful Codex user would choose.</p>
+
+      <div class="quiz-container" id="quiz-module5">
+
+        <div class="quiz-question-block"
+             data-correct="option-sandbox"
+             data-explanation-right="Right. When the chat looks fine but the file didn&rsquo;t change, it&rsquo;s almost always a layer below the model saying no &mdash; usually the sandbox blocking a write outside the workspace. Check the sandbox logs or the recent tool outputs. &lsquo;The model lied&rsquo; is rarely the issue."
+             data-explanation-wrong="The model lying is rarely the cause. When the chat looks normal but the disk didn&rsquo;t change, something deeper said no &mdash; and the sandbox is the most common culprit. The write attempt happened, the kernel refused, and the failure didn&rsquo;t bubble up clearly.">
+          <h3 class="quiz-question">Codex says it edited a file. The chat looks normal. You check the file on disk &mdash; it didn&rsquo;t change. What is most likely?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-lie" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>The model hallucinated the edit. It never actually tried.</span>
+            </button>
+            <button class="quiz-option" data-value="option-sandbox" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>A sandbox denial that wasn&rsquo;t surfaced &mdash; the write was outside the allowed path. Check sandbox logs and recent tool outputs.</span>
+            </button>
+            <button class="quiz-option" data-value="option-cache" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>Your editor is caching the file and showing the old version.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-full"
+             data-explanation-right="Right. The container is already the cleanroom &mdash; layering Codex&rsquo;s sandbox inside is mostly friction with little added safety. This is the classic defense-in-depth-vs-friction trade-off. Outside containers, you&rsquo;d want workspace-write; inside one, danger-full-access is reasonable."
+             data-explanation-wrong="Think about where the security boundary actually lives. Inside a Docker container, the container itself is the cage &mdash; the host can&rsquo;t be touched. Adding Codex&rsquo;s sandbox inside that already-sealed environment mostly just stops Codex from doing useful work, with little extra safety.">
+          <h3 class="quiz-question">You run Codex inside a Docker container that is itself the security boundary. Which sandbox level makes sense?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-read" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>read-only</code> &mdash; safest is always best.</span>
+            </button>
+            <button class="quiz-option" data-value="option-write" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>workspace-write</code> &mdash; the default is always the right call.</span>
+            </button>
+            <button class="quiz-option" data-value="option-full" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span><code>danger-full-access</code> &mdash; the container is the cage; an inner sandbox is mostly friction.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-question-block"
+             data-correct="option-introspect"
+             data-explanation-right="Exactly. Code running inside the sandbox can read CODEX_SANDBOX=seatbelt and adjust &mdash; especially tests that would otherwise try to spawn another sandbox (you can&rsquo;t nest them) or hit the network. This is called introspectable sandboxing: the cage tells you it&rsquo;s there."
+             data-explanation-wrong="The env var isn&rsquo;t there to enable the sandbox &mdash; the sandbox is already running by the time it&rsquo;s set. It&rsquo;s a signal for the code inside: &lsquo;you&rsquo;re in a cage right now, plan accordingly.&rsquo; Mostly used by tests to skip operations the sandbox would block.">
+          <h3 class="quiz-question">Why does Codex set <code>CODEX_SANDBOX=seatbelt</code> on child processes?</h3>
+          <div class="quiz-options">
+            <button class="quiz-option" data-value="option-enable" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>To turn the sandbox on &mdash; without the variable, there&rsquo;s no cage.</span>
+            </button>
+            <button class="quiz-option" data-value="option-introspect" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>So code <em>inside</em> the sandbox can detect that it&rsquo;s caged &mdash; useful for tests that need to skip operations the sandbox would block.</span>
+            </button>
+            <button class="quiz-option" data-value="option-billing" onclick="selectOption(this)">
+              <div class="quiz-option-radio"></div>
+              <span>For logging and billing &mdash; OpenAI charges differently for sandboxed runs.</span>
+            </button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+        <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📦</div>
+        <div class="callout-content">
+          <strong class="callout-title">Next up: how does Codex remember?</strong>
+          <p>
+            We have an agent, a turn loop, tools, and a sandbox. But conversations are
+            long &mdash; and the model&rsquo;s memory is finite. How does Codex hold onto
+            context across hundreds of turns without forgetting what you asked for?
+            Last module.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
