@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code as Agent Harness + OpenHands: Must-Know Concise Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #0071e3;
+      --blue-light: #e8f2fd;
+      --ink: #1d1d1f;
+      --secondary: #6e6e73;
+      --surface: #fbfbfd;
+      --border: #d2d2d7;
+      --white: #ffffff;
+      --thoughts-bg: #f5f5f7;
+      --max-w: 740px;
+    }
+
+    html { font-size: 17px; scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      z-index: 100;
+    }
+
+    .site-name { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+    .site-date { font-size: 13px; color: var(--secondary); }
+
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    article { padding: 72px 0 80px; }
+
+    .article-header {
+      margin-bottom: 32px;
+      padding-left: 16px;
+      border-left: 3px solid var(--blue);
+    }
+
+    .article-eyebrow {
+      color: var(--blue);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .article-header h1 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      line-height: 1.12;
+      margin-bottom: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    }
+
+    .article-subtitle {
+      color: var(--secondary);
+      font-size: 16px;
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-pills .pill {
+      background: var(--blue-light);
+      color: var(--blue);
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .toc {
+      background: var(--thoughts-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 44px;
+    }
+
+    .toc h2 {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .toc-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+    }
+
+    .toc a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      border-bottom: 1px solid transparent;
+    }
+
+    .toc a:hover {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+
+    .article-body { margin-bottom: 44px; }
+
+    .article-body p { margin-bottom: 20px; }
+
+    .article-body .lead {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .article-body h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin: 48px 0 18px;
+      line-height: 1.2;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    .article-body h3 {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 32px 0 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    .article-body ul, .article-body ol {
+      margin: 0 0 20px 22px;
+    }
+
+    .article-body li { margin-bottom: 8px; }
+
+    .article-body a {
+      color: var(--blue);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0, 113, 227, 0.25);
+    }
+
+    .article-body a:hover { border-bottom-color: var(--blue); }
+
+    .article-body strong { font-weight: 600; }
+
+    section { scroll-margin-top: 80px; }
+    section + section { margin-top: 12px; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    .callout {
+      border-left: 2px solid var(--blue);
+      background: var(--blue-light);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .callout p { margin-bottom: 10px; }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout strong { font-weight: 600; color: var(--blue); }
+
+    .callout.teal {
+      border-left-color: #0a8268;
+      background: #ecfdf7;
+    }
+    .callout.teal strong { color: #0a8268; }
+
+    .callout.warm {
+      border-left-color: #c2710c;
+      background: #fff7ed;
+    }
+    .callout.warm strong { color: #c2710c; }
+
+    .callout.rose {
+      border-left-color: #c0344d;
+      background: #fff1f3;
+    }
+    .callout.rose strong { color: #c0344d; }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; margin: 22px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 11px 14px;
+      vertical-align: top;
+      text-align: left;
+      line-height: 1.55;
+    }
+
+    th:last-child, td:last-child { border-right: none; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    th {
+      background: var(--thoughts-bg);
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    tbody tr:nth-child(even) td { background: #fcfcfd; }
+
+    /* Card grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .card {
+      background: var(--thoughts-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+
+    .card h4 {
+      margin-bottom: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .card p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--secondary); }
+
+    /* ASCII diagram */
+    .diagram {
+      background: var(--thoughts-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 24px 0;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: "SF Mono", "Menlo", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    pre {
+      background: var(--thoughts-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 20px 0;
+      padding: 16px 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "SF Mono", "Menlo", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    code { font-family: "SF Mono", "Menlo", monospace; }
+
+    /* Checklist with tags */
+    .checklist { list-style: none; margin: 22px 0 !important; padding: 0 !important; }
+    .checklist li {
+      margin-bottom: 12px;
+      padding-left: 0;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .tag {
+      display: inline-block;
+      background: var(--blue-light);
+      color: var(--blue);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin-right: 8px;
+      vertical-align: 1px;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--secondary);
+    }
+
+    @media (max-width: 600px) {
+      html { font-size: 15px; }
+      .container { padding: 0 16px; }
+      article { padding: 48px 0 56px; }
+      .toc { padding: 14px 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="../../index.html" style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--secondary);text-decoration:none;" onmouseover="this.style.color='var(--blue)'" onmouseout="this.style.color='var(--secondary)'">
+    <svg width="14" height="14" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 7L8 1l7 6v7.5h-4.5V10h-5v4.5H1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    Home
+  </a>
+  <span class="site-name">AI Insights</span>
+  <span class="site-date">&nbsp;</span>
+</header>
+
+<article>
+  <div class="container">
+
+    <div class="article-header">
+      <div class="article-eyebrow">Must-Know Concise Guide</div>
+      <h1>Code as Agent Harness + OpenHands</h1>
+      <p class="article-subtitle">A compact learning article combining the paper’s core idea, OpenHands must-know architecture, and the practical comparison with Codex CLI and Claude Code.</p>
+      <div class="meta-pills">
+        <span class="pill">Paper → platform mapping</span>
+        <span class="pill">OpenHands focus</span>
+        <span class="pill">Includes comparison</span>
+        <span class="pill">Updated: June 10, 2026</span>
+      </div>
+    </div>
+
+    <nav class="toc" aria-label="Table of contents">
+      <h2>Contents</h2>
+      <div class="toc-links">
+        <a href="#one-line">One-line idea</a>
+        <a href="#mental-model">Mental model shift</a>
+        <a href="#paper-framework">Paper framework</a>
+        <a href="#openhands">OpenHands must know</a>
+        <a href="#comparison">OpenHands vs Codex CLI vs Claude Code</a>
+        <a href="#architecture">Reference architecture</a>
+        <a href="#evaluation">Evaluation and governance</a>
+        <a href="#learning-path">Learning path</a>
+        <a href="#sources">Sources</a>
+      </div>
+    </nav>
+
+    <div class="article-body">
+      <section id="one-line">
+        <h2>1. One-line idea</h2>
+        <div class="callout">
+          <p><strong>Code as Agent Harness:</strong> code is no longer only the output of an AI model; code becomes the runtime layer that lets an agent act, observe, verify, remember, and improve.</p>
+        </div>
+        <p>The paper argues that the important unit is not just the LLM. The important unit is the <strong>LLM plus harness</strong>: tools, files, shell, APIs, sandbox, tests, logs, memory, approvals, and audit trail.</p>
+      </section>
+
+      <section id="mental-model">
+        <h2>2. Mental model shift</h2>
+        <p><strong>Old model:</strong></p>
+        <pre>User asks → LLM writes code → code is final answer</pre>
+        <p><strong>New agent model:</strong></p>
+        <pre>User goal
+  ↓
+Agent plans
+  ↓
+Agent edits files / runs commands / calls tools
+  ↓
+Harness executes in a controlled runtime
+  ↓
+Tests, logs, errors, policies, and human feedback return as signals
+  ↓
+Agent revises, persists state, and produces an artifact</pre>
+        <div class="callout teal">
+          <p><strong>Must know:</strong> agent quality is not only model quality. It depends on the harness: tool design, sandbox isolation, state management, verification, and governance.</p>
+        </div>
+      </section>
+
+      <section id="paper-framework">
+        <h2>3. The paper framework</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Layer</th><th>Meaning</th><th>Must know</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Harness interface</strong></td><td>How code connects the model to reasoning, action, and environment state.</td><td>Files, shell, APIs, tests, browser, repo state, logs.</td></tr>
+              <tr><td><strong>Harness mechanisms</strong></td><td>The control surfaces around the model.</td><td>Planning, memory, context construction, tool use, feedback control, verification.</td></tr>
+              <tr><td><strong>Scaling layer</strong></td><td>How one agent becomes many coordinated agents.</td><td>Planner, coder, tester, reviewer, security checker using shared executable state.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The paper’s practical message: <strong>do not treat agents as chatbots with tools</strong>. Treat them as controlled execution systems.</p>
+      </section>
+
+      <section id="openhands">
+        <h2>4. OpenHands must know</h2>
+        <p>OpenHands is a useful concrete example because it exposes much of the harness as inspectable software: SDK, CLI, web app, sandbox, tools, workspace, agent server, and deployment options.</p>
+        <div class="grid">
+          <div class="card"><h4>1. SDK first</h4><p>The Software Agent SDK provides Python and REST APIs for building agents that work with code.</p></div>
+          <div class="card"><h4>2. Interfaces are separate</h4><p>CLI, web, cloud, and integrations consume the SDK instead of becoming the agent core.</p></div>
+          <div class="card"><h4>3. Sandbox is the action zone</h4><p>OpenHands supports Docker, process, and remote sandbox providers. Docker is recommended for isolation.</p></div>
+          <div class="card"><h4>4. Tools define capability</h4><p>File edit, Bash, browsing, tests, MCP/custom tools, and repo operations form the agent’s action space.</p></div>
+          <div class="card"><h4>5. Events create inspectability</h4><p>Useful output is not only the final diff; it is also the run history: observations, actions, failures, tests, and decisions.</p></div>
+          <div class="card"><h4>6. Model-agnostic by design</h4><p>The harness should survive model changes; tools, policies, and verifiers should not assume one model’s behavior.</p></div>
+        </div>
+        <div class="callout warm">
+          <p><strong>Practical interpretation:</strong> OpenHands is not merely a terminal coding assistant. It is closer to an open-source platform for building, inspecting, customizing, and deploying coding agents.</p>
+        </div>
+      </section>
+
+      <section id="comparison">
+        <h2>5. OpenHands vs Codex CLI vs Claude Code</h2>
+        <p>All three can feel similar at the terminal: they read a repo, edit files, run commands, and iterate from test output. The difference is mainly <strong>product scope and extensibility</strong>, not the surface chat loop.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Dimension</th><th>OpenHands</th><th>Codex CLI</th><th>Claude Code</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Best mental model</strong></td><td>Open-source software-agent platform and SDK.</td><td>Local terminal-native coding agent.</td><td>Polished agentic coding product centered on Claude.</td></tr>
+              <tr><td><strong>Primary strength</strong></td><td>Extensibility, self-hosting, SDK, sandbox choices, platform workflows.</td><td>Simple local repo coding loop with configurable model/provider, approvals, and sandbox settings.</td><td>Strong developer experience, mature terminal workflow, Anthropic ecosystem, direct Claude integration.</td></tr>
+              <tr><td><strong>Model relationship</strong></td><td>Model-agnostic platform.</td><td>Configurable model/provider in CLI settings.</td><td>Built around Claude access through subscription, Console, or supported cloud provider.</td></tr>
+              <tr><td><strong>Harness visibility</strong></td><td>High: SDK, tools, sandbox, agent server, runtime concepts are explicit.</td><td>Medium-high: open-source CLI exposes the terminal harness, approvals, config, and local execution loop.</td><td>Lower: powerful product, but the deeper runtime is less open to modify.</td></tr>
+              <tr><td><strong>Deployment scope</strong></td><td>CLI, web, cloud, SDK/API, self-host, enterprise-style workflows.</td><td>Primarily local CLI/editor/app/cloud product ecosystem around Codex.</td><td>CLI plus Anthropic-supported integrations and managed product experience.</td></tr>
+              <tr><td><strong>Best for learning</strong></td><td>Learning the full agent harness architecture.</td><td>Learning a lean terminal coding-agent loop.</td><td>Learning how a polished production coding agent behaves in daily work.</td></tr>
+              <tr><td><strong>Best for building your own platform</strong></td><td>Strongest starting point.</td><td>Good if your target is a focused CLI workflow.</td><td>Best as a tool to use, not as an open foundation to rebuild.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <p><strong>Shortest distinction:</strong> Claude Code is a polished coding-agent product. Codex CLI is a focused local coding-agent tool. OpenHands is the broader open-source harness platform.</p>
+        </div>
+      </section>
+
+      <section id="architecture">
+        <h2>6. Reference architecture</h2>
+        <div class="diagram">User / Team Goal
+      │
+      ▼
+Interface
+CLI · Web · IDE · API · GitHub/GitLab/Slack/Ticketing
+      │
+      ▼
+Agent Core / SDK
+LLM adapter · agent loop · planning · conversation state · events
+      │
+      ▼
+Tool Layer
+File edit · Bash · browser · MCP · custom tools · test runners
+      │
+      ▼
+Workspace / Sandbox
+Docker · process · remote sandbox · filesystem · services
+      │
+      ▼
+Verification / Governance
+Tests · lint · security checks · policies · approvals · audit trail
+      │
+      ▼
+Artifacts
+Diff · PR · docs · logs · test output · decisions · reusable skills</div>
+        <p>This is the real “code as agent harness” unit: <strong>model + runtime + tools + state + verifier + governance</strong>.</p>
+      </section>
+
+      <section id="evaluation">
+        <h2>7. Evaluation and governance must know</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Question</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr><td>Did it solve the task?</td><td>Final success still matters.</td></tr>
+              <tr><td>Did it prove the task?</td><td>Weak tests create fake success.</td></tr>
+              <tr><td>Was the trajectory safe?</td><td>Agents can run commands and change files; policy and sandbox boundaries matter.</td></tr>
+              <tr><td>Can the run be replayed?</td><td>Auditability is essential for enterprise trust.</td></tr>
+              <tr><td>Did it avoid context pollution?</td><td>Bad memory or irrelevant context makes long tasks worse.</td></tr>
+              <tr><td>Can humans intervene at the right points?</td><td>Approval should become durable governance state, not just a one-time pause.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout rose">
+          <p><strong>Biggest trap:</strong> a coding agent can look successful because it produced a plausible patch. The real question is whether the harness had a strong verifier.</p>
+        </div>
+      </section>
+
+      <section id="learning-path">
+        <h2>8. Concise learning path</h2>
+        <ol class="checklist">
+          <li><span class="tag">Paper</span>Learn the vocabulary: interface, mechanisms, feedback, verification, multi-agent scaling.</li>
+          <li><span class="tag">OpenHands CLI</span>Run a small repo task and watch file reads, edits, commands, failures, and recovery.</li>
+          <li><span class="tag">Sandbox</span>Understand Docker vs process vs remote sandbox tradeoffs.</li>
+          <li><span class="tag">SDK</span>Map agents, tools, conversations, events, workspace, and security policies.</li>
+          <li><span class="tag">Custom tool</span>Add one tool such as a repo scanner, compliance checker, or test summarizer.</li>
+          <li><span class="tag">Verifier</span>Add required tests, lint, security checks, and human approval gates.</li>
+          <li><span class="tag">Compare</span>Use Codex CLI and Claude Code as product references; use OpenHands to study and modify the platform layer.</li>
+        </ol>
+      </section>
+
+      <section id="sources">
+        <h2>9. Sources</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2605.18747">Code as Agent Harness, arXiv 2605.18747</a></li>
+          <li><a href="https://docs.openhands.dev/openhands/usage/cli/quick-start">OpenHands CLI Quick Start</a></li>
+          <li><a href="https://docs.openhands.dev/sdk">OpenHands Software Agent SDK</a></li>
+          <li><a href="https://docs.openhands.dev/sdk/arch/overview">OpenHands SDK Architecture Overview</a></li>
+          <li><a href="https://docs.openhands.dev/openhands/usage/sandboxes/overview">OpenHands Sandbox Overview</a></li>
+          <li><a href="https://docs.openhands.dev/openhands/usage/architecture/runtime">OpenHands Runtime Architecture</a></li>
+          <li><a href="https://github.com/OpenHands/OpenHands">OpenHands GitHub Repository</a></li>
+          <li><a href="https://github.com/openai/codex">OpenAI Codex CLI GitHub Repository</a></li>
+          <li><a href="https://developers.openai.com/codex/config-basic">OpenAI Codex Configuration Documentation</a></li>
+          <li><a href="https://code.claude.com/docs/en/quickstart">Claude Code Quickstart Documentation</a></li>
+        </ul>
+      </section>
+    </div>
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">Prepared as a concise standalone learning article. Focus: Code as Agent Harness, OpenHands, and practical product positioning.</div>
+</footer>
+
+</body>
+</html>
