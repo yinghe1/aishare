@@ -1,0 +1,213 @@
+<section class="module" id="module-3" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">The Injector Pattern</h1>
+      <p class="module-subtitle">How every service in OpenHands becomes swappable &mdash; and why the architects chose this over hardcoding.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The standardized wall socket</h2>
+        <p>A lamp doesn't care which power plant it's connected to &mdash; coal, solar, nuclear. It plugs into a <strong>standardized socket</strong>, and the wiring behind the wall is someone else's problem. Swap the plant; the lamp never knows.</p>
+        <p>OpenHands wires <em>every</em> service this way. Code depends on an <strong>abstract socket</strong> (an interface), and a small &ldquo;injector&rdquo; decides at startup which real implementation gets plugged in. This is
+          <span class="term" data-definition="A design technique where a component receives its dependencies from the outside rather than constructing them itself. It makes implementations swappable and testable.">dependency injection</span>,
+          and it is the single most important pattern in this repository.</p>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🧩</div>
+          <div class="callout-content">
+            <strong class="callout-title">The repeating shape</strong>
+            <p>Almost every service in <code>app_server</code> follows the same three-part shape: an <strong>abstract base class</strong> (the socket), one or more <strong>concrete implementations</strong> (the appliances), and an <strong>Injector</strong> (the wiring that picks one). Learn it once and the whole codebase opens up.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The socket itself</h2>
+        <p>Here is the entire <code>Injector</code> base class. It's tiny on purpose &mdash; its job is just to <em>yield</em> a ready-to-use object and clean it up afterward:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">Injector</span>(Generic[T], ABC):</span>
+<span class="code-line">    <span class="code-string">"""Object designed to facilitate dependency injection"""</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">depends</span>(self, request: Request) -> AsyncGenerator[T, <span class="code-keyword">None</span>]:</span>
+<span class="code-line">        <span class="code-string">"""Depends function suitable for use with FastAPI DI."""</span></span>
+<span class="code-line">        <span class="code-keyword">async for</span> result <span class="code-keyword">in</span> self.inject(request.state, request):</span>
+<span class="code-line">            <span class="code-keyword">yield</span> result</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A generic socket that knows how to produce some type <code>T</code>.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">This method plugs the socket straight into FastAPI's own dependency system&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;so any route can just say &ldquo;give me the service&rdquo; and get the right one, fully wired, for this request.</p>
+            </div>
+          </div>
+        </div>
+        <p>Each concrete service then declares its socket. For event callbacks it's one line:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">EventCallbackServiceInjector</span>(</span>
+<span class="code-line">    DiscriminatedUnionMixin, Injector[EventCallbackService], ABC</span>
+<span class="code-line">):</span>
+<span class="code-line">    <span class="code-keyword">pass</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A socket that specifically produces an <code>EventCallbackService</code>&hellip;</p>
+              <p class="tl">&hellip;and mixes in <code>DiscriminatedUnion</code> &mdash; the magic that lets the choice of implementation be written down in config and saved to disk.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">No body needed &mdash; the shape <em>is</em> the contract.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Why <code>DiscriminatedUnion</code> matters</h2>
+        <p>A plain interface lets you swap implementations <em>in code</em>. A
+          <span class="term" data-definition="A way to represent 'one of several known types' so a serializer can recognise which one it is by a tag field (the discriminator) — e.g. {kind: 'AwsEventService', bucket: '...'}. It lets a choice of class be stored as data.">discriminated union</span>
+          lets you swap them <em>in data</em> &mdash; a JSON object or an environment variable can name the class <em>and</em> carry its settings. That single property is what makes the whole config-driven architecture possible.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🗂️</div>
+            <h4 class="pattern-title">FilesystemEventService</h4>
+            <p class="pattern-desc">The default. Stores events as files on local disk. Perfect for a laptop.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🪣</div>
+            <h4 class="pattern-title">AwsEventService</h4>
+            <p class="pattern-desc">Same socket, S3 behind it. Chosen when the storage provider is AWS.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">☁️</div>
+            <h4 class="pattern-title">GoogleCloudEventService</h4>
+            <p class="pattern-desc">Same socket again, GCS behind it. The conductor never notices the difference.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Where the choice is made</h2>
+        <p>One function reads the environment and fills in any socket the operator didn't override. This is the actual wiring for event storage in <code>config_from_env()</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line">config: AppServerConfig = from_env(AppServerConfig, <span class="code-string">'OH'</span>)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">if</span> config.event <span class="code-keyword">is</span> <span class="code-keyword">None</span>:</span>
+<span class="code-line">    provider = get_storage_provider()</span>
+<span class="code-line">    <span class="code-keyword">if</span> provider == StorageProvider.AWS:</span>
+<span class="code-line">        config.event = AwsEventServiceInjector(bucket_name=bucket_name)</span>
+<span class="code-line">    <span class="code-keyword">elif</span> provider == StorageProvider.GCP:</span>
+<span class="code-line">        config.event = GoogleCloudEventServiceInjector(bucket_name=bucket_name)</span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        config.event = FilesystemEventServiceInjector()</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Build the whole config from <code>OH_*</code> environment variables in one shot.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">If the operator didn't explicitly pin an event backend&hellip;</p>
+              <p class="tl">&hellip;look at which storage provider is configured&hellip;</p>
+              <p class="tl">&hellip;AWS? plug in the S3 socket&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;GCP? plug in the Google Cloud socket&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;otherwise fall back to plain files. Sensible default, full override.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎚️</div>
+          <div class="callout-content">
+            <strong class="callout-title">&ldquo;Convention with an escape hatch&rdquo;</strong>
+            <p>Notice the pattern: <code>if config.X is None:</code> pick a smart default. Operators get zero-config on a laptop, yet can override any single service by setting <code>OH_*</code> variables &mdash; without forking the code. This is the design philosophy of the entire config layer.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The honest trade-off</h2>
+        <p>This pattern is not free. An architect should weigh both sides before adopting it.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">✅</div>
+            <h4 class="pattern-title">What you gain</h4>
+            <p class="pattern-desc">One codebase runs laptop &rarr; cloud &rarr; enterprise. Tests inject fakes trivially. New backends are additive, not invasive. Config is data, so it's serializable and auditable.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">⚠️</div>
+            <h4 class="pattern-title">What it costs</h4>
+            <p class="pattern-desc">Indirection: to read &ldquo;what actually runs,&rdquo; you trace base &rarr; injector &rarr; <code>config_from_env</code>. The <code>from_env</code> magic is implicit. Newcomers must learn the shape before any single feature makes sense.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔍</div>
+          <div class="callout-content">
+            <strong class="callout-title">Debugging tip you'll actually use</strong>
+            <p>When something behaves unexpectedly, &ldquo;what's plugged in right now?&rdquo; is the first question. The answer is never in the calling code &mdash; it's in <code>config_from_env()</code> and the <code>OH_*</code> environment. Start there, not at the call site.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module3">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>You're self-hosting OpenHands and your compliance team requires all conversation events to land in your own S3 bucket. You'd prefer not to fork the project.</p>
+            </div>
+          </div>
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly the intended path. The injector pattern means storage is config, not code: set the storage provider + bucket via OH_* / env, and config_from_env plugs in AwsEventServiceInjector. No fork."
+               data-explanation-wrong="A fork or a code edit defeats the whole design. Event storage is selected by config (the storage provider + bucket), and config_from_env wires AwsEventServiceInjector for you.">
+            <h3 class="quiz-question">What's the cleanest way to get there?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fork the repo and rewrite <code>FilesystemEventService</code> to call S3.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Configure the AWS storage provider + bucket via env; let <code>config_from_env</code> select the S3 injector.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Edit every route to import the S3 service directly.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. The DiscriminatedUnion tag is what lets a class choice live in serialized config/env data — without it, an injector can't be expressed as data and selected at startup."
+               data-explanation-wrong="Re-read 'Why DiscriminatedUnion matters'. A plain interface only swaps in code; the union tag is what lets the chosen implementation be written as data (env/JSON) and reconstructed at startup.">
+            <h3 class="quiz-question">Why do the injectors mix in <code>DiscriminatedUnionMixin</code> rather than being plain abstract classes?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It makes the classes import faster.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It's required by FastAPI.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>So the choice of implementation can be expressed as serializable data (env/JSON) and rebuilt at startup.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: with the sockets understood, let's watch a conversation actually come to life &mdash; the lifecycle state machine and the sandbox. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>

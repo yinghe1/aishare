@@ -1,0 +1,189 @@
+<section class="module" id="module-2" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">The Cast: Control Plane vs. Data Plane</h1>
+      <p class="module-subtitle">Meet the services that make up mission control &mdash; and the hard line that separates them from the agent.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">An orchestra, not a soloist</h2>
+        <p>An orchestra has no single &ldquo;music maker.&rdquo; A conductor coordinates; strings, brass, and percussion each own one job. Remove the conductor and you get noise; remove the brass and the piece is thinner but still plays.</p>
+        <p>The app server is an orchestra of <strong>focused services</strong>. Each owns one responsibility and knows nothing about the others' internals. The
+          <span class="term" data-definition="An architectural principle: each module should have one well-defined job and hide how it does that job from everyone else. It's the single most repeated idea in this codebase.">separation of concerns</span>
+          is deliberate and total.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🎼</div>
+            <div><strong>AppConversationService</strong><p>The conductor. Creates a conversation, wires up the LLM, condenser, security policy, and skills, then drives the start sequence.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">📦</div>
+            <div><strong>SandboxService</strong><p>Launches, health-checks, pauses, resumes, and reaps the isolated environments the agent runs in.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">📜</div>
+            <div><strong>EventService</strong><p>The scribe. Persists and streams every event a conversation produces, backed by the filesystem, S3, or Google Cloud.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🔔</div>
+            <div><strong>EventCallbackService</strong><p>The reactor. Runs custom processors when matching events arrive &mdash; the extension point you'll use in Module 6.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">📈</div>
+            <div><strong>AnalyticsService &amp; UserContext</strong><p>Who is this user, what may they do, and what should we measure &mdash; consent-gated.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The line down the middle: two planes</h2>
+        <p>Cloud architecture has a name for this split. The <span class="term" data-definition="The control plane is the part of a system that makes decisions and holds state — what should run, for whom, where — without doing the heavy lifting itself. Think air-traffic control, not the planes.">control plane</span> makes decisions and holds state; the <span class="term" data-definition="The data plane is the part that actually does the work on the actual data — moving packets, running code, executing commands. In OpenHands it's the agent inside the sandbox.">data plane</span> does the actual work on the actual data. OpenHands draws that line between the app server and the agent.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🛰️</div>
+            <h4 class="pattern-title">Control Plane &middot; App Server</h4>
+            <p class="pattern-desc">FastAPI. Auth, conversation records, sandbox orchestration, event storage, billing. Multi-tenant. <strong>Trusted.</strong> Never executes agent-authored code.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🚀</div>
+            <h4 class="pattern-title">Data Plane &middot; Agent Server</h4>
+            <p class="pattern-desc">Runs in the sandbox. The LLM loop, file edits, shell commands, browser. Single-tenant per conversation. <strong>Untrusted.</strong> Disposable.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🏛️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Design consideration: why split the planes at all?</strong>
+            <p>Three reasons, in priority order. <strong>(1) Security</strong> &mdash; agent-authored shell commands must never share a process with multi-tenant user data. <strong>(2) Scaling</strong> &mdash; one control plane can fan out to thousands of independent agent sandboxes. <strong>(3) Licensing</strong> &mdash; the core <code>openhands</code> and <code>agent-server</code> images are MIT, while <code>enterprise/</code> is source-available; a clean process boundary keeps that line enforceable. The cost you pay: every interaction is now a network round-trip with its own failure modes.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Listen in: starting a conversation</h2>
+        <p>When you submit a task, the services on the control plane have a quick conversation of their own before the agent ever wakes up. Play it through:</p>
+
+        <div class="chat-window" id="chat-module2">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="conv" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">🎼</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">AppConversation</span><p>New task came in. Sandbox, I need a place to run. Spin one up?</p></div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="sandbox" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">📦</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Sandbox</span><p>Booting a container now. I'll ping the Agent Server's <code>/alive</code> endpoint and tell you the moment it answers.</p></div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="sandbox" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">📦</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Sandbox</span><p>It's alive and exposing a URL. Here's your handle.</p></div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="conv" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">🎼</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">AppConversation</span><p>Great. Cloning the repo, running setup.sh, installing hooks, loading skills. Event scribe &mdash; record every step.</p></div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="event" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">📜</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-3)">EventService</span><p>Logged. And anyone who subscribed via a callback will hear about each one.</p></div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="callback" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">🔔</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-4)">EventCallback</span><p>On it. First message event &rarr; I'll go ask the agent to name this conversation.</p></div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-typing" style="display:none">
+            <div class="chat-avatar" id="typing-avatar">?</div>
+            <div class="chat-typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">How the planes actually touch</h2>
+        <p>The control plane reaches the data plane through one narrow channel: an HTTP URL the sandbox exposes, plus a session key. Here's the real lookup that finds it, from <code>sandbox_service.py</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">_get_agent_server_url</span>(self, sandbox: SandboxInfo) -> <span class="code-keyword">str</span>:</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-keyword">not</span> sandbox.exposed_urls:</span>
+<span class="code-line">        <span class="code-keyword">raise</span> SandboxError(<span class="code-string">f'No exposed URLs for sandbox: {sandbox.id}'</span>)</span>
+<span class="code-line">    <span class="code-keyword">for</span> exposed_url <span class="code-keyword">in</span> sandbox.exposed_urls:</span>
+<span class="code-line">        <span class="code-keyword">if</span> exposed_url.name == AGENT_SERVER:</span>
+<span class="code-line">            <span class="code-keyword">return</span> replace_localhost_hostname_for_docker(exposed_url.url)</span>
+<span class="code-line">    <span class="code-keyword">raise</span> SandboxError(<span class="code-string">f'No agent server URL found for sandbox: {sandbox.id}'</span>)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Find the address mission control should call for this sandbox.</p>
+              <p class="tl">If the sandbox published no URLs yet, that's an error &mdash; there's nothing to talk to.</p>
+              <p class="tl">Otherwise, scan the URLs the sandbox exposed&hellip;</p>
+              <p class="tl">&hellip;looking for the one named &ldquo;agent server.&rdquo;</p>
+              <p class="tl">Found it &mdash; but rewrite <code>localhost</code> so it works from inside Docker's network, then hand it back.</p>
+              <p class="tl">No agent-server URL? Fail loudly rather than guess.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔌</div>
+          <div class="callout-content">
+            <strong class="callout-title">Notice the discipline</strong>
+            <p>The control plane holds <em>no</em> direct reference to the agent process &mdash; only a URL and a key it discovered at runtime. That indirection is what lets the same code drive a local Docker container, a remote runtime, or a Kubernetes pod without changing.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module2">
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Correct. A symptom of 'the agent ran but nothing showed up' points at the event pipeline — EventService persisting/streaming and any callbacks — not at the sandbox, which clearly started."
+               data-explanation-wrong="The agent demonstrably ran (it did work), so the sandbox started fine. The missing piece is the events not reaching the UI — that's the EventService/streaming path.">
+            <h3 class="quiz-question">A user reports: &ldquo;the agent finished my task and opened a PR, but the activity feed in the UI stayed empty the whole time.&rdquo; Where do you look first?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The Sandbox Service &mdash; the container probably never started.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The LLM &mdash; the model must have failed.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The EventService / streaming path &mdash; work happened, but events didn't reach the UI.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. Putting agent-executed shell commands in the trusted, multi-tenant control plane process would let one user's agent reach another's data — the exact thing the plane split prevents."
+               data-explanation-wrong="Reconsider the security rationale. The control plane is trusted and multi-tenant; running untrusted agent commands there breaks isolation for everyone.">
+            <h3 class="quiz-question">You're tempted to run a &ldquo;quick&rdquo; agent shell command directly in the app server to save a network hop. Why is that a serious mistake?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It runs untrusted code in the trusted, multi-tenant plane &mdash; breaking isolation for every user.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>FastAPI doesn't support subprocesses.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It would violate the MIT license.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: how does the app server swap one sandbox backend for another without touching the conductor? The injector pattern. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>

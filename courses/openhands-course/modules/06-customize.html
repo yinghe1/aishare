@@ -1,0 +1,262 @@
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">Customizing Observability &amp; Evaluation</h1>
+      <p class="module-subtitle">The applied module: wire your own tracing and your own trajectory scoring onto the event spine &mdash; with an honest map of what ships vs. what you build.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A reading convention for this module</h2>
+        <p>Because we're about to mix real platform code with code <em>you</em> would write, every code block here is labelled. Don't skip these &mdash; they're the difference between &ldquo;ships in the box&rdquo; and &ldquo;you implement it.&rdquo;</p>
+        <div class="badge-list">
+          <div class="badge-item"><code class="badge-code" style="color:#A6E3A1">REAL</code><span class="badge-desc">Copied verbatim from this repository. You can open the file and find it.</span></div>
+          <div class="badge-item"><code class="badge-code" style="color:#F9E2AF">SAMPLE</code><span class="badge-desc">Illustrative code <em>you</em> would write, built on the real <code>EventCallbackProcessor</code> contract from Module 5. Not in the repo as-is.</span></div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon">🎙️</div>
+          <div class="callout-content">
+            <strong class="callout-title">The metaphor: a flight data recorder and a panel of judges</strong>
+            <p><strong>Observability</strong> is the black box &mdash; it records what happened so you can replay any flight. <strong>Evaluation</strong> is the panel of judges &mdash; it watches the recording and assigns a score. OpenHands gives you mounting points for both; the recorder is largely built, the judges are mostly yours to write.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Observability, layer 1: the analytics that ships</h2>
+        <p>The platform already records product-level signals through <code>AnalyticsService</code> &mdash; a thin, consent-gated wrapper over
+          <span class="term" data-definition="A product-analytics tool that records events like 'conversation created' so teams can analyse usage. Here it's wrapped so it never fires without user consent.">PostHog</span>.
+          Two design choices in this <code>REAL</code> snippet are worth copying in your own telemetry:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">REAL &middot; analytics_service.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">capture</span>(self, ctx, event, properties=<span class="code-keyword">None</span>, session_id=<span class="code-keyword">None</span>):</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-keyword">not</span> ctx.consented:</span>
+<span class="code-line">        <span class="code-keyword">return</span></span>
+<span class="code-line">    merged = self._common_properties(org_id=ctx.org_id, session_id=session_id)</span>
+<span class="code-line">    <span class="code-keyword">if</span> properties:</span>
+<span class="code-line">        merged.update(properties)</span>
+<span class="code-line">    <span class="code-keyword">try</span>:</span>
+<span class="code-line">        self._client.capture(distinct_id=..., event=event, properties=merged)</span>
+<span class="code-line">    <span class="code-keyword">except</span> Exception:</span>
+<span class="code-line">        logger.exception(<span class="code-string">'AnalyticsService.capture failed for event=%s'</span>, event)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Record a server-side event&hellip;</p>
+              <p class="tl"><strong>Choice 1 &mdash; consent gate:</strong> if the user hasn't opted in,</p>
+              <p class="tl">do absolutely nothing. Privacy is the default, not an afterthought.</p>
+              <p class="tl">Attach common context (org, session) to every event&hellip;</p>
+              <p class="tl">&hellip;then merge in the caller's specifics.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Send it&hellip;</p>
+              <p class="tl"><strong>Choice 2 &mdash; never let telemetry break the app:</strong></p>
+              <p class="tl">if the analytics SDK throws, log and swallow. Measuring must never crash the thing being measured.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-accent">
+          <div class="callout-icon">📊</div>
+          <div class="callout-content">
+            <strong class="callout-title">It already tracks the metrics evaluation cares about</strong>
+            <p><code>track_conversation_finished</code> (also <code>REAL</code>) emits <code>terminal_state</code>, <code>turn_count</code>, <code>accumulated_cost_usd</code>, and token counts. Those four fields <em>are</em> the raw material of agent evaluation &mdash; hold that thought for the second half.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Observability, layer 2: tracing the agent, free</h2>
+        <p>Inside the sandbox, the agent emits detailed LLM <span class="term" data-definition="A trace is the full timeline of one request as it flows through a system — every model call, tool call, and timing — visualised as a tree. It's how you debug why an agent did what it did.">traces</span> to
+          <span class="term" data-definition="Laminar (package name lmnr) is an observability platform for LLM apps. It collects traces of model and tool calls so you can inspect and debug agent behaviour.">Laminar</span>.
+          You don't write code to enable it &mdash; you set environment variables, and the <code>REAL</code> forwarding rule from Module 1 carries them across the plane boundary:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">REAL &middot; operator config</span>
+            <pre><code><span class="code-line"><span class="code-comment"># On the app server host — auto-forwarded into the sandbox</span></span>
+<span class="code-line"><span class="code-keyword">export</span> LMNR_PROJECT_API_KEY=your-api-key</span>
+<span class="code-line"><span class="code-keyword">export</span> LMNR_BASE_URL=https://app.lmnr.ai</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment"># AUTO_FORWARD_PREFIXES = ('LLM_', 'LMNR_')  &larr; from Module 1</span></span>
+<span class="code-line"><span class="code-comment"># anything LMNR_* now appears inside the agent-server, too</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Give mission control your Laminar credentials&hellip;</p>
+              <p class="tl">&hellip;the project key&hellip;</p>
+              <p class="tl">&hellip;and where to send traces.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Because the prefix is on the auto-forward list&hellip;</p>
+              <p class="tl">&hellip;the spacecraft inherits them and starts emitting traces. Config, not code.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">Honest limitation</strong>
+            <p>This binds you to Laminar specifically. There is <em>no</em> vendor-neutral <span class="term" data-definition="OpenTelemetry (OTel) is an open standard for traces, metrics, and logs that most backends understand. Emitting OTel means you can switch vendors without changing instrumentation.">OpenTelemetry</span> exporter wired into the app server today. Want Datadog or Honeycomb instead? You either point Laminar at an OTel collector downstream, or you build your own hook &mdash; which is exactly layer 3.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Observability, layer 3: your own tracing hook</h2>
+        <p>For control-plane-side observability (or a non-Laminar backend), implement an <code>EventCallbackProcessor</code>. This <code>SAMPLE</code> turns every event into a span on a backend of your choice &mdash; note it implements the exact <code>REAL</code> contract from Module 5:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">SAMPLE &middot; you write this</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">TracingCallbackProcessor</span>(EventCallbackProcessor):</span>
+<span class="code-line">    event_kind: ClassVar[EventKind] = <span class="code-string">'MessageEvent'</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">__call__</span>(self, conversation_id, callback, event):</span>
+<span class="code-line">        <span class="code-keyword">with</span> tracer.start_as_current_span(<span class="code-string">'agent.event'</span>) <span class="code-keyword">as</span> span:</span>
+<span class="code-line">            span.set_attribute(<span class="code-string">'conversation_id'</span>, <span class="code-function">str</span>(conversation_id))</span>
+<span class="code-line">            span.set_attribute(<span class="code-string">'event.kind'</span>, event.kind)</span>
+<span class="code-line">        <span class="code-keyword">return</span> EventCallbackResult(</span>
+<span class="code-line">            status=EventCallbackResultStatus.SUCCESS,</span>
+<span class="code-line">            event_callback_id=callback.id, event_id=event.id,</span>
+<span class="code-line">            conversation_id=conversation_id)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define a reaction &mdash; same base class the platform's own callbacks use.</p>
+              <p class="tl">Tell the dispatcher which events to send you.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Each time one arrives&hellip;</p>
+              <p class="tl">&hellip;open a span on your tracing backend (OTel, Langfuse, anything)&hellip;</p>
+              <p class="tl">&hellip;tag it with the conversation&hellip;</p>
+              <p class="tl">&hellip;and the event type.</p>
+              <p class="tl">Then hand back a SUCCESS result&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;so the dispatcher records that your hook ran cleanly. That's the entire integration.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon">🔁</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why this is the same shape as <code>LoggingCallbackProcessor</code></strong>
+            <p>The repo's <code>REAL</code> <code>LoggingCallbackProcessor</code> does precisely this, but its body just calls <code>_logger.info(...)</code>. Swap the logger for a tracer and you have layer-3 observability. The platform handed you a working template; you change four lines.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Evaluation: the honest map first</h2>
+        <p>Before any sample, the truth about where evaluation lives:</p>
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🚫</div>
+            <h4 class="pattern-title">Not in this repo</h4>
+            <p class="pattern-desc">The benchmark harness behind the 77.6 SWE-bench score lives in a <em>separate</em> project (<code>OpenHands/benchmarks</code>). There is no first-class &ldquo;evaluation framework&rdquo; injector in <code>app_server</code> today.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">✅</div>
+            <h4 class="pattern-title">What this repo gives you</h4>
+            <p class="pattern-desc">The raw material: the full event stream, terminal state, turn count, and cost. Enough to score a <span class="term" data-definition="The trajectory is the full sequence of steps an agent took on a task — its messages, tool calls, and edits from start to finish. Evaluating a trajectory means judging that whole sequence, not just the final answer.">trajectory</span> yourself, on the same callback spine.</p>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why honesty matters here</strong>
+            <p>If someone tells you OpenHands has &ldquo;built-in custom evaluation,&rdquo; push back. It has the <em>data and the hook</em> for evaluation. The scoring logic &mdash; and any benchmark dataset, sandboxed test runner, or LLM-judge &mdash; is something you assemble. Knowing that boundary prevents a planning mistake.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Evaluation: a sample trajectory scorer</h2>
+        <p>Here's how you'd score a finished run in-process. This <code>SAMPLE</code> reacts to the agent-completion event and records a score as a callback result &mdash; queryable later, no separate pipeline:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">SAMPLE &middot; you write this</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">TrajectoryScoringProcessor</span>(EventCallbackProcessor):</span>
+<span class="code-line">    <span class="code-comment"># set to the SDK event kind that marks completion</span></span>
+<span class="code-line">    event_kind: ClassVar[EventKind] = <span class="code-string">'AgentStateChangedEvent'</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">__call__</span>(self, conversation_id, callback, event):</span>
+<span class="code-line">        score = <span class="code-keyword">await</span> self.judge(conversation_id)   <span class="code-comment"># tests / LLM-judge</span></span>
+<span class="code-line">        <span class="code-keyword">return</span> EventCallbackResult(</span>
+<span class="code-line">            status=EventCallbackResultStatus.SUCCESS,</span>
+<span class="code-line">            detail=json.dumps({<span class="code-string">'score'</span>: score}),</span>
+<span class="code-line">            event_callback_id=callback.id, event_id=event.id,</span>
+<span class="code-line">            conversation_id=conversation_id)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A reaction &mdash; again, the same Module 5 contract.</p>
+              <p class="tl">Listen for the event that means &ldquo;the agent reached a terminal state.&rdquo;</p>
+              <p class="tl">(The exact name comes from the SDK's event taxonomy &mdash; verify it; don't trust this string blindly.)</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">When the run ends&hellip;</p>
+              <p class="tl">&hellip;judge it &mdash; run the repo's tests, or ask an LLM to grade the trajectory.</p>
+              <p class="tl">Record the verdict&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;as structured JSON in the result&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;tied to this exact conversation, persisted automatically.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-content">
+            <strong class="callout-title">Honest limitations of in-process scoring</strong>
+            <p>(1) <strong>Judging is genuinely hard</strong> &mdash; &ldquo;did the agent do a good job?&rdquo; rarely has a clean signal; LLM-judges are noisy and can be gamed. (2) <strong>Callbacks aren't a batch harness</strong> &mdash; for reproducible benchmarks across hundreds of tasks, the external <code>benchmarks</code> repo is the right tool, not per-conversation callbacks. (3) <strong>The completion event kind must be verified</strong> against the SDK version you run &mdash; event taxonomies change with version bumps.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module6">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>Your platform team standardised on Datadog APM and wants every agent action visible there, with no dependency on Laminar.</p>
+            </div>
+          </div>
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. There's no built-in vendor-neutral exporter, so the idiomatic move is a custom EventCallbackProcessor (like the layer-3 sample) that emits to your backend — reusing the resilient dispatcher you already have."
+               data-explanation-wrong="Re-read the layer-2 limitation. LMNR_* only configures Laminar; it won't send data to Datadog. The seam for arbitrary backends is a custom EventCallbackProcessor.">
+            <h3 class="quiz-question">What's the right hook?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Set <code>LMNR_*</code> to Datadog's URL &mdash; it'll forward there.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Write an <code>EventCallbackProcessor</code> that emits to Datadog &mdash; the layer-3 pattern.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fork the SDK and replace its tracer.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. For reproducible scoring across a fixed task set, the external benchmarks repo is the right tool. Per-conversation callbacks are for live, in-product signals — not batch evaluation."
+               data-explanation-wrong="Per-conversation callbacks fire on live production runs, not a controlled task set. For a reproducible benchmark you want the dedicated external harness, not the callback spine.">
+            <h3 class="quiz-question">Your research lead wants a reproducible score for the agent across a fixed set of 300 GitHub issues. Should you build it as event callbacks in <code>app_server</code>?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Yes &mdash; callbacks are the official evaluation framework.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Yes &mdash; it's the only place trajectory data exists.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No &mdash; use the dedicated external <code>benchmarks</code> harness; callbacks are for live in-product signals.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Finally: the design trade-offs pulled together, the honest limits, and a clearly-marked look at what could come next. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>

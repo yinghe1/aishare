@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside OpenHands</title>
+
+  <!-- Google Fonts: Bricolage Grotesque · DM Sans · JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!--
+    CUSTOMIZE PER COURSE — teal accent, chosen to match the OpenHands brand
+    while keeping the warm-paper background.
+  -->
+  <style>
+    :root {
+      --color-accent:       #2A7B9B;
+      --color-accent-hover: #1F6280;
+      --color-accent-light: #E4F2F7;
+      --color-accent-muted: #5A9DB8;
+    }
+  </style>
+
+  <script src="main.js" defer></script>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="nav-inner">
+      <span class="nav-title">Inside OpenHands</span>
+      <div class="nav-dots" id="nav-dots" role="tablist">
+        <button class="nav-dot" data-target="module-1" data-tooltip="The Journey of a Task" role="tab" aria-label="Module 1: The Journey of a Task"></button>
+        <button class="nav-dot" data-target="module-2" data-tooltip="Control Plane vs Data Plane" role="tab" aria-label="Module 2: Control Plane vs Data Plane"></button>
+        <button class="nav-dot" data-target="module-3" data-tooltip="The Injector Pattern" role="tab" aria-label="Module 3: The Injector Pattern"></button>
+        <button class="nav-dot" data-target="module-4" data-tooltip="Conversation Lifecycle & Sandboxes" role="tab" aria-label="Module 4: Conversation Lifecycle and Sandboxes"></button>
+        <button class="nav-dot" data-target="module-5" data-tooltip="Events & Callbacks" role="tab" aria-label="Module 5: Events and Callbacks"></button>
+        <button class="nav-dot" data-target="module-6" data-tooltip="Customizing Observability & Evaluation" role="tab" aria-label="Module 6: Customizing Observability and Evaluation"></button>
+        <button class="nav-dot" data-target="module-7" data-tooltip="Trade-offs, Limits & The Road Ahead" role="tab" aria-label="Module 7: Trade-offs, Limits and The Road Ahead"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- modules/*.html content is assembled here by build.sh -->
+<section class="module" id="module-1" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">The Journey of a Single Task</h1>
+      <p class="module-subtitle">What OpenHands actually is, and what happens between &ldquo;build me a feature&rdquo; and a pull request appearing on GitHub.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What you're looking at</h2>
+        <p><strong>OpenHands is a platform for running AI software-engineering agents</strong> &mdash; programs that read a codebase, write code, run commands, and open pull requests on your behalf. It scores 77.6 on
+          <span class="term" data-definition="A standard benchmark where an AI agent must fix real GitHub issues from open-source projects. The score is the percentage of issues it resolves with a passing test. Higher is better; this is near the top of the field.">SWE-bench</span>, near the top of the field.</p>
+        <p>But &ldquo;OpenHands&rdquo; is really <em>five products sharing one engine</em>. This course is about the repository in front of you &mdash; the <strong>server and web application</strong> that turns that engine into a multi-user product.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">📦</div>
+            <h4 class="pattern-title">The SDK</h4>
+            <p class="pattern-desc">A Python library &mdash; the actual agent engine. Lives in a <em>separate</em> repo and ships here as the <code>openhands-agent-server</code> package.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">⌨️</div>
+            <h4 class="pattern-title">The CLI</h4>
+            <p class="pattern-desc">A terminal tool like Claude Code or Codex. Drives the same engine from your shell.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🖥️</div>
+            <h4 class="pattern-title">The Local GUI</h4>
+            <p class="pattern-desc">A REST API + React app for running agents on your laptop. <strong>This repo.</strong></p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">☁️</div>
+            <h4 class="pattern-title">Cloud + Enterprise</h4>
+            <p class="pattern-desc">The same GUI, scaled to many users with auth, billing, and integrations. The <code>enterprise/</code> directory here.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">Orient yourself before you read code</strong>
+            <p>This repository is the <strong>application layer</strong>: <code>openhands/app_server/</code> (the REST API), <code>frontend/</code> (the React app), and <code>enterprise/</code> (the multi-tenant SaaS). The agent's reasoning loop lives in the SDK, a dependency. Keep that boundary in mind &mdash; it explains almost every design choice you'll meet.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The metaphor: mission control and the spacecraft</h2>
+        <p>Picture a space mission. There's <strong>mission control</strong> on the ground &mdash; it doesn't fly anywhere, but it decides when to launch, watches telemetry, and keeps records. And there's <strong>the spacecraft</strong> &mdash; isolated, doing the actual dangerous work out in the void.</p>
+        <p>OpenHands is built exactly this way. The <strong>app server</strong> is mission control. The <strong>agent</strong>, running inside a locked-down
+          <span class="term" data-definition="An isolated environment (usually a container or VM) where untrusted code can run without touching the host machine. If the agent runs a destructive command, the blast radius is the sandbox, not your server.">sandbox</span>, is the spacecraft. They are two separate processes that talk over the network.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🛰️</div>
+            <div>
+              <strong>Mission control = the App Server</strong>
+              <p>A <span class="term" data-definition="A popular Python web framework for building APIs. It handles incoming HTTP requests and routes them to your code.">FastAPI</span> service. Starts conversations, launches sandboxes, stores events, enforces auth. Never runs the agent's code itself.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🚀</div>
+            <div>
+              <strong>The spacecraft = the Agent Server</strong>
+              <p>Runs <em>inside</em> the sandbox. This is where the LLM loop, tool calls, and shell commands actually execute. Exposed to mission control over an HTTP port.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Trace it: from prompt to running agent</h2>
+        <p>Imagine you type <em>&ldquo;add rate limiting to the login endpoint&rdquo;</em> and pick a repository. Here's the journey your request takes. Step through it:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"You submit a task and select a repo in the web UI."},
+          {"highlight":"flow-actor-2","label":"The App Server receives the request and starts a conversation.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"The App Server asks the Sandbox Service to launch an isolated container.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-3","label":"The sandbox boots and starts the Agent Server inside it; the App Server polls /alive until it answers."},
+          {"highlight":"flow-actor-3","label":"Setup runs in the sandbox: clone the repo, run .openhands/setup.sh, install git hooks, load skills.","packet":true,"from":"actor-3","to":"actor-4"},
+          {"highlight":"flow-actor-4","label":"The Agent Server runs the LLM loop, editing files and running commands inside the sandbox."},
+          {"highlight":"flow-actor-2","label":"Every action becomes an Event, streamed back to the App Server and persisted.","packet":true,"from":"actor-4","to":"actor-2"},
+          {"highlight":"flow-actor-1","label":"You watch the agent work in real time, and a pull request appears on GitHub."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">🧑‍💻</div>
+              <span>You + Web UI</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🛰️</div>
+              <span>App Server</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-3">
+              <div class="flow-actor-icon">📦</div>
+              <span>Sandbox</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-4">
+              <div class="flow-actor-icon">🚀</div>
+              <span>Agent Server</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">The whole course in one sentence</strong>
+            <p>Everything you'll learn &mdash; the injector pattern, the lifecycle state machine, event callbacks, observability hooks &mdash; exists to make <em>that flow</em> reliable, swappable, and observable across a laptop, a cloud, or a thousand parallel agents.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One small piece of real code</h2>
+        <p>How does configuration on mission control reach the spacecraft? The app server forwards certain environment variables into the sandbox. Here's the actual rule from <code>sandbox_spec_service.py</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-comment"># Prefixes for env vars auto-forwarded to agent-server</span></span>
+<span class="code-line"><span class="code-property">AUTO_FORWARD_PREFIXES</span> = (<span class="code-string">'LLM_'</span>, <span class="code-string">'LMNR_'</span>)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">for</span> key, value <span class="code-keyword">in</span> os.environ.items():</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-function">any</span>(key.startswith(p) <span class="code-keyword">for</span> p <span class="code-keyword">in</span> AUTO_FORWARD_PREFIXES):</span>
+<span class="code-line">        result[key] = value</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define which settings should cross the boundary into the sandbox.</p>
+              <p class="tl">Anything starting with <code>LLM_</code> (model config) or <code>LMNR_</code> (Laminar tracing) qualifies.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Walk every environment variable mission control has&hellip;</p>
+              <p class="tl">&hellip;and if its name has a forwarded prefix&hellip;</p>
+              <p class="tl">&hellip;copy it into the spacecraft's environment. (We'll revisit <code>LMNR_</code> in Module 6 &mdash; it's how tracing gets in.)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module1">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. This repo is the application layer (app_server, frontend, enterprise). The agent's reasoning loop lives in the SDK, pulled in as the openhands-agent-server dependency."
+               data-explanation-wrong="Re-read the orientation card. The LLM loop runs in the Agent Server inside the sandbox, shipped via the SDK dependency — not in this repository's app_server.">
+            <h3 class="quiz-question">A teammate says &ldquo;let's tweak how the agent decides which tool to call &mdash; it's in <code>app_server</code>, right?&rdquo; What's the most accurate response?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Yes, the agent loop is in <code>openhands/app_server/</code>.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No &mdash; the agent loop lives in the SDK (the <code>openhands-agent-server</code> dependency); this repo orchestrates it.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It's in the React frontend.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. Isolation is the whole point: agent-authored commands run in a disposable sandbox, so a destructive command can't reach mission control or other tenants."
+               data-explanation-wrong="Think about what runs untrusted, agent-written shell commands. You want a blast radius — that's the sandbox's reason to exist.">
+            <h3 class="quiz-question">Why run the Agent Server in a separate sandbox instead of in the App Server process?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>To make the code shorter.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Because FastAPI can't run loops.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Isolation &mdash; the agent runs untrusted commands, so its blast radius must be contained.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: we meet the full cast of characters and the hard line between the two planes. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-2" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">The Cast: Control Plane vs. Data Plane</h1>
+      <p class="module-subtitle">Meet the services that make up mission control &mdash; and the hard line that separates them from the agent.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">An orchestra, not a soloist</h2>
+        <p>An orchestra has no single &ldquo;music maker.&rdquo; A conductor coordinates; strings, brass, and percussion each own one job. Remove the conductor and you get noise; remove the brass and the piece is thinner but still plays.</p>
+        <p>The app server is an orchestra of <strong>focused services</strong>. Each owns one responsibility and knows nothing about the others' internals. The
+          <span class="term" data-definition="An architectural principle: each module should have one well-defined job and hide how it does that job from everyone else. It's the single most repeated idea in this codebase.">separation of concerns</span>
+          is deliberate and total.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🎼</div>
+            <div><strong>AppConversationService</strong><p>The conductor. Creates a conversation, wires up the LLM, condenser, security policy, and skills, then drives the start sequence.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">📦</div>
+            <div><strong>SandboxService</strong><p>Launches, health-checks, pauses, resumes, and reaps the isolated environments the agent runs in.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">📜</div>
+            <div><strong>EventService</strong><p>The scribe. Persists and streams every event a conversation produces, backed by the filesystem, S3, or Google Cloud.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🔔</div>
+            <div><strong>EventCallbackService</strong><p>The reactor. Runs custom processors when matching events arrive &mdash; the extension point you'll use in Module 6.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">📈</div>
+            <div><strong>AnalyticsService &amp; UserContext</strong><p>Who is this user, what may they do, and what should we measure &mdash; consent-gated.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The line down the middle: two planes</h2>
+        <p>Cloud architecture has a name for this split. The <span class="term" data-definition="The control plane is the part of a system that makes decisions and holds state — what should run, for whom, where — without doing the heavy lifting itself. Think air-traffic control, not the planes.">control plane</span> makes decisions and holds state; the <span class="term" data-definition="The data plane is the part that actually does the work on the actual data — moving packets, running code, executing commands. In OpenHands it's the agent inside the sandbox.">data plane</span> does the actual work on the actual data. OpenHands draws that line between the app server and the agent.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🛰️</div>
+            <h4 class="pattern-title">Control Plane &middot; App Server</h4>
+            <p class="pattern-desc">FastAPI. Auth, conversation records, sandbox orchestration, event storage, billing. Multi-tenant. <strong>Trusted.</strong> Never executes agent-authored code.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🚀</div>
+            <h4 class="pattern-title">Data Plane &middot; Agent Server</h4>
+            <p class="pattern-desc">Runs in the sandbox. The LLM loop, file edits, shell commands, browser. Single-tenant per conversation. <strong>Untrusted.</strong> Disposable.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🏛️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Design consideration: why split the planes at all?</strong>
+            <p>Three reasons, in priority order. <strong>(1) Security</strong> &mdash; agent-authored shell commands must never share a process with multi-tenant user data. <strong>(2) Scaling</strong> &mdash; one control plane can fan out to thousands of independent agent sandboxes. <strong>(3) Licensing</strong> &mdash; the core <code>openhands</code> and <code>agent-server</code> images are MIT, while <code>enterprise/</code> is source-available; a clean process boundary keeps that line enforceable. The cost you pay: every interaction is now a network round-trip with its own failure modes.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Listen in: starting a conversation</h2>
+        <p>When you submit a task, the services on the control plane have a quick conversation of their own before the agent ever wakes up. Play it through:</p>
+
+        <div class="chat-window" id="chat-module2">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="conv" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">🎼</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">AppConversation</span><p>New task came in. Sandbox, I need a place to run. Spin one up?</p></div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="sandbox" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">📦</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Sandbox</span><p>Booting a container now. I'll ping the Agent Server's <code>/alive</code> endpoint and tell you the moment it answers.</p></div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="sandbox" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">📦</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-2)">Sandbox</span><p>It's alive and exposing a URL. Here's your handle.</p></div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="conv" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">🎼</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-1)">AppConversation</span><p>Great. Cloning the repo, running setup.sh, installing hooks, loading skills. Event scribe &mdash; record every step.</p></div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="event" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">📜</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-3)">EventService</span><p>Logged. And anyone who subscribed via a callback will hear about each one.</p></div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="callback" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">🔔</div>
+              <div class="chat-bubble"><span class="chat-sender" style="color: var(--color-actor-4)">EventCallback</span><p>On it. First message event &rarr; I'll go ask the agent to name this conversation.</p></div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-typing" style="display:none">
+            <div class="chat-avatar" id="typing-avatar">?</div>
+            <div class="chat-typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">How the planes actually touch</h2>
+        <p>The control plane reaches the data plane through one narrow channel: an HTTP URL the sandbox exposes, plus a session key. Here's the real lookup that finds it, from <code>sandbox_service.py</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">_get_agent_server_url</span>(self, sandbox: SandboxInfo) -> <span class="code-keyword">str</span>:</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-keyword">not</span> sandbox.exposed_urls:</span>
+<span class="code-line">        <span class="code-keyword">raise</span> SandboxError(<span class="code-string">f'No exposed URLs for sandbox: {sandbox.id}'</span>)</span>
+<span class="code-line">    <span class="code-keyword">for</span> exposed_url <span class="code-keyword">in</span> sandbox.exposed_urls:</span>
+<span class="code-line">        <span class="code-keyword">if</span> exposed_url.name == AGENT_SERVER:</span>
+<span class="code-line">            <span class="code-keyword">return</span> replace_localhost_hostname_for_docker(exposed_url.url)</span>
+<span class="code-line">    <span class="code-keyword">raise</span> SandboxError(<span class="code-string">f'No agent server URL found for sandbox: {sandbox.id}'</span>)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Find the address mission control should call for this sandbox.</p>
+              <p class="tl">If the sandbox published no URLs yet, that's an error &mdash; there's nothing to talk to.</p>
+              <p class="tl">Otherwise, scan the URLs the sandbox exposed&hellip;</p>
+              <p class="tl">&hellip;looking for the one named &ldquo;agent server.&rdquo;</p>
+              <p class="tl">Found it &mdash; but rewrite <code>localhost</code> so it works from inside Docker's network, then hand it back.</p>
+              <p class="tl">No agent-server URL? Fail loudly rather than guess.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔌</div>
+          <div class="callout-content">
+            <strong class="callout-title">Notice the discipline</strong>
+            <p>The control plane holds <em>no</em> direct reference to the agent process &mdash; only a URL and a key it discovered at runtime. That indirection is what lets the same code drive a local Docker container, a remote runtime, or a Kubernetes pod without changing.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module2">
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Correct. A symptom of 'the agent ran but nothing showed up' points at the event pipeline — EventService persisting/streaming and any callbacks — not at the sandbox, which clearly started."
+               data-explanation-wrong="The agent demonstrably ran (it did work), so the sandbox started fine. The missing piece is the events not reaching the UI — that's the EventService/streaming path.">
+            <h3 class="quiz-question">A user reports: &ldquo;the agent finished my task and opened a PR, but the activity feed in the UI stayed empty the whole time.&rdquo; Where do you look first?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The Sandbox Service &mdash; the container probably never started.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The LLM &mdash; the model must have failed.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The EventService / streaming path &mdash; work happened, but events didn't reach the UI.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. Putting agent-executed shell commands in the trusted, multi-tenant control plane process would let one user's agent reach another's data — the exact thing the plane split prevents."
+               data-explanation-wrong="Reconsider the security rationale. The control plane is trusted and multi-tenant; running untrusted agent commands there breaks isolation for everyone.">
+            <h3 class="quiz-question">You're tempted to run a &ldquo;quick&rdquo; agent shell command directly in the app server to save a network hop. Why is that a serious mistake?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It runs untrusted code in the trusted, multi-tenant plane &mdash; breaking isolation for every user.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>FastAPI doesn't support subprocesses.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It would violate the MIT license.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: how does the app server swap one sandbox backend for another without touching the conductor? The injector pattern. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-3" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">The Injector Pattern</h1>
+      <p class="module-subtitle">How every service in OpenHands becomes swappable &mdash; and why the architects chose this over hardcoding.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The standardized wall socket</h2>
+        <p>A lamp doesn't care which power plant it's connected to &mdash; coal, solar, nuclear. It plugs into a <strong>standardized socket</strong>, and the wiring behind the wall is someone else's problem. Swap the plant; the lamp never knows.</p>
+        <p>OpenHands wires <em>every</em> service this way. Code depends on an <strong>abstract socket</strong> (an interface), and a small &ldquo;injector&rdquo; decides at startup which real implementation gets plugged in. This is
+          <span class="term" data-definition="A design technique where a component receives its dependencies from the outside rather than constructing them itself. It makes implementations swappable and testable.">dependency injection</span>,
+          and it is the single most important pattern in this repository.</p>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🧩</div>
+          <div class="callout-content">
+            <strong class="callout-title">The repeating shape</strong>
+            <p>Almost every service in <code>app_server</code> follows the same three-part shape: an <strong>abstract base class</strong> (the socket), one or more <strong>concrete implementations</strong> (the appliances), and an <strong>Injector</strong> (the wiring that picks one). Learn it once and the whole codebase opens up.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The socket itself</h2>
+        <p>Here is the entire <code>Injector</code> base class. It's tiny on purpose &mdash; its job is just to <em>yield</em> a ready-to-use object and clean it up afterward:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">Injector</span>(Generic[T], ABC):</span>
+<span class="code-line">    <span class="code-string">"""Object designed to facilitate dependency injection"""</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">depends</span>(self, request: Request) -> AsyncGenerator[T, <span class="code-keyword">None</span>]:</span>
+<span class="code-line">        <span class="code-string">"""Depends function suitable for use with FastAPI DI."""</span></span>
+<span class="code-line">        <span class="code-keyword">async for</span> result <span class="code-keyword">in</span> self.inject(request.state, request):</span>
+<span class="code-line">            <span class="code-keyword">yield</span> result</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A generic socket that knows how to produce some type <code>T</code>.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">This method plugs the socket straight into FastAPI's own dependency system&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;so any route can just say &ldquo;give me the service&rdquo; and get the right one, fully wired, for this request.</p>
+            </div>
+          </div>
+        </div>
+        <p>Each concrete service then declares its socket. For event callbacks it's one line:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">EventCallbackServiceInjector</span>(</span>
+<span class="code-line">    DiscriminatedUnionMixin, Injector[EventCallbackService], ABC</span>
+<span class="code-line">):</span>
+<span class="code-line">    <span class="code-keyword">pass</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A socket that specifically produces an <code>EventCallbackService</code>&hellip;</p>
+              <p class="tl">&hellip;and mixes in <code>DiscriminatedUnion</code> &mdash; the magic that lets the choice of implementation be written down in config and saved to disk.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">No body needed &mdash; the shape <em>is</em> the contract.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Why <code>DiscriminatedUnion</code> matters</h2>
+        <p>A plain interface lets you swap implementations <em>in code</em>. A
+          <span class="term" data-definition="A way to represent 'one of several known types' so a serializer can recognise which one it is by a tag field (the discriminator) — e.g. {kind: 'AwsEventService', bucket: '...'}. It lets a choice of class be stored as data.">discriminated union</span>
+          lets you swap them <em>in data</em> &mdash; a JSON object or an environment variable can name the class <em>and</em> carry its settings. That single property is what makes the whole config-driven architecture possible.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🗂️</div>
+            <h4 class="pattern-title">FilesystemEventService</h4>
+            <p class="pattern-desc">The default. Stores events as files on local disk. Perfect for a laptop.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🪣</div>
+            <h4 class="pattern-title">AwsEventService</h4>
+            <p class="pattern-desc">Same socket, S3 behind it. Chosen when the storage provider is AWS.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">☁️</div>
+            <h4 class="pattern-title">GoogleCloudEventService</h4>
+            <p class="pattern-desc">Same socket again, GCS behind it. The conductor never notices the difference.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Where the choice is made</h2>
+        <p>One function reads the environment and fills in any socket the operator didn't override. This is the actual wiring for event storage in <code>config_from_env()</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line">config: AppServerConfig = from_env(AppServerConfig, <span class="code-string">'OH'</span>)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">if</span> config.event <span class="code-keyword">is</span> <span class="code-keyword">None</span>:</span>
+<span class="code-line">    provider = get_storage_provider()</span>
+<span class="code-line">    <span class="code-keyword">if</span> provider == StorageProvider.AWS:</span>
+<span class="code-line">        config.event = AwsEventServiceInjector(bucket_name=bucket_name)</span>
+<span class="code-line">    <span class="code-keyword">elif</span> provider == StorageProvider.GCP:</span>
+<span class="code-line">        config.event = GoogleCloudEventServiceInjector(bucket_name=bucket_name)</span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        config.event = FilesystemEventServiceInjector()</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Build the whole config from <code>OH_*</code> environment variables in one shot.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">If the operator didn't explicitly pin an event backend&hellip;</p>
+              <p class="tl">&hellip;look at which storage provider is configured&hellip;</p>
+              <p class="tl">&hellip;AWS? plug in the S3 socket&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;GCP? plug in the Google Cloud socket&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;otherwise fall back to plain files. Sensible default, full override.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎚️</div>
+          <div class="callout-content">
+            <strong class="callout-title">&ldquo;Convention with an escape hatch&rdquo;</strong>
+            <p>Notice the pattern: <code>if config.X is None:</code> pick a smart default. Operators get zero-config on a laptop, yet can override any single service by setting <code>OH_*</code> variables &mdash; without forking the code. This is the design philosophy of the entire config layer.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The honest trade-off</h2>
+        <p>This pattern is not free. An architect should weigh both sides before adopting it.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">✅</div>
+            <h4 class="pattern-title">What you gain</h4>
+            <p class="pattern-desc">One codebase runs laptop &rarr; cloud &rarr; enterprise. Tests inject fakes trivially. New backends are additive, not invasive. Config is data, so it's serializable and auditable.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">⚠️</div>
+            <h4 class="pattern-title">What it costs</h4>
+            <p class="pattern-desc">Indirection: to read &ldquo;what actually runs,&rdquo; you trace base &rarr; injector &rarr; <code>config_from_env</code>. The <code>from_env</code> magic is implicit. Newcomers must learn the shape before any single feature makes sense.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔍</div>
+          <div class="callout-content">
+            <strong class="callout-title">Debugging tip you'll actually use</strong>
+            <p>When something behaves unexpectedly, &ldquo;what's plugged in right now?&rdquo; is the first question. The answer is never in the calling code &mdash; it's in <code>config_from_env()</code> and the <code>OH_*</code> environment. Start there, not at the call site.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module3">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>You're self-hosting OpenHands and your compliance team requires all conversation events to land in your own S3 bucket. You'd prefer not to fork the project.</p>
+            </div>
+          </div>
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly the intended path. The injector pattern means storage is config, not code: set the storage provider + bucket via OH_* / env, and config_from_env plugs in AwsEventServiceInjector. No fork."
+               data-explanation-wrong="A fork or a code edit defeats the whole design. Event storage is selected by config (the storage provider + bucket), and config_from_env wires AwsEventServiceInjector for you.">
+            <h3 class="quiz-question">What's the cleanest way to get there?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fork the repo and rewrite <code>FilesystemEventService</code> to call S3.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Configure the AWS storage provider + bucket via env; let <code>config_from_env</code> select the S3 injector.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Edit every route to import the S3 service directly.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. The DiscriminatedUnion tag is what lets a class choice live in serialized config/env data — without it, an injector can't be expressed as data and selected at startup."
+               data-explanation-wrong="Re-read 'Why DiscriminatedUnion matters'. A plain interface only swaps in code; the union tag is what lets the chosen implementation be written as data (env/JSON) and reconstructed at startup.">
+            <h3 class="quiz-question">Why do the injectors mix in <code>DiscriminatedUnionMixin</code> rather than being plain abstract classes?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It makes the classes import faster.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It's required by FastAPI.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>So the choice of implementation can be expressed as serializable data (env/JSON) and rebuilt at startup.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: with the sockets understood, let's watch a conversation actually come to life &mdash; the lifecycle state machine and the sandbox. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">The Conversation Lifecycle &amp; Sandboxes</h1>
+      <p class="module-subtitle">From an empty container to an agent that's cloned your repo, run your setup, and is ready to work.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Onboarding a new hire</h2>
+        <p>When someone joins a team, their laptop isn't useful on day one. Someone provisions it: installs the toolchain, clones the repos, sets up commit hooks, hands over the team's playbooks. Only then can the new hire do real work.</p>
+        <p>A fresh sandbox is exactly that empty laptop. Starting a conversation is the <strong>onboarding sequence</strong> &mdash; and OpenHands models it as an explicit
+          <span class="term" data-definition="A model where something moves through a fixed set of named stages in order, and you always know which stage it's in. It makes progress observable and failures easy to localise.">state machine</span>
+          so progress is visible the whole way.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"PREPARING_REPOSITORY — clone the selected repo (or git init an empty workspace)."},
+          {"highlight":"flow-actor-2","label":"RUNNING_SETUP_SCRIPT — execute .openhands/setup.sh to install deps and configure the project.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"SETTING_UP_GIT_HOOKS — install the pre-commit hook, preserving any existing one as pre-commit.local.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-4","label":"SETTING_UP_SKILLS — load and merge skills from public, user, org, and project sources.","packet":true,"from":"actor-3","to":"actor-4"},
+          {"highlight":"flow-actor-4","label":"Ready. The agent now has a provisioned workspace and starts working on your task."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">📥</div><span>Clone</span></div>
+            <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">⚙️</div><span>Setup</span></div>
+            <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">🪝</div><span>Hooks</span></div>
+            <div class="flow-actor" id="flow-actor-4"><div class="flow-actor-icon">🧠</div><span>Skills</span></div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin onboarding</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The state machine, in code</h2>
+        <p>This is the real <code>run_setup_scripts</code> method. The interesting part is the <code>yield</code> after each status change &mdash; that's what powers the live progress you see in the UI:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line">task.status = AppConversationStartTaskStatus.PREPARING_REPOSITORY</span>
+<span class="code-line"><span class="code-keyword">yield</span> task</span>
+<span class="code-line"><span class="code-keyword">await</span> self.clone_or_init_git_repo(task, workspace, sandbox)</span>
+<span class="code-line"></span>
+<span class="code-line">task.status = AppConversationStartTaskStatus.RUNNING_SETUP_SCRIPT</span>
+<span class="code-line"><span class="code-keyword">yield</span> task</span>
+<span class="code-line"><span class="code-keyword">await</span> self.maybe_run_setup_script(workspace, project_dir)</span>
+<span class="code-line"></span>
+<span class="code-line">task.status = AppConversationStartTaskStatus.SETTING_UP_GIT_HOOKS</span>
+<span class="code-line"><span class="code-keyword">yield</span> task</span>
+<span class="code-line"><span class="code-keyword">await</span> self.maybe_setup_git_hooks(workspace, project_dir)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Mark the task as &ldquo;preparing the repository.&rdquo;</p>
+              <p class="tl">Hand that status back to the caller <em>immediately</em> &mdash; the UI updates now, before the slow work starts.</p>
+              <p class="tl">Then actually do the slow thing: clone or initialise the repo.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Now we're &ldquo;running the setup script.&rdquo; Announce it&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;then run <code>.openhands/setup.sh</code>.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Finally, &ldquo;setting up git hooks.&rdquo; Announce, then install.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">📡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Design consideration: announce, then act</strong>
+            <p>Using a <span class="term" data-definition="A function that can pause and hand back partial results with 'yield', then resume where it left off. It lets a long process report progress as it goes instead of only at the end.">generator</span> that <code>yield</code>s before each slow step is a deliberate UX-and-architecture decision: the user sees &ldquo;cloning&hellip;&rdquo; the instant it begins, not after it finishes. The status <em>is</em> the contract between a long backend job and a responsive frontend.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The sandbox lifecycle: more than start</h2>
+        <p>The <code>SandboxService</code> abstract base defines a full lifecycle &mdash; not just &ldquo;start.&rdquo; Each is one socket on the wall (Module 3), implemented by Docker, a local process, or a remote runtime.</p>
+
+        <div class="badge-list stagger-children">
+          <div class="badge-item animate-in"><code class="badge-code">start_sandbox</code><span class="badge-desc">Provision a new isolated environment for a conversation.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">wait_for_sandbox_running</code><span class="badge-desc">Poll until status is RUNNING <em>and</em> the agent server answers <code>/alive</code>.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">pause_sandbox / resume_sandbox</code><span class="badge-desc">Freeze an idle sandbox to reclaim resources; thaw it on demand.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">pause_old_sandboxes</code><span class="badge-desc">Cap concurrent sandboxes per user by freezing the oldest ones.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">delete_sandbox</code><span class="badge-desc">Stop and tear down &mdash; the disposable nature made literal.</span></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A race condition the code guards against</h2>
+        <p>A sandbox reporting <code>RUNNING</code> doesn't mean the agent inside is ready to take requests. The base class handles that gap explicitly:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">if</span> sandbox.status == SandboxStatus.RUNNING:</span>
+<span class="code-line">    <span class="code-comment"># sandbox says RUNNING, but is the agent server actually up?</span></span>
+<span class="code-line">    <span class="code-keyword">if</span> httpx_client <span class="code-keyword">and</span> sandbox.exposed_urls:</span>
+<span class="code-line">        <span class="code-keyword">if</span> <span class="code-keyword">await</span> self._check_agent_server_alive(sandbox, httpx_client):</span>
+<span class="code-line">            <span class="code-keyword">return</span> sandbox</span>
+<span class="code-line">        <span class="code-comment"># not ready yet, keep polling</span></span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        <span class="code-keyword">return</span> sandbox</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">The container reports it's running&hellip;</p>
+              <p class="tl">&hellip;but &ldquo;the box is on&rdquo; isn't &ldquo;the worker is ready.&rdquo;</p>
+              <p class="tl">If we were given a way to check and the sandbox has exposed a URL&hellip;</p>
+              <p class="tl">&hellip;actually knock on the agent's <code>/alive</code> door.</p>
+              <p class="tl">It answered &mdash; <em>now</em> it's safe to hand back.</p>
+              <p class="tl">Door's silent? Don't return yet; loop and try again.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">(If no checker was supplied, trust the status and move on.)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">⏱️</div>
+          <div class="callout-content">
+            <strong class="callout-title">A real-world failure this prevents</strong>
+            <p>Without the <code>/alive</code> check, the app server would fire the agent's first request into a process that isn't listening yet &mdash; an intermittent &ldquo;connection refused&rdquo; that only shows up under load or on slow machines. Health-gating the readiness check turns a flaky race into a deterministic wait.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module4">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Correct. setup.sh runs during RUNNING_SETUP_SCRIPT, before the agent works. A dependency that isn't installed points straight at that step (or a missing/failing .openhands/setup.sh)."
+               data-explanation-wrong="The symptom is 'a dependency the project needs isn't present.' Installing project deps is exactly what the RUNNING_SETUP_SCRIPT stage (.openhands/setup.sh) is for — that's where to look.">
+            <h3 class="quiz-question">An agent keeps failing with &ldquo;module not found&rdquo; for a library the repo clearly depends on. Which lifecycle stage is the prime suspect?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>PREPARING_REPOSITORY &mdash; the clone failed.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>RUNNING_SETUP_SCRIPT &mdash; <code>.openhands/setup.sh</code> didn't install deps.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>SETTING_UP_GIT_HOOKS &mdash; the pre-commit hook is broken.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. yield-before-each-step is what makes progress observable in real time; collapsing it into one call would leave users staring at a spinner with no signal until the very end."
+               data-explanation-wrong="Reconsider the 'announce, then act' callout. The yields exist precisely so the UI can show which stage is running live. Removing them costs you all real-time progress feedback.">
+            <h3 class="quiz-question">A teammate wants to &ldquo;simplify&rdquo; <code>run_setup_scripts</code> by removing the <code>yield task</code> lines and just running all steps in sequence. What's lost?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Live, per-stage progress in the UI &mdash; users would see nothing until everything finished.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nothing &mdash; the yields are decorative.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The git clone would stop working.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: the agent is working and producing events. Where do they go, and how do you hook into them? &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Events &amp; Callbacks: The Extension Spine</h1>
+      <p class="module-subtitle">Everything the agent does becomes an event &mdash; and events are the seam where you bolt on your own behavior.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A house full of automation rules</h2>
+        <p>In a smart home, you don't rewire the house to add a behavior. You write a rule: <em>&ldquo;when the front door opens, turn on the hallway light and text me.&rdquo;</em> The door knows nothing about lights or phones &mdash; it just <em>emits an event</em>, and independent rules react.</p>
+        <p>OpenHands works identically. The agent emits <strong>events</strong> &mdash; a message, a tool call, a finished run &mdash; and registered <span class="term" data-definition="A callback is a piece of code you hand to a system to run later, when something happens — like leaving your number so the restaurant can call you when your table is ready. Here, it's the code that runs when a matching event fires.">callbacks</span> react. The agent never knows who's listening. This is
+          <span class="term" data-definition="A design where producers broadcast events without knowing who consumes them, and consumers subscribe without knowing who produced them. It keeps the two sides independent and lets you add reactions without touching the producer.">publish/subscribe</span>,
+          and it's the cleanest place to extend the platform.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">📜</div>
+          <div class="callout-content">
+            <strong class="callout-title">Two halves: storage and reaction</strong>
+            <p>The <strong>EventService</strong> is durable memory &mdash; it persists and streams the full event history (to disk, S3, or GCS, chosen by injector). The <strong>EventCallbackService</strong> is live reaction &mdash; it runs your code when a matching event arrives. Module 6 lives entirely in that second half.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The contract you implement: one method</h2>
+        <p>To react to events, you subclass <code>EventCallbackProcessor</code> and implement a single async method. Here's the entire base class &mdash; this is the whole extension API:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">EventCallbackProcessor</span>(DiscriminatedUnionMixin, ABC):</span>
+<span class="code-line">    event_kind: ClassVar[EventKind] = <span class="code-string">'MessageEvent'</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-property">@abstractmethod</span></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">__call__</span>(</span>
+<span class="code-line">        self,</span>
+<span class="code-line">        conversation_id: UUID,</span>
+<span class="code-line">        callback: EventCallback,</span>
+<span class="code-line">        event: Event,</span>
+<span class="code-line">    ) -> EventCallbackResult | <span class="code-keyword">None</span>:</span>
+<span class="code-line">        <span class="code-string">"""Process an event."""</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define a reaction. (It's a discriminated union, so &mdash; like injectors &mdash; it can be stored as config and rebuilt.)</p>
+              <p class="tl">Declare <em>which kind</em> of event you care about. Default: chat messages.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">You must fill in one thing&hellip;</p>
+              <p class="tl">&hellip;a callable that receives:</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&mdash; which conversation this is,</p>
+              <p class="tl">&mdash; the callback's own record (so it can update itself),</p>
+              <p class="tl">&mdash; and the event that just fired.</p>
+              <p class="tl">Return a result to record, or <code>None</code> to stay silent.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-accent">
+          <div class="callout-icon">🪝</div>
+          <div class="callout-content">
+            <strong class="callout-title">This tiny interface is the whole point of the module</strong>
+            <p>Logging, metrics, tracing, evaluation, webhooks, auto-naming a conversation &mdash; <em>all</em> of them are just different bodies for this one <code>__call__</code> method. The platform ships <code>LoggingCallbackProcessor</code> as a copy-paste starting point and a title-setter as a real production example.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The dispatcher: how your code gets called</h2>
+        <p>When an event fires, <code>execute_callbacks</code> finds the rules that match and runs them all at once. Trace the live dispatch:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"The agent emits an event (e.g. a MessageEvent)."},
+          {"highlight":"flow-actor-2","label":"execute_callbacks queries the DB: which ACTIVE callbacks match this conversation AND this event kind?","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"Each matching processor runs concurrently via asyncio.gather — one slow callback cannot block the others.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-3","label":"A processor that throws is caught and recorded as an ERROR result — it never crashes the others or the agent."},
+          {"highlight":"flow-actor-2","label":"Each result is written back to the database for later inspection.","packet":true,"from":"actor-3","to":"actor-2"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">🚀</div><span>Agent event</span></div>
+            <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">🔔</div><span>Dispatcher</span></div>
+            <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">⚙️</div><span>Your processors</span></div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to dispatch</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Resilience by construction</h2>
+        <p>The dispatcher's error handling is worth reading carefully &mdash; it's a deliberate reliability decision. This is the real <code>execute_callback</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">try</span>:</span>
+<span class="code-line">    result = <span class="code-keyword">await</span> callback.processor(conversation_id, callback, event)</span>
+<span class="code-line">    <span class="code-keyword">if</span> result <span class="code-keyword">is</span> <span class="code-keyword">None</span>:</span>
+<span class="code-line">        <span class="code-keyword">return</span></span>
+<span class="code-line">    stored_result = StoredEventCallbackResult(**result.model_dump())</span>
+<span class="code-line"><span class="code-keyword">except</span> Exception <span class="code-keyword">as</span> exc:</span>
+<span class="code-line">    _logger.exception(<span class="code-string">f'Exception in callback {callback.id}'</span>)</span>
+<span class="code-line">    stored_result = StoredEventCallbackResult(</span>
+<span class="code-line">        status=EventCallbackResultStatus.ERROR, detail=<span class="code-function">str</span>(exc), ...)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Run the user's processor&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">If it chose to stay silent, we're done.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Otherwise, save what it returned.</p>
+              <p class="tl">But if it <em>blew up</em>&hellip;</p>
+              <p class="tl">&hellip;log the full stack trace for debugging&hellip;</p>
+              <p class="tl">&hellip;and record an ERROR result with the message &mdash; instead of letting the crash escape.</p>
+              <p class="tl">&nbsp;</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🛡️</div>
+          <div class="callout-content">
+            <strong class="callout-title">A double-edged decision &mdash; note it for Module 7</strong>
+            <p>Swallowing exceptions means <em>your buggy observability hook can never take down a user's agent run.</em> That's the right default. The cost: a silently failing callback leaves only an <code>ERROR</code> row in a table no one is watching. Resilience here trades loud failure for quiet failure &mdash; a trade we'll revisit honestly.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module5">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. Callbacks are filtered by event_kind AND conversation_id and run via the pub/sub dispatcher — you add a processor without ever editing the agent or the emitter."
+               data-explanation-wrong="The whole reason events exist is so you DON'T modify the producer. Subscribe a processor for the event kind you care about; the agent stays untouched.">
+            <h3 class="quiz-question">You want to POST a Slack notification every time an agent finishes a run, without touching the agent code. What's the idiomatic approach?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Edit the agent loop in the SDK to call Slack directly.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Write an <code>EventCallbackProcessor</code> for the &ldquo;finished&rdquo; event kind and register it on the conversation.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Poll the database from a cron job and diff it.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. execute_callback catches the exception, logs it, and records an ERROR result. The other callbacks and the agent run are unaffected — which is also why the failure is easy to miss."
+               data-explanation-wrong="Re-read the resilience code. Exceptions in a processor are caught and stored as ERROR results; they don't propagate to crash other callbacks or the agent.">
+            <h3 class="quiz-question">Your custom processor throws an unhandled exception on every event. What actually happens to the user's agent run?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The agent run crashes immediately.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>All other callbacks are skipped for safety.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nothing visible &mdash; the error is caught, logged, and stored as an ERROR result; the run continues.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Now the payoff: let's actually write custom observability and evaluation on top of this spine. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">Customizing Observability &amp; Evaluation</h1>
+      <p class="module-subtitle">The applied module: wire your own tracing and your own trajectory scoring onto the event spine &mdash; with an honest map of what ships vs. what you build.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A reading convention for this module</h2>
+        <p>Because we're about to mix real platform code with code <em>you</em> would write, every code block here is labelled. Don't skip these &mdash; they're the difference between &ldquo;ships in the box&rdquo; and &ldquo;you implement it.&rdquo;</p>
+        <div class="badge-list">
+          <div class="badge-item"><code class="badge-code" style="color:#A6E3A1">REAL</code><span class="badge-desc">Copied verbatim from this repository. You can open the file and find it.</span></div>
+          <div class="badge-item"><code class="badge-code" style="color:#F9E2AF">SAMPLE</code><span class="badge-desc">Illustrative code <em>you</em> would write, built on the real <code>EventCallbackProcessor</code> contract from Module 5. Not in the repo as-is.</span></div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon">🎙️</div>
+          <div class="callout-content">
+            <strong class="callout-title">The metaphor: a flight data recorder and a panel of judges</strong>
+            <p><strong>Observability</strong> is the black box &mdash; it records what happened so you can replay any flight. <strong>Evaluation</strong> is the panel of judges &mdash; it watches the recording and assigns a score. OpenHands gives you mounting points for both; the recorder is largely built, the judges are mostly yours to write.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Observability, layer 1: the analytics that ships</h2>
+        <p>The platform already records product-level signals through <code>AnalyticsService</code> &mdash; a thin, consent-gated wrapper over
+          <span class="term" data-definition="A product-analytics tool that records events like 'conversation created' so teams can analyse usage. Here it's wrapped so it never fires without user consent.">PostHog</span>.
+          Two design choices in this <code>REAL</code> snippet are worth copying in your own telemetry:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">REAL &middot; analytics_service.py</span>
+            <pre><code><span class="code-line"><span class="code-keyword">def</span> <span class="code-function">capture</span>(self, ctx, event, properties=<span class="code-keyword">None</span>, session_id=<span class="code-keyword">None</span>):</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-keyword">not</span> ctx.consented:</span>
+<span class="code-line">        <span class="code-keyword">return</span></span>
+<span class="code-line">    merged = self._common_properties(org_id=ctx.org_id, session_id=session_id)</span>
+<span class="code-line">    <span class="code-keyword">if</span> properties:</span>
+<span class="code-line">        merged.update(properties)</span>
+<span class="code-line">    <span class="code-keyword">try</span>:</span>
+<span class="code-line">        self._client.capture(distinct_id=..., event=event, properties=merged)</span>
+<span class="code-line">    <span class="code-keyword">except</span> Exception:</span>
+<span class="code-line">        logger.exception(<span class="code-string">'AnalyticsService.capture failed for event=%s'</span>, event)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Record a server-side event&hellip;</p>
+              <p class="tl"><strong>Choice 1 &mdash; consent gate:</strong> if the user hasn't opted in,</p>
+              <p class="tl">do absolutely nothing. Privacy is the default, not an afterthought.</p>
+              <p class="tl">Attach common context (org, session) to every event&hellip;</p>
+              <p class="tl">&hellip;then merge in the caller's specifics.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Send it&hellip;</p>
+              <p class="tl"><strong>Choice 2 &mdash; never let telemetry break the app:</strong></p>
+              <p class="tl">if the analytics SDK throws, log and swallow. Measuring must never crash the thing being measured.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-accent">
+          <div class="callout-icon">📊</div>
+          <div class="callout-content">
+            <strong class="callout-title">It already tracks the metrics evaluation cares about</strong>
+            <p><code>track_conversation_finished</code> (also <code>REAL</code>) emits <code>terminal_state</code>, <code>turn_count</code>, <code>accumulated_cost_usd</code>, and token counts. Those four fields <em>are</em> the raw material of agent evaluation &mdash; hold that thought for the second half.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Observability, layer 2: tracing the agent, free</h2>
+        <p>Inside the sandbox, the agent emits detailed LLM <span class="term" data-definition="A trace is the full timeline of one request as it flows through a system — every model call, tool call, and timing — visualised as a tree. It's how you debug why an agent did what it did.">traces</span> to
+          <span class="term" data-definition="Laminar (package name lmnr) is an observability platform for LLM apps. It collects traces of model and tool calls so you can inspect and debug agent behaviour.">Laminar</span>.
+          You don't write code to enable it &mdash; you set environment variables, and the <code>REAL</code> forwarding rule from Module 1 carries them across the plane boundary:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">REAL &middot; operator config</span>
+            <pre><code><span class="code-line"><span class="code-comment"># On the app server host — auto-forwarded into the sandbox</span></span>
+<span class="code-line"><span class="code-keyword">export</span> LMNR_PROJECT_API_KEY=your-api-key</span>
+<span class="code-line"><span class="code-keyword">export</span> LMNR_BASE_URL=https://app.lmnr.ai</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment"># AUTO_FORWARD_PREFIXES = ('LLM_', 'LMNR_')  &larr; from Module 1</span></span>
+<span class="code-line"><span class="code-comment"># anything LMNR_* now appears inside the agent-server, too</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Give mission control your Laminar credentials&hellip;</p>
+              <p class="tl">&hellip;the project key&hellip;</p>
+              <p class="tl">&hellip;and where to send traces.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Because the prefix is on the auto-forward list&hellip;</p>
+              <p class="tl">&hellip;the spacecraft inherits them and starts emitting traces. Config, not code.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">Honest limitation</strong>
+            <p>This binds you to Laminar specifically. There is <em>no</em> vendor-neutral <span class="term" data-definition="OpenTelemetry (OTel) is an open standard for traces, metrics, and logs that most backends understand. Emitting OTel means you can switch vendors without changing instrumentation.">OpenTelemetry</span> exporter wired into the app server today. Want Datadog or Honeycomb instead? You either point Laminar at an OTel collector downstream, or you build your own hook &mdash; which is exactly layer 3.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Observability, layer 3: your own tracing hook</h2>
+        <p>For control-plane-side observability (or a non-Laminar backend), implement an <code>EventCallbackProcessor</code>. This <code>SAMPLE</code> turns every event into a span on a backend of your choice &mdash; note it implements the exact <code>REAL</code> contract from Module 5:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">SAMPLE &middot; you write this</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">TracingCallbackProcessor</span>(EventCallbackProcessor):</span>
+<span class="code-line">    event_kind: ClassVar[EventKind] = <span class="code-string">'MessageEvent'</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">__call__</span>(self, conversation_id, callback, event):</span>
+<span class="code-line">        <span class="code-keyword">with</span> tracer.start_as_current_span(<span class="code-string">'agent.event'</span>) <span class="code-keyword">as</span> span:</span>
+<span class="code-line">            span.set_attribute(<span class="code-string">'conversation_id'</span>, <span class="code-function">str</span>(conversation_id))</span>
+<span class="code-line">            span.set_attribute(<span class="code-string">'event.kind'</span>, event.kind)</span>
+<span class="code-line">        <span class="code-keyword">return</span> EventCallbackResult(</span>
+<span class="code-line">            status=EventCallbackResultStatus.SUCCESS,</span>
+<span class="code-line">            event_callback_id=callback.id, event_id=event.id,</span>
+<span class="code-line">            conversation_id=conversation_id)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define a reaction &mdash; same base class the platform's own callbacks use.</p>
+              <p class="tl">Tell the dispatcher which events to send you.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Each time one arrives&hellip;</p>
+              <p class="tl">&hellip;open a span on your tracing backend (OTel, Langfuse, anything)&hellip;</p>
+              <p class="tl">&hellip;tag it with the conversation&hellip;</p>
+              <p class="tl">&hellip;and the event type.</p>
+              <p class="tl">Then hand back a SUCCESS result&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;so the dispatcher records that your hook ran cleanly. That's the entire integration.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-icon">🔁</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why this is the same shape as <code>LoggingCallbackProcessor</code></strong>
+            <p>The repo's <code>REAL</code> <code>LoggingCallbackProcessor</code> does precisely this, but its body just calls <code>_logger.info(...)</code>. Swap the logger for a tracer and you have layer-3 observability. The platform handed you a working template; you change four lines.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Evaluation: the honest map first</h2>
+        <p>Before any sample, the truth about where evaluation lives:</p>
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🚫</div>
+            <h4 class="pattern-title">Not in this repo</h4>
+            <p class="pattern-desc">The benchmark harness behind the 77.6 SWE-bench score lives in a <em>separate</em> project (<code>OpenHands/benchmarks</code>). There is no first-class &ldquo;evaluation framework&rdquo; injector in <code>app_server</code> today.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">✅</div>
+            <h4 class="pattern-title">What this repo gives you</h4>
+            <p class="pattern-desc">The raw material: the full event stream, terminal state, turn count, and cost. Enough to score a <span class="term" data-definition="The trajectory is the full sequence of steps an agent took on a task — its messages, tool calls, and edits from start to finish. Evaluating a trajectory means judging that whole sequence, not just the final answer.">trajectory</span> yourself, on the same callback spine.</p>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-icon">⚖️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why honesty matters here</strong>
+            <p>If someone tells you OpenHands has &ldquo;built-in custom evaluation,&rdquo; push back. It has the <em>data and the hook</em> for evaluation. The scoring logic &mdash; and any benchmark dataset, sandboxed test runner, or LLM-judge &mdash; is something you assemble. Knowing that boundary prevents a planning mistake.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Evaluation: a sample trajectory scorer</h2>
+        <p>Here's how you'd score a finished run in-process. This <code>SAMPLE</code> reacts to the agent-completion event and records a score as a callback result &mdash; queryable later, no separate pipeline:</p>
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">SAMPLE &middot; you write this</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">TrajectoryScoringProcessor</span>(EventCallbackProcessor):</span>
+<span class="code-line">    <span class="code-comment"># set to the SDK event kind that marks completion</span></span>
+<span class="code-line">    event_kind: ClassVar[EventKind] = <span class="code-string">'AgentStateChangedEvent'</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">__call__</span>(self, conversation_id, callback, event):</span>
+<span class="code-line">        score = <span class="code-keyword">await</span> self.judge(conversation_id)   <span class="code-comment"># tests / LLM-judge</span></span>
+<span class="code-line">        <span class="code-keyword">return</span> EventCallbackResult(</span>
+<span class="code-line">            status=EventCallbackResultStatus.SUCCESS,</span>
+<span class="code-line">            detail=json.dumps({<span class="code-string">'score'</span>: score}),</span>
+<span class="code-line">            event_callback_id=callback.id, event_id=event.id,</span>
+<span class="code-line">            conversation_id=conversation_id)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A reaction &mdash; again, the same Module 5 contract.</p>
+              <p class="tl">Listen for the event that means &ldquo;the agent reached a terminal state.&rdquo;</p>
+              <p class="tl">(The exact name comes from the SDK's event taxonomy &mdash; verify it; don't trust this string blindly.)</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">When the run ends&hellip;</p>
+              <p class="tl">&hellip;judge it &mdash; run the repo's tests, or ask an LLM to grade the trajectory.</p>
+              <p class="tl">Record the verdict&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;as structured JSON in the result&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;tied to this exact conversation, persisted automatically.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-icon">🎯</div>
+          <div class="callout-content">
+            <strong class="callout-title">Honest limitations of in-process scoring</strong>
+            <p>(1) <strong>Judging is genuinely hard</strong> &mdash; &ldquo;did the agent do a good job?&rdquo; rarely has a clean signal; LLM-judges are noisy and can be gamed. (2) <strong>Callbacks aren't a batch harness</strong> &mdash; for reproducible benchmarks across hundreds of tasks, the external <code>benchmarks</code> repo is the right tool, not per-conversation callbacks. (3) <strong>The completion event kind must be verified</strong> against the SDK version you run &mdash; event taxonomies change with version bumps.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module6">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>Your platform team standardised on Datadog APM and wants every agent action visible there, with no dependency on Laminar.</p>
+            </div>
+          </div>
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. There's no built-in vendor-neutral exporter, so the idiomatic move is a custom EventCallbackProcessor (like the layer-3 sample) that emits to your backend — reusing the resilient dispatcher you already have."
+               data-explanation-wrong="Re-read the layer-2 limitation. LMNR_* only configures Laminar; it won't send data to Datadog. The seam for arbitrary backends is a custom EventCallbackProcessor.">
+            <h3 class="quiz-question">What's the right hook?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Set <code>LMNR_*</code> to Datadog's URL &mdash; it'll forward there.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Write an <code>EventCallbackProcessor</code> that emits to Datadog &mdash; the layer-3 pattern.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fork the SDK and replace its tracer.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. For reproducible scoring across a fixed task set, the external benchmarks repo is the right tool. Per-conversation callbacks are for live, in-product signals — not batch evaluation."
+               data-explanation-wrong="Per-conversation callbacks fire on live production runs, not a controlled task set. For a reproducible benchmark you want the dedicated external harness, not the callback spine.">
+            <h3 class="quiz-question">Your research lead wants a reproducible score for the agent across a fixed set of 300 GitHub issues. Should you build it as event callbacks in <code>app_server</code>?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Yes &mdash; callbacks are the official evaluation framework.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Yes &mdash; it's the only place trajectory data exists.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No &mdash; use the dedicated external <code>benchmarks</code> harness; callbacks are for live in-product signals.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Finally: the design trade-offs pulled together, the honest limits, and a clearly-marked look at what could come next. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-7" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">07</span>
+      <h1 class="module-title">Trade-offs, Honest Limits &amp; The Road Ahead</h1>
+      <p class="module-subtitle">The architect's wrap-up: why the big decisions were made, where they hurt, and a clearly-labelled look at what could come next.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The five decisions, and what each one cost</h2>
+        <p>Every architecture is a set of bets. Here are the five that define this codebase &mdash; each with the reasoning <em>and</em> the bill.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🛰️</div>
+            <h4 class="pattern-title">Two-plane split</h4>
+            <p class="pattern-desc"><strong>Why:</strong> security isolation, horizontal scale, MIT/enterprise licensing boundary.<br><strong>Cost:</strong> every agent interaction is a network round-trip with its own latency and failure modes.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🔌</div>
+            <h4 class="pattern-title">Injector DI everywhere</h4>
+            <p class="pattern-desc"><strong>Why:</strong> one codebase from laptop to cloud; backends are config, not forks.<br><strong>Cost:</strong> indirection &mdash; &ldquo;what runs?&rdquo; is never answered at the call site.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">📜</div>
+            <h4 class="pattern-title">Event-sourced history</h4>
+            <p class="pattern-desc"><strong>Why:</strong> replayable, streamable, and an open seam for extensions.<br><strong>Cost:</strong> a pluggable store forces a lowest-common-denominator API across disk/S3/GCS.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🛡️</div>
+            <h4 class="pattern-title">Resilient callbacks</h4>
+            <p class="pattern-desc"><strong>Why:</strong> a buggy hook must never crash a user's agent run.<br><strong>Cost:</strong> failures go quiet &mdash; an <code>ERROR</code> row no one watches.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🔒</div>
+            <h4 class="pattern-title">Privacy by default</h4>
+            <p class="pattern-desc"><strong>Why:</strong> consent-gated analytics, secret redaction in logs, OSS/SaaS split.<br><strong>Cost:</strong> more branches and guards in every telemetry path.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Honest limitations &mdash; named, not hidden</h2>
+        <p>A platform you can reason about is one whose weak spots you know. These are real, and some are visible right in the git history.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">🔁</div>
+            <div><strong>Callback dispatch is query-driven, per event</strong><p><code>execute_callbacks</code> runs a database <span class="term" data-definition="SELECT is the SQL command that reads rows from a database table. Running one per event means a database round-trip every time the agent does anything — cheap individually, but it adds up at scale.">SELECT</span> for every event. At high event volume that's load the design hasn't yet optimised away &mdash; it's pull, not push.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">⏳</div>
+            <div><strong>Some reactions still poll</strong><p>The shipped title-setter polls the agent server a fixed number of times with sleeps &mdash; pragmatic, but not event-driven, and it can give up before the title exists.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">🧪</div>
+            <div><strong>No in-repo evaluation framework</strong><p>As Module 6 was blunt about: scoring lives in an external repo. The app server gives you data and a hook, not a harness.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">📌</div>
+            <div><strong>Tight coupling to the SDK version</strong><p>The git log is full of <code>bump agent-server to 1.x</code> commits. Event kinds and behavior can shift under you; pin and test deliberately.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">🏷️</div>
+            <div><strong>Observability is vendor-shaped</strong><p>Laminar for traces, PostHog for analytics &mdash; both fine choices, but neither is a vendor-neutral, injector-pluggable abstraction yet.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔬</div>
+          <div class="callout-content">
+            <strong class="callout-title">Evidence, not vibes</strong>
+            <p>These aren't guesses &mdash; the recent history shows the team actively hardening exactly these seams (e.g. a fix to <em>scope DB sessions tightly in <code>poll_agent_servers</code> to prevent idle-in-transaction</em>). Mature systems carry known rough edges <em>and</em> a visible trail of sanding them down.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The road ahead</h2>
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔮</div>
+          <div class="callout-content">
+            <strong class="callout-title">READ THIS FIRST &mdash; everything below is prediction</strong>
+            <p>The cards on this screen are <strong>the author's informed speculation</strong>, <em>not</em> features of OpenHands today. None of this is in the codebase as of this course. Each is tagged <code style="color:var(--color-error)">NOT IMPLEMENTED</code> so you never mistake a wish for a fact. Treat them as &ldquo;natural next moves,&rdquo; not a roadmap.</p>
+          </div>
+        </div>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Vendor-neutral OTel exporter <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> a first-class OpenTelemetry injector so traces flow to any backend without a custom callback &mdash; closing the layer-2 gap from Module 6.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Push-based callback dispatch <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> an in-memory or <span class="term" data-definition="A message queue is a buffer that holds events so producers and consumers can work at their own pace, decoupled. Backing dispatch with one would let events fan out to listeners without a database query each time.">queue</span>-backed subscription bus to replace the per-event DB query &mdash; lower latency and load at scale.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">First-class <code>EvaluationService</code> <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> an injector that runs a scorer (tests / LLM-judge) over a trajectory in-product, making Module 6's sample a supported abstraction.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Pluggable <code>AnalyticsService</code> injector <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> today analytics is constructed directly, not selected by an injector. Bringing it under the Module 3 pattern would let you swap PostHog for anything.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Callback retry/backoff policy <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> configurable retries and dead-letter handling so a transient failure in an observability hook self-heals instead of leaving a silent <code>ERROR</code> row.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title"><span class="term" data-definition="A microVM is a stripped-down virtual machine that boots in milliseconds (e.g. AWS Firecracker). It gives near-container speed with near-VM isolation — attractive for spinning up disposable agent sandboxes fast.">microVM</span> / <span class="term" data-definition="WebAssembly (WASM) is a portable, sandboxed binary format that runs untrusted code safely and fast. Using it for sandboxes would mean lighter-weight isolation than a full container.">WASM</span> sandbox backend <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> a new <code>SandboxServiceInjector</code> using lighter isolation (Firecracker, gVisor, WASM) for faster, cheaper agent startup at fleet scale.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One last check &mdash; the architect's lens</h2>
+        <div class="quiz-container" id="quiz-module7">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly the right instinct. The course flagged it as a NOT IMPLEMENTED prediction, so you'd verify against the current code/docs before promising it — predictions are hypotheses, not commitments."
+               data-explanation-wrong="The OTel exporter card was explicitly tagged NOT IMPLEMENTED. Quoting a prediction as a shipped feature is exactly the trap the labels exist to prevent — verify first.">
+            <h3 class="quiz-question">A vendor asks &ldquo;does OpenHands export OpenTelemetry traces out of the box?&rdquo; Based on this course, what do you do?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Say yes &mdash; the roadmap card described it.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Say no today &mdash; that was a NOT IMPLEMENTED prediction; verify against current code before committing.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Say it's impossible.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. The resilient-callback decision optimises for never crashing a run, accepting quiet failures as the cost. To catch the silent failures you add monitoring on the ERROR results — you don't undo the resilience."
+               data-explanation-wrong="Reconsider the trade-off. The swallow-and-record design is intentional so a hook can't crash a run. The fix for silent failures is to monitor the ERROR results, not to let exceptions propagate.">
+            <h3 class="quiz-question">Your observability callback fails silently in production. Which response is consistent with the codebase's design philosophy?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Keep the resilient swallow, but add monitoring/alerting on stored <code>ERROR</code> callback results.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Make callbacks re-raise so a failed hook crashes the agent run loudly.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Disable all callbacks permanently.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module7')">Try Again</button>
+        </div>
+
+        <div class="callout callout-accent" style="margin-top: var(--space-10)">
+          <div class="callout-icon">🎓</div>
+          <div class="callout-content">
+            <strong class="callout-title">You've finished Inside OpenHands</strong>
+            <p>You can now place any feature in this codebase: trusted control plane or disposable data plane, which injector selects it, where in the lifecycle it runs, and which event it reacts to. More importantly, you can tell what ships from what you'd build &mdash; and a prediction from a fact. That's the literacy that lets you extend, debug, and make architecture calls with confidence.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+  </main>
+
+</body>
+</html>

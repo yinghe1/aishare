@@ -1,0 +1,176 @@
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">The Conversation Lifecycle &amp; Sandboxes</h1>
+      <p class="module-subtitle">From an empty container to an agent that's cloned your repo, run your setup, and is ready to work.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Onboarding a new hire</h2>
+        <p>When someone joins a team, their laptop isn't useful on day one. Someone provisions it: installs the toolchain, clones the repos, sets up commit hooks, hands over the team's playbooks. Only then can the new hire do real work.</p>
+        <p>A fresh sandbox is exactly that empty laptop. Starting a conversation is the <strong>onboarding sequence</strong> &mdash; and OpenHands models it as an explicit
+          <span class="term" data-definition="A model where something moves through a fixed set of named stages in order, and you always know which stage it's in. It makes progress observable and failures easy to localise.">state machine</span>
+          so progress is visible the whole way.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"PREPARING_REPOSITORY — clone the selected repo (or git init an empty workspace)."},
+          {"highlight":"flow-actor-2","label":"RUNNING_SETUP_SCRIPT — execute .openhands/setup.sh to install deps and configure the project.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"SETTING_UP_GIT_HOOKS — install the pre-commit hook, preserving any existing one as pre-commit.local.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-4","label":"SETTING_UP_SKILLS — load and merge skills from public, user, org, and project sources.","packet":true,"from":"actor-3","to":"actor-4"},
+          {"highlight":"flow-actor-4","label":"Ready. The agent now has a provisioned workspace and starts working on your task."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">📥</div><span>Clone</span></div>
+            <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">⚙️</div><span>Setup</span></div>
+            <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">🪝</div><span>Hooks</span></div>
+            <div class="flow-actor" id="flow-actor-4"><div class="flow-actor-icon">🧠</div><span>Skills</span></div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin onboarding</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The state machine, in code</h2>
+        <p>This is the real <code>run_setup_scripts</code> method. The interesting part is the <code>yield</code> after each status change &mdash; that's what powers the live progress you see in the UI:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line">task.status = AppConversationStartTaskStatus.PREPARING_REPOSITORY</span>
+<span class="code-line"><span class="code-keyword">yield</span> task</span>
+<span class="code-line"><span class="code-keyword">await</span> self.clone_or_init_git_repo(task, workspace, sandbox)</span>
+<span class="code-line"></span>
+<span class="code-line">task.status = AppConversationStartTaskStatus.RUNNING_SETUP_SCRIPT</span>
+<span class="code-line"><span class="code-keyword">yield</span> task</span>
+<span class="code-line"><span class="code-keyword">await</span> self.maybe_run_setup_script(workspace, project_dir)</span>
+<span class="code-line"></span>
+<span class="code-line">task.status = AppConversationStartTaskStatus.SETTING_UP_GIT_HOOKS</span>
+<span class="code-line"><span class="code-keyword">yield</span> task</span>
+<span class="code-line"><span class="code-keyword">await</span> self.maybe_setup_git_hooks(workspace, project_dir)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Mark the task as &ldquo;preparing the repository.&rdquo;</p>
+              <p class="tl">Hand that status back to the caller <em>immediately</em> &mdash; the UI updates now, before the slow work starts.</p>
+              <p class="tl">Then actually do the slow thing: clone or initialise the repo.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Now we're &ldquo;running the setup script.&rdquo; Announce it&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&hellip;then run <code>.openhands/setup.sh</code>.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Finally, &ldquo;setting up git hooks.&rdquo; Announce, then install.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">📡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Design consideration: announce, then act</strong>
+            <p>Using a <span class="term" data-definition="A function that can pause and hand back partial results with 'yield', then resume where it left off. It lets a long process report progress as it goes instead of only at the end.">generator</span> that <code>yield</code>s before each slow step is a deliberate UX-and-architecture decision: the user sees &ldquo;cloning&hellip;&rdquo; the instant it begins, not after it finishes. The status <em>is</em> the contract between a long backend job and a responsive frontend.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The sandbox lifecycle: more than start</h2>
+        <p>The <code>SandboxService</code> abstract base defines a full lifecycle &mdash; not just &ldquo;start.&rdquo; Each is one socket on the wall (Module 3), implemented by Docker, a local process, or a remote runtime.</p>
+
+        <div class="badge-list stagger-children">
+          <div class="badge-item animate-in"><code class="badge-code">start_sandbox</code><span class="badge-desc">Provision a new isolated environment for a conversation.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">wait_for_sandbox_running</code><span class="badge-desc">Poll until status is RUNNING <em>and</em> the agent server answers <code>/alive</code>.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">pause_sandbox / resume_sandbox</code><span class="badge-desc">Freeze an idle sandbox to reclaim resources; thaw it on demand.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">pause_old_sandboxes</code><span class="badge-desc">Cap concurrent sandboxes per user by freezing the oldest ones.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">delete_sandbox</code><span class="badge-desc">Stop and tear down &mdash; the disposable nature made literal.</span></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A race condition the code guards against</h2>
+        <p>A sandbox reporting <code>RUNNING</code> doesn't mean the agent inside is ready to take requests. The base class handles that gap explicitly:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">if</span> sandbox.status == SandboxStatus.RUNNING:</span>
+<span class="code-line">    <span class="code-comment"># sandbox says RUNNING, but is the agent server actually up?</span></span>
+<span class="code-line">    <span class="code-keyword">if</span> httpx_client <span class="code-keyword">and</span> sandbox.exposed_urls:</span>
+<span class="code-line">        <span class="code-keyword">if</span> <span class="code-keyword">await</span> self._check_agent_server_alive(sandbox, httpx_client):</span>
+<span class="code-line">            <span class="code-keyword">return</span> sandbox</span>
+<span class="code-line">        <span class="code-comment"># not ready yet, keep polling</span></span>
+<span class="code-line">    <span class="code-keyword">else</span>:</span>
+<span class="code-line">        <span class="code-keyword">return</span> sandbox</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">The container reports it's running&hellip;</p>
+              <p class="tl">&hellip;but &ldquo;the box is on&rdquo; isn't &ldquo;the worker is ready.&rdquo;</p>
+              <p class="tl">If we were given a way to check and the sandbox has exposed a URL&hellip;</p>
+              <p class="tl">&hellip;actually knock on the agent's <code>/alive</code> door.</p>
+              <p class="tl">It answered &mdash; <em>now</em> it's safe to hand back.</p>
+              <p class="tl">Door's silent? Don't return yet; loop and try again.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">(If no checker was supplied, trust the status and move on.)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">⏱️</div>
+          <div class="callout-content">
+            <strong class="callout-title">A real-world failure this prevents</strong>
+            <p>Without the <code>/alive</code> check, the app server would fire the agent's first request into a process that isn't listening yet &mdash; an intermittent &ldquo;connection refused&rdquo; that only shows up under load or on slow machines. Health-gating the readiness check turns a flaky race into a deterministic wait.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module4">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Correct. setup.sh runs during RUNNING_SETUP_SCRIPT, before the agent works. A dependency that isn't installed points straight at that step (or a missing/failing .openhands/setup.sh)."
+               data-explanation-wrong="The symptom is 'a dependency the project needs isn't present.' Installing project deps is exactly what the RUNNING_SETUP_SCRIPT stage (.openhands/setup.sh) is for — that's where to look.">
+            <h3 class="quiz-question">An agent keeps failing with &ldquo;module not found&rdquo; for a library the repo clearly depends on. Which lifecycle stage is the prime suspect?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>PREPARING_REPOSITORY &mdash; the clone failed.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>RUNNING_SETUP_SCRIPT &mdash; <code>.openhands/setup.sh</code> didn't install deps.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>SETTING_UP_GIT_HOOKS &mdash; the pre-commit hook is broken.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. yield-before-each-step is what makes progress observable in real time; collapsing it into one call would leave users staring at a spinner with no signal until the very end."
+               data-explanation-wrong="Reconsider the 'announce, then act' callout. The yields exist precisely so the UI can show which stage is running live. Removing them costs you all real-time progress feedback.">
+            <h3 class="quiz-question">A teammate wants to &ldquo;simplify&rdquo; <code>run_setup_scripts</code> by removing the <code>yield task</code> lines and just running all steps in sequence. What's lost?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Live, per-stage progress in the UI &mdash; users would see nothing until everything finished.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nothing &mdash; the yields are decorative.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The git clone would stop working.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: the agent is working and producing events. Where do they go, and how do you hook into them? &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>

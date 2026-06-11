@@ -1,0 +1,168 @@
+<section class="module" id="module-7" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">07</span>
+      <h1 class="module-title">Trade-offs, Honest Limits &amp; The Road Ahead</h1>
+      <p class="module-subtitle">The architect's wrap-up: why the big decisions were made, where they hurt, and a clearly-labelled look at what could come next.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The five decisions, and what each one cost</h2>
+        <p>Every architecture is a set of bets. Here are the five that define this codebase &mdash; each with the reasoning <em>and</em> the bill.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🛰️</div>
+            <h4 class="pattern-title">Two-plane split</h4>
+            <p class="pattern-desc"><strong>Why:</strong> security isolation, horizontal scale, MIT/enterprise licensing boundary.<br><strong>Cost:</strong> every agent interaction is a network round-trip with its own latency and failure modes.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🔌</div>
+            <h4 class="pattern-title">Injector DI everywhere</h4>
+            <p class="pattern-desc"><strong>Why:</strong> one codebase from laptop to cloud; backends are config, not forks.<br><strong>Cost:</strong> indirection &mdash; &ldquo;what runs?&rdquo; is never answered at the call site.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">📜</div>
+            <h4 class="pattern-title">Event-sourced history</h4>
+            <p class="pattern-desc"><strong>Why:</strong> replayable, streamable, and an open seam for extensions.<br><strong>Cost:</strong> a pluggable store forces a lowest-common-denominator API across disk/S3/GCS.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🛡️</div>
+            <h4 class="pattern-title">Resilient callbacks</h4>
+            <p class="pattern-desc"><strong>Why:</strong> a buggy hook must never crash a user's agent run.<br><strong>Cost:</strong> failures go quiet &mdash; an <code>ERROR</code> row no one watches.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🔒</div>
+            <h4 class="pattern-title">Privacy by default</h4>
+            <p class="pattern-desc"><strong>Why:</strong> consent-gated analytics, secret redaction in logs, OSS/SaaS split.<br><strong>Cost:</strong> more branches and guards in every telemetry path.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Honest limitations &mdash; named, not hidden</h2>
+        <p>A platform you can reason about is one whose weak spots you know. These are real, and some are visible right in the git history.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">🔁</div>
+            <div><strong>Callback dispatch is query-driven, per event</strong><p><code>execute_callbacks</code> runs a database <span class="term" data-definition="SELECT is the SQL command that reads rows from a database table. Running one per event means a database round-trip every time the agent does anything — cheap individually, but it adds up at scale.">SELECT</span> for every event. At high event volume that's load the design hasn't yet optimised away &mdash; it's pull, not push.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">⏳</div>
+            <div><strong>Some reactions still poll</strong><p>The shipped title-setter polls the agent server a fixed number of times with sleeps &mdash; pragmatic, but not event-driven, and it can give up before the title exists.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">🧪</div>
+            <div><strong>No in-repo evaluation framework</strong><p>As Module 6 was blunt about: scoring lives in an external repo. The app server gives you data and a hook, not a harness.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">📌</div>
+            <div><strong>Tight coupling to the SDK version</strong><p>The git log is full of <code>bump agent-server to 1.x</code> commits. Event kinds and behavior can shift under you; pin and test deliberately.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">🏷️</div>
+            <div><strong>Observability is vendor-shaped</strong><p>Laminar for traces, PostHog for analytics &mdash; both fine choices, but neither is a vendor-neutral, injector-pluggable abstraction yet.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔬</div>
+          <div class="callout-content">
+            <strong class="callout-title">Evidence, not vibes</strong>
+            <p>These aren't guesses &mdash; the recent history shows the team actively hardening exactly these seams (e.g. a fix to <em>scope DB sessions tightly in <code>poll_agent_servers</code> to prevent idle-in-transaction</em>). Mature systems carry known rough edges <em>and</em> a visible trail of sanding them down.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The road ahead</h2>
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔮</div>
+          <div class="callout-content">
+            <strong class="callout-title">READ THIS FIRST &mdash; everything below is prediction</strong>
+            <p>The cards on this screen are <strong>the author's informed speculation</strong>, <em>not</em> features of OpenHands today. None of this is in the codebase as of this course. Each is tagged <code style="color:var(--color-error)">NOT IMPLEMENTED</code> so you never mistake a wish for a fact. Treat them as &ldquo;natural next moves,&rdquo; not a roadmap.</p>
+          </div>
+        </div>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Vendor-neutral OTel exporter <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> a first-class OpenTelemetry injector so traces flow to any backend without a custom callback &mdash; closing the layer-2 gap from Module 6.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Push-based callback dispatch <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> an in-memory or <span class="term" data-definition="A message queue is a buffer that holds events so producers and consumers can work at their own pace, decoupled. Backing dispatch with one would let events fan out to listeners without a database query each time.">queue</span>-backed subscription bus to replace the per-event DB query &mdash; lower latency and load at scale.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">First-class <code>EvaluationService</code> <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> an injector that runs a scorer (tests / LLM-judge) over a trajectory in-product, making Module 6's sample a supported abstraction.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Pluggable <code>AnalyticsService</code> injector <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> today analytics is constructed directly, not selected by an injector. Bringing it under the Module 3 pattern would let you swap PostHog for anything.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title">Callback retry/backoff policy <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> configurable retries and dead-letter handling so a transient failure in an observability hook self-heals instead of leaving a silent <code>ERROR</code> row.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-accent-muted); opacity: 0.96">
+            <div class="pattern-icon" style="background: var(--color-accent-muted)">🔮</div>
+            <h4 class="pattern-title"><span class="term" data-definition="A microVM is a stripped-down virtual machine that boots in milliseconds (e.g. AWS Firecracker). It gives near-container speed with near-VM isolation — attractive for spinning up disposable agent sandboxes fast.">microVM</span> / <span class="term" data-definition="WebAssembly (WASM) is a portable, sandboxed binary format that runs untrusted code safely and fast. Using it for sandboxes would mean lighter-weight isolation than a full container.">WASM</span> sandbox backend <code style="color:var(--color-error); font-size:0.7em">NOT IMPLEMENTED</code></h4>
+            <p class="pattern-desc"><em>Prediction:</em> a new <code>SandboxServiceInjector</code> using lighter isolation (Firecracker, gVisor, WASM) for faster, cheaper agent startup at fleet scale.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One last check &mdash; the architect's lens</h2>
+        <div class="quiz-container" id="quiz-module7">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly the right instinct. The course flagged it as a NOT IMPLEMENTED prediction, so you'd verify against the current code/docs before promising it — predictions are hypotheses, not commitments."
+               data-explanation-wrong="The OTel exporter card was explicitly tagged NOT IMPLEMENTED. Quoting a prediction as a shipped feature is exactly the trap the labels exist to prevent — verify first.">
+            <h3 class="quiz-question">A vendor asks &ldquo;does OpenHands export OpenTelemetry traces out of the box?&rdquo; Based on this course, what do you do?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Say yes &mdash; the roadmap card described it.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Say no today &mdash; that was a NOT IMPLEMENTED prediction; verify against current code before committing.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Say it's impossible.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. The resilient-callback decision optimises for never crashing a run, accepting quiet failures as the cost. To catch the silent failures you add monitoring on the ERROR results — you don't undo the resilience."
+               data-explanation-wrong="Reconsider the trade-off. The swallow-and-record design is intentional so a hook can't crash a run. The fix for silent failures is to monitor the ERROR results, not to let exceptions propagate.">
+            <h3 class="quiz-question">Your observability callback fails silently in production. Which response is consistent with the codebase's design philosophy?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Keep the resilient swallow, but add monitoring/alerting on stored <code>ERROR</code> callback results.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Make callbacks re-raise so a failed hook crashes the agent run loudly.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Disable all callbacks permanently.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module7')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module7')">Try Again</button>
+        </div>
+
+        <div class="callout callout-accent" style="margin-top: var(--space-10)">
+          <div class="callout-icon">🎓</div>
+          <div class="callout-content">
+            <strong class="callout-title">You've finished Inside OpenHands</strong>
+            <p>You can now place any feature in this codebase: trusted control plane or disposable data plane, which injector selects it, where in the lifecycle it runs, and which event it reacts to. More importantly, you can tell what ships from what you'd build &mdash; and a prediction from a fact. That's the literacy that lets you extend, debug, and make architecture calls with confidence.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

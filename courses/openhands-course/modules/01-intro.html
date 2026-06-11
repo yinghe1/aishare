@@ -1,0 +1,191 @@
+<section class="module" id="module-1" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">The Journey of a Single Task</h1>
+      <p class="module-subtitle">What OpenHands actually is, and what happens between &ldquo;build me a feature&rdquo; and a pull request appearing on GitHub.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What you're looking at</h2>
+        <p><strong>OpenHands is a platform for running AI software-engineering agents</strong> &mdash; programs that read a codebase, write code, run commands, and open pull requests on your behalf. It scores 77.6 on
+          <span class="term" data-definition="A standard benchmark where an AI agent must fix real GitHub issues from open-source projects. The score is the percentage of issues it resolves with a passing test. Higher is better; this is near the top of the field.">SWE-bench</span>, near the top of the field.</p>
+        <p>But &ldquo;OpenHands&rdquo; is really <em>five products sharing one engine</em>. This course is about the repository in front of you &mdash; the <strong>server and web application</strong> that turns that engine into a multi-user product.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">📦</div>
+            <h4 class="pattern-title">The SDK</h4>
+            <p class="pattern-desc">A Python library &mdash; the actual agent engine. Lives in a <em>separate</em> repo and ships here as the <code>openhands-agent-server</code> package.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">⌨️</div>
+            <h4 class="pattern-title">The CLI</h4>
+            <p class="pattern-desc">A terminal tool like Claude Code or Codex. Drives the same engine from your shell.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🖥️</div>
+            <h4 class="pattern-title">The Local GUI</h4>
+            <p class="pattern-desc">A REST API + React app for running agents on your laptop. <strong>This repo.</strong></p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">☁️</div>
+            <h4 class="pattern-title">Cloud + Enterprise</h4>
+            <p class="pattern-desc">The same GUI, scaled to many users with auth, billing, and integrations. The <code>enterprise/</code> directory here.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">Orient yourself before you read code</strong>
+            <p>This repository is the <strong>application layer</strong>: <code>openhands/app_server/</code> (the REST API), <code>frontend/</code> (the React app), and <code>enterprise/</code> (the multi-tenant SaaS). The agent's reasoning loop lives in the SDK, a dependency. Keep that boundary in mind &mdash; it explains almost every design choice you'll meet.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The metaphor: mission control and the spacecraft</h2>
+        <p>Picture a space mission. There's <strong>mission control</strong> on the ground &mdash; it doesn't fly anywhere, but it decides when to launch, watches telemetry, and keeps records. And there's <strong>the spacecraft</strong> &mdash; isolated, doing the actual dangerous work out in the void.</p>
+        <p>OpenHands is built exactly this way. The <strong>app server</strong> is mission control. The <strong>agent</strong>, running inside a locked-down
+          <span class="term" data-definition="An isolated environment (usually a container or VM) where untrusted code can run without touching the host machine. If the agent runs a destructive command, the blast radius is the sandbox, not your server.">sandbox</span>, is the spacecraft. They are two separate processes that talk over the network.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🛰️</div>
+            <div>
+              <strong>Mission control = the App Server</strong>
+              <p>A <span class="term" data-definition="A popular Python web framework for building APIs. It handles incoming HTTP requests and routes them to your code.">FastAPI</span> service. Starts conversations, launches sandboxes, stores events, enforces auth. Never runs the agent's code itself.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🚀</div>
+            <div>
+              <strong>The spacecraft = the Agent Server</strong>
+              <p>Runs <em>inside</em> the sandbox. This is where the LLM loop, tool calls, and shell commands actually execute. Exposed to mission control over an HTTP port.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Trace it: from prompt to running agent</h2>
+        <p>Imagine you type <em>&ldquo;add rate limiting to the login endpoint&rdquo;</em> and pick a repository. Here's the journey your request takes. Step through it:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"You submit a task and select a repo in the web UI."},
+          {"highlight":"flow-actor-2","label":"The App Server receives the request and starts a conversation.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"The App Server asks the Sandbox Service to launch an isolated container.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-3","label":"The sandbox boots and starts the Agent Server inside it; the App Server polls /alive until it answers."},
+          {"highlight":"flow-actor-3","label":"Setup runs in the sandbox: clone the repo, run .openhands/setup.sh, install git hooks, load skills.","packet":true,"from":"actor-3","to":"actor-4"},
+          {"highlight":"flow-actor-4","label":"The Agent Server runs the LLM loop, editing files and running commands inside the sandbox."},
+          {"highlight":"flow-actor-2","label":"Every action becomes an Event, streamed back to the App Server and persisted.","packet":true,"from":"actor-4","to":"actor-2"},
+          {"highlight":"flow-actor-1","label":"You watch the agent work in real time, and a pull request appears on GitHub."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">🧑‍💻</div>
+              <span>You + Web UI</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🛰️</div>
+              <span>App Server</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-3">
+              <div class="flow-actor-icon">📦</div>
+              <span>Sandbox</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-4">
+              <div class="flow-actor-icon">🚀</div>
+              <span>Agent Server</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to begin</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">The whole course in one sentence</strong>
+            <p>Everything you'll learn &mdash; the injector pattern, the lifecycle state machine, event callbacks, observability hooks &mdash; exists to make <em>that flow</em> reliable, swappable, and observable across a laptop, a cloud, or a thousand parallel agents.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One small piece of real code</h2>
+        <p>How does configuration on mission control reach the spacecraft? The app server forwards certain environment variables into the sandbox. Here's the actual rule from <code>sandbox_spec_service.py</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-comment"># Prefixes for env vars auto-forwarded to agent-server</span></span>
+<span class="code-line"><span class="code-property">AUTO_FORWARD_PREFIXES</span> = (<span class="code-string">'LLM_'</span>, <span class="code-string">'LMNR_'</span>)</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">for</span> key, value <span class="code-keyword">in</span> os.environ.items():</span>
+<span class="code-line">    <span class="code-keyword">if</span> <span class="code-function">any</span>(key.startswith(p) <span class="code-keyword">for</span> p <span class="code-keyword">in</span> AUTO_FORWARD_PREFIXES):</span>
+<span class="code-line">        result[key] = value</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define which settings should cross the boundary into the sandbox.</p>
+              <p class="tl">Anything starting with <code>LLM_</code> (model config) or <code>LMNR_</code> (Laminar tracing) qualifies.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Walk every environment variable mission control has&hellip;</p>
+              <p class="tl">&hellip;and if its name has a forwarded prefix&hellip;</p>
+              <p class="tl">&hellip;copy it into the spacecraft's environment. (We'll revisit <code>LMNR_</code> in Module 6 &mdash; it's how tracing gets in.)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module1">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. This repo is the application layer (app_server, frontend, enterprise). The agent's reasoning loop lives in the SDK, pulled in as the openhands-agent-server dependency."
+               data-explanation-wrong="Re-read the orientation card. The LLM loop runs in the Agent Server inside the sandbox, shipped via the SDK dependency — not in this repository's app_server.">
+            <h3 class="quiz-question">A teammate says &ldquo;let's tweak how the agent decides which tool to call &mdash; it's in <code>app_server</code>, right?&rdquo; What's the most accurate response?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Yes, the agent loop is in <code>openhands/app_server/</code>.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No &mdash; the agent loop lives in the SDK (the <code>openhands-agent-server</code> dependency); this repo orchestrates it.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>It's in the React frontend.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. Isolation is the whole point: agent-authored commands run in a disposable sandbox, so a destructive command can't reach mission control or other tenants."
+               data-explanation-wrong="Think about what runs untrusted, agent-written shell commands. You want a blast radius — that's the sandbox's reason to exist.">
+            <h3 class="quiz-question">Why run the Agent Server in a separate sandbox instead of in the App Server process?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>To make the code shorter.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Because FastAPI can't run loops.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Isolation &mdash; the agent runs untrusted commands, so its blast radius must be contained.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Next: we meet the full cast of characters and the hard line between the two planes. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>

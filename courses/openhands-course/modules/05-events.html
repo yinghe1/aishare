@@ -1,0 +1,177 @@
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Events &amp; Callbacks: The Extension Spine</h1>
+      <p class="module-subtitle">Everything the agent does becomes an event &mdash; and events are the seam where you bolt on your own behavior.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A house full of automation rules</h2>
+        <p>In a smart home, you don't rewire the house to add a behavior. You write a rule: <em>&ldquo;when the front door opens, turn on the hallway light and text me.&rdquo;</em> The door knows nothing about lights or phones &mdash; it just <em>emits an event</em>, and independent rules react.</p>
+        <p>OpenHands works identically. The agent emits <strong>events</strong> &mdash; a message, a tool call, a finished run &mdash; and registered <span class="term" data-definition="A callback is a piece of code you hand to a system to run later, when something happens — like leaving your number so the restaurant can call you when your table is ready. Here, it's the code that runs when a matching event fires.">callbacks</span> react. The agent never knows who's listening. This is
+          <span class="term" data-definition="A design where producers broadcast events without knowing who consumes them, and consumers subscribe without knowing who produced them. It keeps the two sides independent and lets you add reactions without touching the producer.">publish/subscribe</span>,
+          and it's the cleanest place to extend the platform.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">📜</div>
+          <div class="callout-content">
+            <strong class="callout-title">Two halves: storage and reaction</strong>
+            <p>The <strong>EventService</strong> is durable memory &mdash; it persists and streams the full event history (to disk, S3, or GCS, chosen by injector). The <strong>EventCallbackService</strong> is live reaction &mdash; it runs your code when a matching event arrives. Module 6 lives entirely in that second half.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The contract you implement: one method</h2>
+        <p>To react to events, you subclass <code>EventCallbackProcessor</code> and implement a single async method. Here's the entire base class &mdash; this is the whole extension API:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">class</span> <span class="code-function">EventCallbackProcessor</span>(DiscriminatedUnionMixin, ABC):</span>
+<span class="code-line">    event_kind: ClassVar[EventKind] = <span class="code-string">'MessageEvent'</span></span>
+<span class="code-line"></span>
+<span class="code-line">    <span class="code-property">@abstractmethod</span></span>
+<span class="code-line">    <span class="code-keyword">async def</span> <span class="code-function">__call__</span>(</span>
+<span class="code-line">        self,</span>
+<span class="code-line">        conversation_id: UUID,</span>
+<span class="code-line">        callback: EventCallback,</span>
+<span class="code-line">        event: Event,</span>
+<span class="code-line">    ) -> EventCallbackResult | <span class="code-keyword">None</span>:</span>
+<span class="code-line">        <span class="code-string">"""Process an event."""</span></span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Define a reaction. (It's a discriminated union, so &mdash; like injectors &mdash; it can be stored as config and rebuilt.)</p>
+              <p class="tl">Declare <em>which kind</em> of event you care about. Default: chat messages.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">You must fill in one thing&hellip;</p>
+              <p class="tl">&hellip;a callable that receives:</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">&mdash; which conversation this is,</p>
+              <p class="tl">&mdash; the callback's own record (so it can update itself),</p>
+              <p class="tl">&mdash; and the event that just fired.</p>
+              <p class="tl">Return a result to record, or <code>None</code> to stay silent.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-accent">
+          <div class="callout-icon">🪝</div>
+          <div class="callout-content">
+            <strong class="callout-title">This tiny interface is the whole point of the module</strong>
+            <p>Logging, metrics, tracing, evaluation, webhooks, auto-naming a conversation &mdash; <em>all</em> of them are just different bodies for this one <code>__call__</code> method. The platform ships <code>LoggingCallbackProcessor</code> as a copy-paste starting point and a title-setter as a real production example.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The dispatcher: how your code gets called</h2>
+        <p>When an event fires, <code>execute_callbacks</code> finds the rules that match and runs them all at once. Trace the live dispatch:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"The agent emits an event (e.g. a MessageEvent)."},
+          {"highlight":"flow-actor-2","label":"execute_callbacks queries the DB: which ACTIVE callbacks match this conversation AND this event kind?","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"Each matching processor runs concurrently via asyncio.gather — one slow callback cannot block the others.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-3","label":"A processor that throws is caught and recorded as an ERROR result — it never crashes the others or the agent."},
+          {"highlight":"flow-actor-2","label":"Each result is written back to the database for later inspection.","packet":true,"from":"actor-3","to":"actor-2"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">🚀</div><span>Agent event</span></div>
+            <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">🔔</div><span>Dispatcher</span></div>
+            <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">⚙️</div><span>Your processors</span></div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click &ldquo;Next Step&rdquo; to dispatch</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Resilience by construction</h2>
+        <p>The dispatcher's error handling is worth reading carefully &mdash; it's a deliberate reliability decision. This is the real <code>execute_callback</code>:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">try</span>:</span>
+<span class="code-line">    result = <span class="code-keyword">await</span> callback.processor(conversation_id, callback, event)</span>
+<span class="code-line">    <span class="code-keyword">if</span> result <span class="code-keyword">is</span> <span class="code-keyword">None</span>:</span>
+<span class="code-line">        <span class="code-keyword">return</span></span>
+<span class="code-line">    stored_result = StoredEventCallbackResult(**result.model_dump())</span>
+<span class="code-line"><span class="code-keyword">except</span> Exception <span class="code-keyword">as</span> exc:</span>
+<span class="code-line">    _logger.exception(<span class="code-string">f'Exception in callback {callback.id}'</span>)</span>
+<span class="code-line">    stored_result = StoredEventCallbackResult(</span>
+<span class="code-line">        status=EventCallbackResultStatus.ERROR, detail=<span class="code-function">str</span>(exc), ...)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Run the user's processor&hellip;</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">If it chose to stay silent, we're done.</p>
+              <p class="tl">&nbsp;</p>
+              <p class="tl">Otherwise, save what it returned.</p>
+              <p class="tl">But if it <em>blew up</em>&hellip;</p>
+              <p class="tl">&hellip;log the full stack trace for debugging&hellip;</p>
+              <p class="tl">&hellip;and record an ERROR result with the message &mdash; instead of letting the crash escape.</p>
+              <p class="tl">&nbsp;</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🛡️</div>
+          <div class="callout-content">
+            <strong class="callout-title">A double-edged decision &mdash; note it for Module 7</strong>
+            <p>Swallowing exceptions means <em>your buggy observability hook can never take down a user's agent run.</em> That's the right default. The cost: a silently failing callback leaves only an <code>ERROR</code> row in a table no one is watching. Resilience here trades loud failure for quiet failure &mdash; a trade we'll revisit honestly.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module5">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. Callbacks are filtered by event_kind AND conversation_id and run via the pub/sub dispatcher — you add a processor without ever editing the agent or the emitter."
+               data-explanation-wrong="The whole reason events exist is so you DON'T modify the producer. Subscribe a processor for the event kind you care about; the agent stays untouched.">
+            <h3 class="quiz-question">You want to POST a Slack notification every time an agent finishes a run, without touching the agent code. What's the idiomatic approach?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Edit the agent loop in the SDK to call Slack directly.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Write an <code>EventCallbackProcessor</code> for the &ldquo;finished&rdquo; event kind and register it on the conversation.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Poll the database from a cron job and diff it.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. execute_callback catches the exception, logs it, and records an ERROR result. The other callbacks and the agent run are unaffected — which is also why the failure is easy to miss."
+               data-explanation-wrong="Re-read the resilience code. Exceptions in a processor are caught and stored as ERROR results; they don't propagate to crash other callbacks or the agent.">
+            <h3 class="quiz-question">Your custom processor throws an unhandled exception on every event. What actually happens to the user's agent run?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The agent run crashes immediately.</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>All other callbacks are skipped for safety.</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nothing visible &mdash; the error is caught, logged, and stored as an ERROR result; the run continues.</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+        </div>
+
+        <p style="margin-top: var(--space-8); color: var(--color-text-secondary)">Now the payoff: let's actually write custom observability and evaluation on top of this spine. &rarr;</p>
+      </section>
+
+    </div>
+  </div>
+</section>
